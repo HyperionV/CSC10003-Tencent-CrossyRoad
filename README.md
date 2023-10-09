@@ -20,6 +20,8 @@
 - Speed  
 - Frequency  
   - `seed % n`
+- Direction
+  - `(seed % n) % 2`
 ## Player 
 - ***Name***  
 - Score
@@ -35,3 +37,5 @@
 - ***Collect a coin: +2 pts***
 - Getting hit by a car: *die/restart*
 - Getting hit by animals: *punishments/die*
+
+---
