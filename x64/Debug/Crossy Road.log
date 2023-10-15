@@ -1,0 +1,3 @@
+﻿E:\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Tencent-CrossyRoad.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  CrossyRoad.cpp
+  Crossy Road.vcxproj -> C:\Users\ADMIN\Desktop\HCMUS\Object Oriented Programming\Project\Crossy Road\x64\Debug\Crossy Road.exe
