@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <winuser.h>
 #include <cmath>
+#include "Texture.h"
 
 #define _WIN32_WINNT 0x0500
 
@@ -41,11 +42,16 @@ int main() {
 	HDC hdc = GetDC(console);
 	system("cls");
 
-	//Choose any color
-	COLORREF COLOR = RGB(255, 255, 255);
+//	//Choose any color
+//	COLORREF COLOR = RGB(255, 255, 255);
+//
+//	//Draw pixels
+//	SetPixel(hdc, 100, 100, COLOR);
 
-	//Draw pixels
-	SetPixel(hdc, 100, 100, COLOR);
+    Texture texture;
+    texture.readTexture("test.bin");
+//    texture.print();
+//    texture.drawTexture(0, 0, hdc);
 
 	ReleaseDC(console, hdc);
 	cin.ignore();

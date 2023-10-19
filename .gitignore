@@ -585,3 +585,5 @@ crashlytics-build.properties
 fabric.properties
 .vs/Tencent-CrossyRoad/v17/ipch/AutoPCH/e25be99e1675dcf7/CROSSYROAD.ipch
 *.ipch
+
+.idea/
