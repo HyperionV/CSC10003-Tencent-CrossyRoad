@@ -2,6 +2,8 @@
 #include <Windows.h>
 #include <winuser.h>
 #include <cmath>
+#include <chrono>
+#include <thread>
 
 #define _WIN32_WINNT 0x0500
 
@@ -45,7 +47,20 @@ int main() {
 	COLORREF COLOR = RGB(255, 255, 255);
 
 	//Draw pixels
-	SetPixel(hdc, 100, 100, COLOR);
+	for (int i = 1; i <= 100; i++) {
+		SetPixel(hdc, 100, 100 + i, COLOR);
+		SetPixel(hdc, 101, 100 + i, COLOR);
+		SetPixel(hdc, 102, 100 + i, COLOR);
+		SetPixel(hdc, 103, 100 + i, COLOR);
+		SetPixel(hdc, 104, 100 + i, COLOR);
+		SetPixel(hdc, 105, 100 + i, COLOR);
+		SetPixel(hdc, 106, 100 + i, COLOR);
+		SetPixel(hdc, 107, 100 + i, COLOR);
+		SetPixel(hdc, 108, 100 + i, COLOR);
+		SetPixel(hdc, 109, 100 + i, COLOR);
+		SetPixel(hdc, 110, 100 + i, COLOR);
+		Sleep(20);
+	}
 
 	ReleaseDC(console, hdc);
 	cin.ignore();
