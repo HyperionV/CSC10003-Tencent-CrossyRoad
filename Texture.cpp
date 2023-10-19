@@ -1,6 +1,7 @@
 #include "Texture.h"
 #include <fstream>
 #include <iostream>
+#include <thread>
 
 using namespace std;
 
@@ -89,4 +90,53 @@ void Texture::drawTexture(int x, int y, HDC hdc) {
             pixels[i][j].drawPixel(x + j, y + i, hdc);
         }
     }
+}
+
+void Texture::drawToMem(HDC hdc) {
+
+}
+
+void Texture::fastDrawTexture(int x, int y, HDC hdc) {
+    BITMAPINFO bmi;
+    ZeroMemory(&bmi, sizeof(BITMAPINFO));
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biWidth = width;
+    bmi.bmiHeader.biHeight = -height; // Negative height to specify a top-down DIB
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = 32; // 32 bits per pixel (for RGBA)
+
+    void* bits; // Pointer to the bitmap pixel data
+
+    // Create a DIB section
+    HBITMAP hBitmap = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &bits, NULL, 0);
+
+    if (hBitmap == NULL) {
+        std::cerr << "Failed to create DIB section." << std::endl;
+        return;
+    }
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            // Get a pointer to the pixel at (x, y)
+            BYTE* pPixel = (BYTE*)bits + (y * width + x) * 4;
+
+            // Set the pixel (R, G, B, A)
+            pPixel[0] = pixels[y][x].getB();
+            pPixel[1] = pixels[y][x].getG();
+            pPixel[2] = pixels[y][x].getR();
+            pPixel[3] = pixels[y][x].getA();
+        }
+    }
+
+    // Use BitBlt to draw the DIB section onto the HDC at position (x, y)
+    HDC memDC = CreateCompatibleDC(hdc);
+    HBITMAP hOldBitmap = (HBITMAP)SelectObject(memDC, hBitmap);
+
+    BitBlt(hdc, x, y, width, height, memDC, 0, 0, SRCCOPY);
+
+    SelectObject(memDC, hOldBitmap);
+    DeleteDC(memDC);
+
+    // Clean up the DIB section
+    DeleteObject(hBitmap);
 }

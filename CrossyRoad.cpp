@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <winuser.h>
 #include <cmath>
+#include <time.h>
 #include "Texture.h"
 
 #define _WIN32_WINNT 0x0500
@@ -20,7 +21,7 @@ void ShowConsoleCursor(bool showFlag)
 }
 
 int main() {
-	
+
 	HWND console = GetConsoleWindow();
 
 	RECT r;
@@ -40,6 +41,7 @@ int main() {
 
 
 	HDC hdc = GetDC(console);
+    HDC hdcMem = CreateCompatibleDC(hdc);
 	system("cls");
 
 //	//Choose any color
@@ -48,10 +50,14 @@ int main() {
 //	//Draw pixels
 //	SetPixel(hdc, 100, 100, COLOR);
 
-    Texture texture;
-    texture.readTexture("image_bin/xebay.bin");
-//    texture.print();
-    texture.drawTexture(0, 0, hdc);
+	Texture texture;
+	texture.readTexture("image_bin/lava.bin");
+
+    clock_t start = clock();
+    texture.fastDrawTexture(0,0,hdc);
+    clock_t end = clock();
+
+    cout << "Time: " << (double)(end - start) / CLOCKS_PER_SEC << endl;
 
 	ReleaseDC(console, hdc);
 	cin.ignore();

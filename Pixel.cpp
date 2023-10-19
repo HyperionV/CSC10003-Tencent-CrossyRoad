@@ -28,7 +28,25 @@ Pixel::~Pixel() {
     // Do nothing
 }
 
+int Pixel::getR() {
+    return r;
+}
+
+int Pixel::getG() {
+    return g;
+}
+
+int Pixel::getB() {
+    return b;
+}
+
+int Pixel::getA() {
+    return a;
+}
+
 void Pixel::drawPixel(int x, int y, HDC hdc) {
+    if (a == 0)
+        return;
     COLORREF COLOR = RGB(r, g, b);
     SetPixel(hdc, x, y, COLOR);
 }

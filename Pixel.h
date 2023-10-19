@@ -16,6 +16,11 @@ public:
     Pixel(const Pixel& other);
     ~Pixel();
 
+    int getR();
+    int getG();
+    int getB();
+    int getA();
+
     void drawPixel(int x, int y, HDC hdc);
     void print();
 };
