@@ -49,9 +49,9 @@ int main() {
 //	SetPixel(hdc, 100, 100, COLOR);
 
     Texture texture;
-    texture.readTexture("test.bin");
+    texture.readTexture("image_bin/xebay.bin");
 //    texture.print();
-//    texture.drawTexture(0, 0, hdc);
+    texture.drawTexture(0, 0, hdc);
 
 	ReleaseDC(console, hdc);
 	cin.ignore();

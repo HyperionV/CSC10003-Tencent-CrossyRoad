@@ -59,9 +59,9 @@ void Texture::readTexture(string filename) {
             int color;
             file.read(reinterpret_cast<char*>(&color), sizeof(int));
             a = (color >> 24) & 0xFF;
-            r = (color >> 16) & 0xFF;
+            b = (color >> 16) & 0xFF;
             g = (color >> 8) & 0xFF;
-            b = color & 0xFF;
+            r = color & 0xFF;
             pixels[row][col] = Pixel(r, g, b, a);
         }
     }
