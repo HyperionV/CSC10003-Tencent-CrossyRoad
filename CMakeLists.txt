@@ -16,4 +16,4 @@ add_executable(CSC10003_Tencent_CrossyRoad
         resource.h
         Texture.cpp
         Texture.h
-        )
+        Utilities.cpp Utilities.h Movable.cpp Movable.h Sprite.cpp Sprite.h)

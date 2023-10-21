@@ -83,27 +83,15 @@ void Texture::print() {
     }
 }
 
-void Texture::drawTexture(int x, int y, HDC hdc) {
-    for (int i = 0; i < height; i++) {
-        for (int j = 0; j < width; j++)
-        {
-            pixels[i][j].drawPixel(x + j, y + i, hdc);
-        }
-    }
-}
-
-void Texture::drawToMem(HDC hdc) {
-
-}
-
-void Texture::fastDrawTexture(int x, int y, HDC hdc) {
+void Texture::drawTexture(int top, int left, Rect2D textureRect, HDC hdc) {
     BITMAPINFO bmi;
     ZeroMemory(&bmi, sizeof(BITMAPINFO));
     bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmi.bmiHeader.biWidth = width;
-    bmi.bmiHeader.biHeight = -height; // Negative height to specify a top-down DIB
+    bmi.bmiHeader.biWidth = textureRect.width;
+    bmi.bmiHeader.biHeight = -textureRect.height; // Negative height to specify a top-down DIB
     bmi.bmiHeader.biPlanes = 1;
     bmi.bmiHeader.biBitCount = 32; // 32 bits per pixel (for RGBA)
+
 
     void* bits; // Pointer to the bitmap pixel data
 
@@ -115,24 +103,24 @@ void Texture::fastDrawTexture(int x, int y, HDC hdc) {
         return;
     }
 
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-            // Get a pointer to the pixel at (x, y)
-            BYTE* pPixel = (BYTE*)bits + (y * width + x) * 4;
+    for (int y = 0; y < textureRect.height; y++) {
+        for (int x = 0; x < textureRect.width; x++) {
+            // Get a pointer to the pixel at (top, left)
+            BYTE* pPixel = (BYTE*)bits + (y * textureRect.width + x) * 4;
 
             // Set the pixel (R, G, B, A)
-            pPixel[0] = pixels[y][x].getB();
-            pPixel[1] = pixels[y][x].getG();
-            pPixel[2] = pixels[y][x].getR();
-            pPixel[3] = pixels[y][x].getA();
+            pPixel[0] = pixels[textureRect.top + y][textureRect.left + x].getB();
+            pPixel[1] = pixels[textureRect.top + y][textureRect.left + x].getG();
+            pPixel[2] = pixels[textureRect.top + y][textureRect.left + x].getR();
+            pPixel[3] = pixels[textureRect.top + y][textureRect.left + x].getA();
         }
     }
 
-    // Use BitBlt to draw the DIB section onto the HDC at position (x, y)
+    // Use BitBlt to draw the DIB section onto the HDC at position (top, left)
     HDC memDC = CreateCompatibleDC(hdc);
     HBITMAP hOldBitmap = (HBITMAP)SelectObject(memDC, hBitmap);
 
-    BitBlt(hdc, x, y, width, height, memDC, 0, 0, SRCCOPY);
+    BitBlt(hdc, top, left, width, height, memDC, 0, 0, SRCCOPY);
 
     SelectObject(memDC, hOldBitmap);
     DeleteDC(memDC);

@@ -5,12 +5,20 @@
 #include <Windows.h>
 #include <winuser.h>
 #include "Pixel.h"
+#include "Utilities.h"
 
 using namespace std;
+using namespace utility;
 
 class Texture
+/* Texture class
+ * This class is used to store a texture
+ * A texture is a 2D array of pixels
+ * This class also provides methods to read a texture from a file
+ * and draw a texture to a device context
+ */
 {
-private:
+protected:
 	int width;
 	int height;
 	vector<vector<Pixel>> pixels;
@@ -23,10 +31,9 @@ public:
 	Pixel getPixel(int x, int y);
 	int getWidth();
 	int getHeight();
+    Vector2i getSize();
 
 	void readTexture(string filename);
 	void print();
-	void drawTexture(int x, int y, HDC hdc);
-    void drawToMem(HDC hdc);
-    void fastDrawTexture(int x, int y, HDC hdc);
+	void drawTexture(int top, int left, Rect2D textureRect, HDC hdc);
 };
