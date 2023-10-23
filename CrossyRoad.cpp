@@ -73,13 +73,13 @@ int main() {
 		for (int i = 0; i < 100; i++) {
 			mainFrame.update();
 			mainFrame.draw(hdc);
-			this_thread::sleep_for(chrono::milliseconds(50));
+//			this_thread::sleep_for(chrono::milliseconds(50));
 		}
 		clock_t end = clock();
 		double fps = 100.0 / ((double)(end - start) / CLOCKS_PER_SEC);
 		cout << "FPS: " << fps << endl;
 		FPS.push_back(fps);
-					this_thread::sleep_for(chrono::seconds(1));
+        this_thread::sleep_for(chrono::seconds(1));
 
 		// delete xengu;
 	}

@@ -23,8 +23,6 @@ Sprite::Sprite(Vector2f position, Texture* texture):Movable(position, Vector2f()
 
 Sprite::~Sprite()
 {
-    delete next;
-    delete prev;
     next = nullptr;
     prev = nullptr;
 }
