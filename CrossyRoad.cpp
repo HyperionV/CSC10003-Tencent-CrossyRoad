@@ -45,28 +45,27 @@ int main() {
 
 
 	HDC hdc = GetDC(console);
-	HDC hdcMem = CreateCompatibleDC(hdc);
 
 	//Create a texture
-    Texture* xengu = new Texture("image_bin/xengu.bin");
+	Texture* xengu = new Texture("image_bin/xengu.bin");
 
-    Frame mainFrame(Vector2i(1280, 960), Vector2i(0, 0));
+	Frame mainFrame(Vector2i(1280, 960), Vector2i(0, 0));
 
-    Sprite* xenguSprite[100];
-    for (int i = 0; i < 100; i++) {
-        xenguSprite[i] = mainFrame.addSprite(*xengu, Vector2f(i*10, 0));
-        xenguSprite[i]->setEndPos(Vector2f(1280 + i*10, 960), 0.4);
-    }
+	Sprite* xenguSprite[100];
+	for (int i = 0; i < 100; i++) {
+		xenguSprite[i] = mainFrame.addSprite(*xengu, Vector2f(i*10, 0));
+		xenguSprite[i]->setEndPos(Vector2f(1280 + i*10, 960), 0.4);
+	}
 
 
-    clock_t start = clock();
-    for (int i = 0; i < 100; i++) {
-        mainFrame.update();
-        mainFrame.draw(hdc);
-    }
-    clock_t end = clock();
-    double fps = 100.0 / ((double)(end - start) / CLOCKS_PER_SEC);
-    cout << "FPS: " << fps << endl;
+	clock_t start = clock();
+	for (int i = 0; i < 100; i++) {
+		mainFrame.update();
+		mainFrame.draw(hdc);
+	}
+	clock_t end = clock();
+	double fps = 100.0 / ((double)(end - start) / CLOCKS_PER_SEC);
+	cout << "FPS: " << fps << endl;
 
 	ReleaseDC(console, hdc);
 	cin.ignore();

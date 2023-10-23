@@ -76,16 +76,16 @@ void Frame::draw(HDC hdc) {
     bmi.bmiHeader.biPlanes = 1;
     bmi.bmiHeader.biBitCount = 32; // 32 bits per pixel (for RGBA)
 
-
-    void* bits; // Pointer to the bitmap pixel data
+    void *bits;
 
     // Create a DIB section
-    HBITMAP hBitmap = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &bits, NULL, 0);
+    HBITMAP hBitmap = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
 
-    if (hBitmap == NULL) {
+    if (hBitmap == nullptr) {
         std::cerr << "Failed to create DIB section." << std::endl;
         return;
     }
+
 
     // Draw the sprites to the DIB section
     Sprite* current = first;

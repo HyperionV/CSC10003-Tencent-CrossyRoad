@@ -1,7 +1,7 @@
 #pragma once
-#include <Utilities.h>
-#include <Sprite.h>
-#include <Texture.h>
+#include "Utilities.h"
+#include "Sprite.h"
+#include "Texture.h"
 
 using namespace std;
 
@@ -13,6 +13,7 @@ private:
 
     Vector2i size;
     Vector2i position;
+
 public:
     Frame();
     Frame(Vector2i size, Vector2i position);
