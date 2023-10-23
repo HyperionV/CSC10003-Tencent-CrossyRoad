@@ -13,11 +13,15 @@ private:
     Rect2D textureRect;
 public:
     Sprite();
-    Sprite(Vector2f position ,Texture texture);
-    void setTexture(Texture texture);
+    Sprite(Vector2f position ,Texture* texture);
+    ~Sprite();
+    void setTexture(Texture* texture);
     Texture getTexture();
+
+    Sprite* next;
+    Sprite* prev;
 
     void setTextureRect(int top, int left, int width, int height);
     void updateSprite();
-    void draw(HDC hdc);
+    void draw(void* bits, Vector2i frameSize);
 };

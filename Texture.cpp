@@ -23,6 +23,19 @@ Texture::Texture(const Texture& other) {
     pixels = other.pixels;
 }
 
+Texture::Texture(string filename) {
+    width = 0;
+    height = 0;
+    pixels = vector<vector<Pixel>>();
+    readTexture(filename);
+}
+
+Texture::Texture(Texture* other) {
+    width = other->width;
+    height = other->height;
+    pixels = other->pixels;
+}
+
 Texture::~Texture() {
     // Do nothing
 }
@@ -83,30 +96,17 @@ void Texture::print() {
     }
 }
 
-void Texture::drawTexture(int top, int left, Rect2D textureRect, HDC hdc) {
-    BITMAPINFO bmi;
-    ZeroMemory(&bmi, sizeof(BITMAPINFO));
-    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmi.bmiHeader.biWidth = textureRect.width;
-    bmi.bmiHeader.biHeight = -textureRect.height; // Negative height to specify a top-down DIB
-    bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biBitCount = 32; // 32 bits per pixel (for RGBA)
-
-
-    void* bits; // Pointer to the bitmap pixel data
-
-    // Create a DIB section
-    HBITMAP hBitmap = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &bits, NULL, 0);
-
-    if (hBitmap == NULL) {
-        std::cerr << "Failed to create DIB section." << std::endl;
-        return;
-    }
-
+void Texture::drawTexture(int top, int left, Rect2D textureRect, void *bits, Vector2i frameSize) {
     for (int y = 0; y < textureRect.height; y++) {
         for (int x = 0; x < textureRect.width; x++) {
+            if (textureRect.top + y < 0 || textureRect.top + y >= frameSize.y || textureRect.left + x < 0 || textureRect.left + x >= frameSize.x)
+                continue;
+            if(pixels[textureRect.top + y][textureRect.left + x].getA() == 0)
+                continue;
+            if(top + y < 0 || top + y >= frameSize.y || left + x < 0 || left + x >= frameSize.x)
+                continue;
             // Get a pointer to the pixel at (top, left)
-            BYTE* pPixel = (BYTE*)bits + (y * textureRect.width + x) * 4;
+            BYTE* pPixel = (BYTE*)bits + ((top + y) * frameSize.x + (left + x)) * 4;
 
             // Set the pixel (R, G, B, A)
             pPixel[0] = pixels[textureRect.top + y][textureRect.left + x].getB();
@@ -115,16 +115,4 @@ void Texture::drawTexture(int top, int left, Rect2D textureRect, HDC hdc) {
             pPixel[3] = pixels[textureRect.top + y][textureRect.left + x].getA();
         }
     }
-
-    // Use BitBlt to draw the DIB section onto the HDC at position (top, left)
-    HDC memDC = CreateCompatibleDC(hdc);
-    HBITMAP hOldBitmap = (HBITMAP)SelectObject(memDC, hBitmap);
-
-    BitBlt(hdc, top, left, width, height, memDC, 0, 0, SRCCOPY);
-
-    SelectObject(memDC, hOldBitmap);
-    DeleteDC(memDC);
-
-    // Clean up the DIB section
-    DeleteObject(hBitmap);
 }

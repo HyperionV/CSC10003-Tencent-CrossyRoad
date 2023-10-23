@@ -7,6 +7,7 @@
 #include <thread>
 #include "Texture.h"
 #include "Sprite.h"
+#include "Frame.h"
 
 #define _WIN32_WINNT 0x0500
 
@@ -45,35 +46,27 @@ int main() {
 
 	HDC hdc = GetDC(console);
 	HDC hdcMem = CreateCompatibleDC(hdc);
-	system("cls");
-
-//	//Choose any color
-//	COLORREF COLOR = RGB(255, 255, 255);
-//
-//	//Draw pixels
-//	SetPixel(hdc, 100, 100, COLOR);
 
 	//Create a texture
-    Texture texture;
-    texture.readTexture("image_bin/xengu.bin");
-    Texture bg;
-    bg.readTexture("image_bin/lava.bin");
+    Texture* xengu = new Texture("image_bin/xengu.bin");
 
-    //Create a sprite
-    Sprite sprite(Vector2f(100, 100), texture);
-    sprite.setEndPos(Vector2f(400, 400),0.3);
+    Frame mainFrame(Vector2i(1280, 960), Vector2i(0, 0));
 
-    Sprite bgSprite(Vector2f(0, 0), bg);
-    time_t start = time(NULL);
-    while (true) {
-//        cout << "frame time: " << time(NULL) - start << endl;
-        bgSprite.draw(hdc);
-        sprite.draw(hdc);
-        sprite.update();
-//        cout << sprite.getPosition().x << " " << sprite.getPosition().y << endl;
-        this_thread::sleep_for(chrono::milliseconds(12));
+    Sprite* xenguSprite[100];
+    for (int i = 0; i < 100; i++) {
+        xenguSprite[i] = mainFrame.addSprite(*xengu, Vector2f(i*10, 0));
+        xenguSprite[i]->setEndPos(Vector2f(1280 + i*10, 960), 0.4);
     }
 
+
+    clock_t start = clock();
+    for (int i = 0; i < 100; i++) {
+        mainFrame.update();
+        mainFrame.draw(hdc);
+    }
+    clock_t end = clock();
+    double fps = 100.0 / ((double)(end - start) / CLOCKS_PER_SEC);
+    cout << "FPS: " << fps << endl;
 
 	ReleaseDC(console, hdc);
 	cin.ignore();
