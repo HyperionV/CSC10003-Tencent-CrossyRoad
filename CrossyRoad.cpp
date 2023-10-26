@@ -8,6 +8,7 @@
 #include "Texture.h"
 #include "Sprite.h"
 #include "Frame.h"
+#include "Entity.h"
 
 // #define _WIN32_WINNT 0x0500
 
@@ -24,6 +25,8 @@ void ShowConsoleCursor(bool showFlag)
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
 
+
+
 int main() {
 
 	HWND console = GetConsoleWindow();
@@ -31,7 +34,7 @@ int main() {
 	RECT r;
 	GetWindowRect(console, &r); //stores the console's current dimensions
 
-	MoveWindow(console, 0, 0, 1280, 960, TRUE);
+	MoveWindow(console, 0, 0, 1560, 960, TRUE);
 
 	//Fixed console size
 	HWND consoleWindow = GetConsoleWindow();
@@ -46,43 +49,21 @@ int main() {
 
 	HDC hdc = GetDC(console);
 
-	//Create a texture
-	// Texture* xengu = new Texture("image_bin/xengu.bin");
-
-	// Frame mainFrame(Vector2i(1280, 960), Vector2i(0, 0));
-
-	// Sprite* xenguSprite[100];
-	// for (int i = 0; i < 100; i++) {
-	// 	xenguSprite[i] = mainFrame.addSprite(*xengu, Vector2f(i*10, 0));
-	// 	xenguSprite[i]->setEndPos(Vector2f(1280 + i*10, 960), 0.4);
-	// }
-
+	Entity e1("Car2_");
 	vector<double> FPS;
-	for (int i = 0; i < 30; i++) {
-		Texture* xengu = new Texture("image_bin/xengu.bin");
+	// Sprite* curr;
+	// e1.addResource(mainFrame);
+	while (true) {
+		Frame mainFrame(Vector2i(1560, 960), Vector2i(0,0));
 
-		Frame mainFrame(Vector2i(1280, 960), Vector2i(0, 0));
-
-		Sprite* xenguSprite[100];
-		for (int i = 0; i < 100; i++) {
-			xenguSprite[i] = mainFrame.addSprite(*xengu, Vector2f(i*10, 0));
-			xenguSprite[i]->setEndPos(Vector2f(1280 + i*10, 960), 0.4);
-		}
-		system("cls");
-		clock_t start = clock();
-		for (int i = 0; i < 100; i++) {
-			mainFrame.update();
-			mainFrame.draw(hdc);
-//			this_thread::sleep_for(chrono::milliseconds(50));
-		}
-		clock_t end = clock();
-		double fps = 100.0 / ((double)(end - start) / CLOCKS_PER_SEC);
-		cout << "FPS: " << fps << endl;
-		FPS.push_back(fps);
-        this_thread::sleep_for(chrono::seconds(1));
-
-		// delete xengu;
+		Sprite* curr = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(0,0));
+		curr->setEndPos(Vector2f(1560, 960), 0);
+		e1.shiftResource();
+		mainFrame.update();
+		mainFrame.draw(hdc);
+		// mainFrame.~Frame();
 	}
+
 	ReleaseDC(console, hdc);
 	system("cls");
 	for (int i = 0; i < 30; i++) {
