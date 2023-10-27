@@ -2,10 +2,15 @@
 #include <Windows.h>
 #include <winuser.h>
 #include <cmath>
+#include <time.h>
 #include <chrono>
 #include <thread>
+#include "Texture.h"
+#include "Sprite.h"
+#include "Frame.h"
+#include "Entity.h"
 
-#define _WIN32_WINNT 0x0500
+// #define _WIN32_WINNT 0x0500
 
 using namespace std;
 
@@ -20,14 +25,16 @@ void ShowConsoleCursor(bool showFlag)
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
 
+
+
 int main() {
-	
+
 	HWND console = GetConsoleWindow();
 
 	RECT r;
 	GetWindowRect(console, &r); //stores the console's current dimensions
 
-	MoveWindow(console, r.left, r.top, 1280, 960, TRUE);
+	MoveWindow(console, 0, 0, 1560, 960, TRUE);
 
 	//Fixed console size
 	HWND consoleWindow = GetConsoleWindow();
@@ -41,28 +48,27 @@ int main() {
 
 
 	HDC hdc = GetDC(console);
-	system("cls");
 
-	//Choose any color
-	COLORREF COLOR = RGB(255, 255, 255);
+	Entity e1("Car2_");
+	vector<double> FPS;
+	// Sprite* curr;
+	// e1.addResource(mainFrame);
+	while (true) {
+		Frame mainFrame(Vector2i(1560, 960), Vector2i(0,0));
 
-	//Draw pixels
-	for (int i = 1; i <= 100; i++) {
-		SetPixel(hdc, 100, 100 + i, COLOR);
-		SetPixel(hdc, 101, 100 + i, COLOR);
-		SetPixel(hdc, 102, 100 + i, COLOR);
-		SetPixel(hdc, 103, 100 + i, COLOR);
-		SetPixel(hdc, 104, 100 + i, COLOR);
-		SetPixel(hdc, 105, 100 + i, COLOR);
-		SetPixel(hdc, 106, 100 + i, COLOR);
-		SetPixel(hdc, 107, 100 + i, COLOR);
-		SetPixel(hdc, 108, 100 + i, COLOR);
-		SetPixel(hdc, 109, 100 + i, COLOR);
-		SetPixel(hdc, 110, 100 + i, COLOR);
-		Sleep(20);
+		Sprite* curr = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(0,0));
+		curr->setEndPos(Vector2f(1560, 960), 0);
+		e1.shiftResource();
+		mainFrame.update();
+		mainFrame.draw(hdc);
+		// mainFrame.~Frame();
 	}
 
 	ReleaseDC(console, hdc);
+	system("cls");
+	for (int i = 0; i < 30; i++) {
+		cout << "Run #" << i+1 << ": " << FPS[i] << " fps" << endl;
+	}
 	cin.ignore();
 	return 0;
 }
