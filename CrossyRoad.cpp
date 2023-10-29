@@ -34,7 +34,7 @@ int main() {
 	RECT r;
 	GetWindowRect(console, &r); //stores the console's current dimensions
 
-	MoveWindow(console, 0, 0, 1560, 960, TRUE);
+	MoveWindow(console, 0, 0, 1560, 1010, TRUE);
 
 	//Fixed console size
 	HWND consoleWindow = GetConsoleWindow();
@@ -49,26 +49,25 @@ int main() {
 
 	HDC hdc = GetDC(console);
 
-	Entity e1("Car2_");
-	vector<double> FPS;
-	// Sprite* curr;
-	// e1.addResource(mainFrame);
-	while (true) {
-		Frame mainFrame(Vector2i(1560, 960), Vector2i(0,0));
+	Entity e1("car2_motion");
+	Entity e2("street");
 
-		Sprite* curr = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(0,0));
-		curr->setEndPos(Vector2f(1560, 960), 0);
-		e1.shiftResource();
+	Frame mainFrame(Vector2i(1560, 960), Vector2i(0,0));
+	Sprite* bg = mainFrame.addSprite(*(e2.getCurrentTexture()), Vector2f(0,0));
+	Sprite* car1 = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(-780,75));
+
+	car1->setEndPos(Vector2f(780, 75), 1);
+	bg->setEndPos(Vector2f(1560, 960), 0);
+	while (true) {
+		this_thread::sleep_for(chrono::milliseconds(50));
+		e1.shiftResource(car1);
 		mainFrame.update();
 		mainFrame.draw(hdc);
-		// mainFrame.~Frame();
 	}
 
 	ReleaseDC(console, hdc);
 	system("cls");
-	for (int i = 0; i < 30; i++) {
-		cout << "Run #" << i+1 << ": " << FPS[i] << " fps" << endl;
-	}
+
 	cin.ignore();
 	return 0;
 }

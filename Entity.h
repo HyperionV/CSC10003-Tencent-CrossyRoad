@@ -6,13 +6,15 @@
 
 class Entity {
 private:
+
     deque<Texture*> motion;
     string entityName{};
+    
 public:
     Entity();
 
     Entity(const string&);
     void getResource();
-    void shiftResource();
+    void shiftResource(Sprite*);
     Texture* getCurrentTexture();
 };

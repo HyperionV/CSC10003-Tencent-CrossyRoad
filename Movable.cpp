@@ -128,6 +128,7 @@ void Movable::setEndPos(Vector2f endPos, float speed) {
     float distanceModulus = distance.modulus();
     float time = distanceModulus / speed;
     acceleration = distance / time;
+    // acceleration = Vector2f(0,0);
     velocity = Vector2f();
 }
 
