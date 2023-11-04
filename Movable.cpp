@@ -105,8 +105,9 @@ void Movable::update() {
             isMoving = false;
             velocity = Vector2f();
             acceleration = Vector2f();
-            position = destination;
-            startingPosition = destination;
+            // system("pause");
+            // position = destination;
+            // startingPosition = destination;
         }
         else {
             Vector2f firstHalf = position - startingPosition;
@@ -127,9 +128,10 @@ void Movable::setEndPos(Vector2f endPos, float speed) {
     Vector2f distance = destination - position;
     float distanceModulus = distance.modulus();
     float time = distanceModulus / speed;
-    acceleration = distance / time;
+    velocity = distance / time;
+    acceleration = Vector2f();
     // acceleration = Vector2f(0,0);
-    velocity = Vector2f();
+    // velocity = Vector2f();
 }
 
 

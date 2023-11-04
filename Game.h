@@ -15,4 +15,6 @@ public:
 	~Game();
 
 	Game(int width, int height, int fpsCap);
+
+	
 };

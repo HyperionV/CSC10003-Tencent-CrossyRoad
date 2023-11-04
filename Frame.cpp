@@ -63,6 +63,10 @@ void Frame::update() {
     Sprite* current = first;
     while (current != nullptr) {
         current->updateSprite();
+        // if (current->getPosition().x > current->getDestination().x || (current->getPosition().x < current->getDestination().x && current->getDestination().x < 0) ) {
+        //     removeSprite(current);
+        //     continue;
+        // }
         current = current->next;
     }
 }

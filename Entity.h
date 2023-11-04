@@ -3,18 +3,19 @@
 #include "Sprite.h"
 #include "Frame.h"
 #include <deque>
+#include "Utilities.h"
 
-class Entity {
+class Entity : protected Rect2D {
 private:
-
     deque<Texture*> motion;
-    string entityName{};
-    
+    string entityName{};    
 public:
     Entity();
 
     Entity(const string&);
     void getResource();
-    void shiftResource(Sprite*);
+    void shiftResource();
     Texture* getCurrentTexture();
+    Texture* getPreviousTexture();
 };
+

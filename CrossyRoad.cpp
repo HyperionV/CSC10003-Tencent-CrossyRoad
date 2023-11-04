@@ -9,10 +9,16 @@
 #include "Sprite.h"
 #include "Frame.h"
 #include "Entity.h"
+#include <conio.h>
 
 // #define _WIN32_WINNT 0x0500
 
 using namespace std;
+
+Frame mainFrame(Vector2i(1280, 760), Vector2i(0,0));
+Entity e1("car1_motion");
+
+
 
 void ShowConsoleCursor(bool showFlag)
 {
@@ -25,42 +31,141 @@ void ShowConsoleCursor(bool showFlag)
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
 
-
+void spawnCar() {
+	while (true) {
+		this_thread::sleep_for(chrono::seconds(2));
+		srand(rand());
+		int rd = rand();
+		if (rd % 15 == rd % 3) {
+			Sprite* new_car1 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 143));
+			new_car1->setEndPos(Vector2f(1280, 143), 5);
+		}
+		if (rd % 16 == rd % 4) {
+			Sprite* new_car2 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 183));
+			new_car2->setEndPos(Vector2f(1280, 183), 5);
+		}
+		if (rd % 995 == rd % 25) {
+			Sprite* new_car3 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 252));
+			new_car3->setEndPos(Vector2f(1280, 252), 5);
+		}
+		if (rd % 18 == rd % 6) {
+			Sprite* new_car4 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 292));
+			new_car4->setEndPos(Vector2f(1280, 292), 5);
+		}
+		if (rd % 12 == rd % 4) {
+			Sprite* new_car5 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 355));
+			new_car5->setEndPos(Vector2f(1280, 355), 5);
+		}
+		if (rd % 27 == rd % 9) {
+			Sprite* new_car6 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 395));
+			new_car6->setEndPos(Vector2f(1280, 395), 5);
+		}
+		if (rd % 15 == rd % 5) {
+			Sprite* new_car7 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 465));
+			new_car7->setEndPos(Vector2f(1280, 465), 5);
+		}
+		if (rd % (rd % 20) == rd % 5) {
+			Sprite* new_car8 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 505));
+			new_car8->setEndPos(Vector2f(1280, 505), 5);
+		}
+		if (rd % (rd % 15) == rd % 5) {
+			Sprite* new_car9 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 575));
+			new_car9->setEndPos(Vector2f(1280, 575), 5);
+		}
+		Sprite* new_car10 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 615));
+		new_car10->setEndPos(Vector2f(1280, 615), 5);
+		
+	}
+}
 
 int main() {
 
 	HWND console = GetConsoleWindow();
 
 	RECT r;
-	GetWindowRect(console, &r); //stores the console's current dimensions
+	GetWindowRect(console, &r); 
+	
+	// Size 1280 - 760
+	MoveWindow(console, 0, 0, 1380, 860, TRUE);
 
-	MoveWindow(console, 0, 0, 1560, 1010, TRUE);
-
-	//Fixed console size
 	HWND consoleWindow = GetConsoleWindow();
 	SetWindowLong(consoleWindow, GWL_STYLE, GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
-
-	//Hide scrollbar
 	ShowScrollBar(GetConsoleWindow(), SB_VERT, 0);
-
-	//Hide cursor
 	ShowConsoleCursor(false);
 
 
 	HDC hdc = GetDC(console);
 
-	Entity e1("car2_motion");
-	Entity e2("street");
+	Entity e2("car4_motion");
 
-	Frame mainFrame(Vector2i(1560, 960), Vector2i(0,0));
-	Sprite* bg = mainFrame.addSprite(*(e2.getCurrentTexture()), Vector2f(0,0));
-	Sprite* car1 = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(-780,75));
+	Entity bg1("street");
 
-	car1->setEndPos(Vector2f(780, 75), 1);
-	bg->setEndPos(Vector2f(1560, 960), 0);
+	Sprite* bg = mainFrame.addSprite(*(bg1.getCurrentTexture()), Vector2f(0,0));
+	// Sprite* car1 = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(-132, 143));
+	// Sprite* car2 = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(1280 + 132,183));
+	// Sprite* car3 = mainFrame.addSprite(*(e2.getCurrentTexture()), Vector2f(- 132,252));
+	// Sprite* car4 = mainFrame.addSprite(*(e2.getCurrentTexture()), Vector2f(1280 + 132,292));
+	// Sprite* car5 = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(-132, 355));
+	// Sprite* car6 = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(1280 + 132,395));
+	// Sprite* car7 = mainFrame.addSprite(*(e2.getCurrentTexture()), Vector2f(-132,463));
+	// Sprite* car8 = mainFrame.addSprite(*(e2.getCurrentTexture()), Vector2f(1280 + 132,503));
+	// Sprite* car9 = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(-132, 570));
+	// Sprite* car10 = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(1280 + 132,613));
+	bg->setEndPos(Vector2f(1280, 920), 0);
+	// car1->setEndPos(Vector2f(1280+132, 143), 0.5);
+	// car2->setEndPos(Vector2f(-132, 188), 0.5);
+	// car3->setEndPos(Vector2f(1280+132, 252), 0.5);
+	// car4->setEndPos(Vector2f(-132, 292), 0.5);
+	// car5->setEndPos(Vector2f(1280+132, 355), 0.5);
+	// car6->setEndPos(Vector2f(-132, 395), 0.5);
+	// car7->setEndPos(Vector2f(1280+132, 465), 0.5);
+	// car8->setEndPos(Vector2f(-132, 505), 0.5);
+	// car9->setEndPos(Vector2f(1280+132, 575), 0.5);
+	// car10->setEndPos(Vector2f(-132, 615), 0.5);
+	thread _newThread(spawnCar);
+
 	while (true) {
-		this_thread::sleep_for(chrono::milliseconds(50));
-		e1.shiftResource(car1);
+
+		// this_thread::sleep_for(chrono::milliseconds(20));
+		e1.shiftResource();
+		
+		// car2->setTexture(e1.getCurrentTexture());
+		// car5->setTexture(e1.getCurrentTexture());
+		// car6->setTexture(e1.getCurrentTexture());
+		// car9->setTexture(e1.getCurrentTexture());
+		// car10->setTexture(e1.getCurrentTexture());
+		// e2.shiftResource(car3);
+		// car4->setTexture(e2.getCurrentTexture());
+		// car7->setTexture(e2.getCurrentTexture());
+		// car8->setTexture(e2.getCurrentTexture());
+
+		// if (_kbhit()) {
+		// 	Vector2f currPos = car1->getPosition();
+		// 	cout << "Current position: " << currPos.x << " " << currPos.y << endl;
+		// 	this_thread::sleep_for(chrono::seconds(1));
+		// 	system("cls");
+		// 	char curr = getch();
+		// 	int step{5};
+		// 	switch(curr) {
+		// 		case 'w':
+		// 			currPos.y -= step;
+		// 			break;
+		// 		case 'a':
+		// 			currPos.x -= step;
+		// 			break;
+		// 		case 's':
+		// 			currPos.y += step;
+		// 			break;
+		// 		case 'd':
+		// 			currPos.x += step;
+		// 			break;
+		// 		default:
+		// 			break;
+		// 	}
+		// 	car1->setPosition(currPos);
+		// }
+		// // system("cls");
+		// system("pause");
 		mainFrame.update();
 		mainFrame.draw(hdc);
 	}

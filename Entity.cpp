@@ -21,12 +21,15 @@ void Entity::getResource() {
     }
 }
 
-void Entity::shiftResource(Sprite* _sprite) {
+void Entity::shiftResource() {
     motion.push_back(motion.front());
     motion.pop_front();
-    _sprite->setTexture(motion.front());
 }
 
 Texture* Entity::getCurrentTexture() {
     return motion.front();
+}
+
+Texture* Entity::getPreviousTexture() {
+    return motion.back();
 }

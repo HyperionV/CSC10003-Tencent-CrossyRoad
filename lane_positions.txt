@@ -1,0 +1,16 @@
+lane 1: 143
+lane 2: 183
+
+lane 3: 252
+lane 4: 292
+
+lane 5: 355
+lane 6: 395
+
+lane 7: 465
+lane 8: 505
+
+lane 9: 575
+lane 10: 615
+
+Player: 670
