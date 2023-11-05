@@ -31,53 +31,143 @@ void ShowConsoleCursor(bool showFlag)
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
 
-void spawnCar() {
+void spawnCar1() {
 	while (true) {
-		this_thread::sleep_for(chrono::milliseconds(500));
 		int _seed = rand();
-		srand(rand() + (_seed * 7 + rand()));
+		srand(rand()*7+13);
 		int rd = rand();
-		if (rd % 37 == rd % 3) {
+		this_thread::sleep_for(chrono::milliseconds(100)); 
+		if (rd % 30 < 3) {
 			Sprite* new_car1 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 143));
 			new_car1->setEndPos(Vector2f(1280, 143), 5);
+			this_thread::sleep_for(chrono::seconds(3));
 		}
-		if (rd % 31 == rd % 4) {
-			Sprite* new_car2 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 183));
-			new_car2->setEndPos(Vector2f(1280, 183), 5);
+	}
+}
+
+void spawnCar2() {
+	while (true) {
+		int _seed = rand();
+		srand(rand()*13+7);
+		int rd = rand();
+		this_thread::sleep_for(chrono::milliseconds(100)); 
+		if (rd % 30 < 3) {
+			Sprite* new_car1 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 183));
+			new_car1->setEndPos(Vector2f(1280, 183), 5);
+			this_thread::sleep_for(chrono::seconds(3));
 		}
-		if (rd % 53 == rd % 3) {
-			Sprite* new_car3 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 252));
-			new_car3->setEndPos(Vector2f(1280, 252), 5);
+	}
+}
+
+void spawnCar3() {
+	while (true) {
+		int _seed = rand();
+		srand(rand()*7+37);
+		int rd = rand();
+		this_thread::sleep_for(chrono::milliseconds(100)); 
+		if (rd % 30 < 3) {
+			Sprite* new_car1 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 252));
+			new_car1->setEndPos(Vector2f(1280, 252), 5);
+			this_thread::sleep_for(chrono::seconds(3));
 		}
-		if (rd % 23 == rd % 6) {
-			Sprite* new_car4 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 292));
-			new_car4->setEndPos(Vector2f(1280, 292), 5);
+	}
+}
+
+void spawnCar4() {
+	while (true) {
+		int _seed = rand();
+		srand(rand()*13+31);
+		int rd = rand();
+		this_thread::sleep_for(chrono::milliseconds(100)); 
+		if (rd % 30 < 3) {
+			Sprite* new_car1 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 292));
+			new_car1->setEndPos(Vector2f(1280, 292), 5);
+			this_thread::sleep_for(chrono::seconds(3));
 		}
-		if (rd % 13 == rd % 4) {
-			Sprite* new_car5 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 355));
-			new_car5->setEndPos(Vector2f(1280, 355), 5);
+	}
+}
+
+void spawnCar5() {
+	while (true) {
+		int _seed = rand();
+		srand(rand()*7+29);
+		int rd = rand();
+		this_thread::sleep_for(chrono::milliseconds(100)); 
+		if (rd % 30 < 3) {
+			Sprite* new_car1 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 355));
+			new_car1->setEndPos(Vector2f(1280, 355), 5);
+			this_thread::sleep_for(chrono::seconds(3));
 		}
-		if (rd % 17 == rd % 7) {
-			Sprite* new_car6 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 395));
-			new_car6->setEndPos(Vector2f(1280, 395), 5);
+	}
+}
+
+void spawnCar6() {
+	while (true) {
+		int _seed = rand();
+		srand(rand()*13+23);
+		int rd = rand();
+		this_thread::sleep_for(chrono::milliseconds(100)); 
+		if (rd % 30 < 3) {
+			Sprite* new_car1 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 395));
+			new_car1->setEndPos(Vector2f(1280, 395), 5);
+			this_thread::sleep_for(chrono::seconds(3));
 		}
-		if (rd % 41 == rd % 9) {
-			Sprite* new_car7 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 465));
-			new_car7->setEndPos(Vector2f(1280, 465), 5);
+	}
+}
+
+void spawnCar7() {
+	while (true) {
+		int _seed = rand();
+		srand(rand()*7+19);
+		int rd = rand();
+		this_thread::sleep_for(chrono::milliseconds(100)); 
+		if (rd % 30 < 3) {
+			Sprite* new_car1 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 465));
+			new_car1->setEndPos(Vector2f(1280, 465), 5);
+			this_thread::sleep_for(chrono::seconds(3));
 		}
-		if (rd % 43 == rd % 7) {
-			Sprite* new_car8 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 505));
-			new_car8->setEndPos(Vector2f(1280, 505), 5);
+	}
+}
+
+void spawnCar8() {
+	while (true) {
+		int _seed = rand();
+		srand(rand()*13+17);
+		int rd = rand();
+		this_thread::sleep_for(chrono::milliseconds(100)); 
+		if (rd % 30 < 3) {
+			Sprite* new_car1 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 505));
+			new_car1->setEndPos(Vector2f(1280, 505), 5);
+			this_thread::sleep_for(chrono::seconds(3));
 		}
-		if (rd % 28 == rd % 3) {
-			Sprite* new_car9 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 575));
-			new_car9->setEndPos(Vector2f(1280, 575), 5);
+	}
+}
+
+void spawnCar9() {
+	while (true) {
+		int _seed = rand();
+		srand(rand()*7+7);
+		int rd = rand();
+		this_thread::sleep_for(chrono::milliseconds(100)); 
+		if (rd % 30 < 3) {
+			Sprite* new_car1 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 575));
+			new_car1->setEndPos(Vector2f(1280, 575), 5);
+			this_thread::sleep_for(chrono::seconds(3));
 		}
-		if (rd % 35 == 3) {
-			Sprite* new_car10 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 615));
-			new_car10->setEndPos(Vector2f(1280, 615), 5);
+	}
+}
+
+void spawnCar10() {
+	while (true) {
+		int _seed = rand();
+		srand(rand()*13+13);
+		int rd = rand();
+		this_thread::sleep_for(chrono::milliseconds(100)); 
+		if (rd % 30 < 3) {
+			Sprite* new_car1 = mainFrame.addSprite(*e1.getCurrentTexture(), Vector2f(-132, 615));
+			new_car1->setEndPos(Vector2f(1280, 615), 5);
+			this_thread::sleep_for(chrono::seconds(3));
 		}
-		
 	}
 }
 
@@ -89,7 +179,7 @@ int main() {
 	GetWindowRect(console, &r); 
 	
 	// Size 1280 - 760
-	MoveWindow(console, 0, 0, 1380, 860, TRUE);
+	MoveWindow(console, 0, 0, 1280, 760, TRUE);
 
 	HWND consoleWindow = GetConsoleWindow();
 	SetWindowLong(consoleWindow, GWL_STYLE, GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
@@ -114,7 +204,7 @@ int main() {
 	// Sprite* car8 = mainFrame.addSprite(*(e2.getCurrentTexture()), Vector2f(1280 + 132,503));
 	// Sprite* car9 = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(-132, 570));
 	// Sprite* car10 = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(1280 + 132,613));
-	bg->setEndPos(Vector2f(1280, 920), 0);
+	bg->setEndPos(Vector2f(1480, 960), 0);
 	// car1->setEndPos(Vector2f(1280+132, 143), 0.5);
 	// car2->setEndPos(Vector2f(-132, 188), 0.5);
 	// car3->setEndPos(Vector2f(1280+132, 252), 0.5);
@@ -125,7 +215,16 @@ int main() {
 	// car8->setEndPos(Vector2f(-132, 505), 0.5);
 	// car9->setEndPos(Vector2f(1280+132, 575), 0.5);
 	// car10->setEndPos(Vector2f(-132, 615), 0.5);
-	thread _newThread(spawnCar);
+	thread _newThread(spawnCar1);
+	thread _lane2(spawnCar2);
+	thread _lane3(spawnCar3);
+	thread _lane4(spawnCar4);
+	thread _lane5(spawnCar5);
+	thread _lane6(spawnCar6);
+	thread _lane7(spawnCar7);
+	thread _lane8(spawnCar8);
+	thread _lane9(spawnCar9);
+	thread _lane10(spawnCar10);
 
 	while (true) {
 
