@@ -6,10 +6,11 @@
 #include <cmath>
 #include <chrono>
 #include <thread>
+#include "Player.h"
 
 class Game {
-	HWND window;
-
+private:
+	Player* _player;
 public:
 	Game();
 	~Game();

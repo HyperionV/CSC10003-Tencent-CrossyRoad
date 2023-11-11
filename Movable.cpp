@@ -88,7 +88,7 @@ void Movable::setSpeed(float speed) {
 }
 
 bool Movable::reachedDestination() {
-    if(abs(position.x - startingPosition.x) - abs(destination.x - startingPosition.x) > 0.1 && abs(position.y - startingPosition.y) - abs(destination.y - startingPosition.y) > 0.1)
+    if (position.x > destination.x || position.x < destination.x && destination.x < 0) 
         return true;
     if (position.x == destination.x && position.y == destination.y)
         return true;
@@ -102,11 +102,11 @@ void Movable::update() {
 //    cerr << "acceleration: " << acceleration.x << ", " << acceleration.y << endl;
     if (isMoving) {
         if (reachedDestination()) {
-            isMoving = false;
-            velocity = Vector2f();
-            acceleration = Vector2f();
+            // isMoving = false;
+            // velocity = Vector2f();
+            // acceleration = Vector2f();
             // system("pause");
-            // position = destination;
+            position = startingPosition;
             // startingPosition = destination;
         }
         else {

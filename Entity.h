@@ -5,7 +5,7 @@
 #include <deque>
 #include "Utilities.h"
 
-class Entity : protected Rect2D {
+class Entity : public Rect2D {
 private:
     deque<Texture*> motion;
     string entityName{};    
@@ -17,5 +17,7 @@ public:
     void shiftResource();
     Texture* getCurrentTexture();
     Texture* getPreviousTexture();
+
+    void setName(const string&);
 };
 

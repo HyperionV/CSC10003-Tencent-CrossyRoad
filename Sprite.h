@@ -17,6 +17,7 @@ public:
     ~Sprite();
     void setTexture(Texture* texture);
     Texture getTexture();
+    Vector2f getHitbox() const;
 
     Sprite* next;
     Sprite* prev;

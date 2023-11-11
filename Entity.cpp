@@ -33,3 +33,7 @@ Texture* Entity::getCurrentTexture() {
 Texture* Entity::getPreviousTexture() {
     return motion.back();
 }
+
+void Entity::setName(const string& _name) {
+    entityName = _name;
+}
