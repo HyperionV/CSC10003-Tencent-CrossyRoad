@@ -1,5 +1,0 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Tencent-CrossyRoad.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  CrossyRoad.cpp
-D:\FITUS\23-24\OOP\10Cent_Crossy-road_project\CrossyRoad.cpp(8,1): warning C4005: '_WIN32_WINNT': macro redefinition
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\sdkddkver.h(224,1): message : see previous definition of '_WIN32_WINNT'
-  Crossy Road.vcxproj -> D:\FITUS\23-24\OOP\10Cent_Crossy-road_project\x64\Debug\Crossy Road.exe
