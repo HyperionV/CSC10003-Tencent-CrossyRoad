@@ -88,7 +88,7 @@ void Movable::setSpeed(float speed) {
 }
 
 bool Movable::reachedDestination() {
-    if(abs(position.x - startingPosition.x) - abs(destination.x - startingPosition.x) > 0.1 && abs(position.y - startingPosition.y) - abs(destination.y - startingPosition.y) > 0.1)
+    if (position.x > destination.x || position.x < destination.x && destination.x < 0) 
         return true;
     if (position.x == destination.x && position.y == destination.y)
         return true;
@@ -102,11 +102,12 @@ void Movable::update() {
 //    cerr << "acceleration: " << acceleration.x << ", " << acceleration.y << endl;
     if (isMoving) {
         if (reachedDestination()) {
-            isMoving = false;
-            velocity = Vector2f();
-            acceleration = Vector2f();
-            position = destination;
-            startingPosition = destination;
+            // isMoving = false;
+            // velocity = Vector2f();
+            // acceleration = Vector2f();
+            // system("pause");
+            position = startingPosition;
+            // startingPosition = destination;
         }
         else {
             Vector2f firstHalf = position - startingPosition;
@@ -127,8 +128,10 @@ void Movable::setEndPos(Vector2f endPos, float speed) {
     Vector2f distance = destination - position;
     float distanceModulus = distance.modulus();
     float time = distanceModulus / speed;
-    acceleration = distance / time;
-    velocity = Vector2f();
+    velocity = distance / time;
+    acceleration = Vector2f();
+    // acceleration = Vector2f(0,0);
+    // velocity = Vector2f();
 }
 
 

@@ -38,6 +38,10 @@ Texture Sprite::getTexture()
     return this->texture;
 }
 
+Vector2f Sprite::getHitbox() const {
+    return Vector2f(textureRect.width, textureRect.height);
+}
+
 void Sprite::setTextureRect(int top, int left, int width, int height)
 {
     this->textureRect.top = top;

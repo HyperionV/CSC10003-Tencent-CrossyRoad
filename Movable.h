@@ -16,8 +16,8 @@ protected:
     bool isMoving;
     float speed;
 
-    bool reachedDestination();
 public:
+    bool reachedDestination();
     Movable();
     Movable(Vector2f position, Vector2f velocity, Vector2f acceleration);
     Movable(const Movable& other);

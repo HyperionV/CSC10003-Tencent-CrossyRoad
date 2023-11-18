@@ -9,10 +9,18 @@
 #include "Sprite.h"
 #include "Frame.h"
 #include "Entity.h"
+#include <conio.h>
+#include "Lane.h"
+#include "Player.h"
 
 // #define _WIN32_WINNT 0x0500
 
 using namespace std;
+
+Frame mainFrame(Vector2i(1280, 760), Vector2i(0,0));
+Entity e1("car1_motion");
+
+
 
 void ShowConsoleCursor(bool showFlag)
 {
@@ -25,50 +33,88 @@ void ShowConsoleCursor(bool showFlag)
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
 
-
+// char Input() {
+// 	if (_kbhit()) {
+//         char curr = getch();
+//         int step{2};
+//         switch(curr) {
+//             case 'a':	
+//                 break;
+//             case 'd':
+//                 break;
+//             case 'w':
+//                 break;
+//             case 's':
+//                 break;
+//             default:
+//                 cout << "Invalid key pressed" << endl;
+//                 system("pause");
+//         }
+//     }
+// }
 
 int main() {
 
 	HWND console = GetConsoleWindow();
 
 	RECT r;
-	GetWindowRect(console, &r); //stores the console's current dimensions
+	GetWindowRect(console, &r); 
+	
+	// Size 1280 - 760
+	MoveWindow(console, 0, 0, 1280, 760, TRUE);
 
-	MoveWindow(console, 0, 0, 1560, 960, TRUE);
-
-	//Fixed console size
 	HWND consoleWindow = GetConsoleWindow();
 	SetWindowLong(consoleWindow, GWL_STYLE, GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
-
-	//Hide scrollbar
 	ShowScrollBar(GetConsoleWindow(), SB_VERT, 0);
-
-	//Hide cursor
 	ShowConsoleCursor(false);
 
 
 	HDC hdc = GetDC(console);
 
-	Entity e1("Car2_");
-	vector<double> FPS;
-	// Sprite* curr;
-	// e1.addResource(mainFrame);
-	while (true) {
-		Frame mainFrame(Vector2i(1560, 960), Vector2i(0,0));
+	Entity bg1("street");
+	Entity _char("up");
 
-		Sprite* curr = mainFrame.addSprite(*(e1.getCurrentTexture()), Vector2f(0,0));
-		curr->setEndPos(Vector2f(1560, 960), 0);
-		e1.shiftResource();
+	Sprite* bg = mainFrame.addSprite(*(bg1.getCurrentTexture()), Vector2f(0,0));
+	bg->setEndPos(Vector2f(1480, 960), 0);
+	// Lane l1(1, e1, 1);
+
+	Player _p(_char, mainFrame);
+	
+	while (true) {
+		// this_thread::sleep_for(50ms);
+		_p.animatePlayer();
+		if (_kbhit()) {
+			char curr = getch();
+			int step{2};
+			Vector2f currPos = _p.getCurrentPos();
+			switch(curr) {
+				case 'a':
+					_p.setPosition(currPos.x-40, currPos.y);
+					break;
+				case 'd':
+					_p.setPosition(currPos.x+40, currPos.y);
+					break;
+				case 'w':
+					_p.setPosition(currPos.x, currPos.y+40);
+					break;
+				case 's':
+					_p.setPosition(currPos.x, currPos.y-40);
+					break;
+				case 'q':
+					// quit = true;
+					break;
+				default:
+					cout << "Invalid key pressed" << endl;
+					system("pause");
+			}
+		}
 		mainFrame.update();
 		mainFrame.draw(hdc);
-		// mainFrame.~Frame();
 	}
 
 	ReleaseDC(console, hdc);
 	system("cls");
-	for (int i = 0; i < 30; i++) {
-		cout << "Run #" << i+1 << ": " << FPS[i] << " fps" << endl;
-	}
+
 	cin.ignore();
 	return 0;
 }

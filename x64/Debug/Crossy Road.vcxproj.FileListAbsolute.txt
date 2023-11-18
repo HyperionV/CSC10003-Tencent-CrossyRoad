@@ -1,3 +1,0 @@
-C:\Users\ADMIN\Desktop\HCMUS\Object Oriented Programming\Project\Crossy Road\x64\Debug\Crossy Road.exe
-D:\sublime text thingy\CSC10003-Tencent-CrossyRoad\x64\Debug\Crossy Road.exe
-D:\FITUS\23-24\OOP\10Cent_Crossy-road_project\x64\Debug\Crossy Road.exe
