@@ -120,10 +120,34 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CrossyRoad.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Frame.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Movable.cpp" />
+    <ClCompile Include="Pixel.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="Frame.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Movable.h" />
+    <ClInclude Include="Pixel.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="Utilities.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
+    <None Include="convert.py" />
+    <None Include="README.md" />
+    <None Include="test.bin" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
