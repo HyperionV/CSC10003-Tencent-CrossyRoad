@@ -57,4 +57,5 @@ bool Lane::checkCollision(Player* _p) {
             if (topLeft.x < vTopLeft.x && topLeft.y < topLeft.y) return true;
         return false;
     }
+    return false;
 }

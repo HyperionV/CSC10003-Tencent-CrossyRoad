@@ -109,3 +109,38 @@ void Frame::draw(HDC hdc) {
     // Clean up the DIB section
     DeleteObject(hBitmap);
 }
+
+void Frame::draw(HDC hdc, Sprite* curSprite) {
+    BITMAPINFO bmi;
+    ZeroMemory(&bmi, sizeof(BITMAPINFO));
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biWidth = size.x;
+    bmi.bmiHeader.biHeight = -size.y; // Negative height to specify a top-down DIB
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = 32; // 32 bits per pixel (for RGBA)
+
+    void* bits;
+
+    // Create a DIB section
+    HBITMAP hBitmap = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
+
+    if (hBitmap == nullptr) {
+        std::cerr << "Failed to create DIB section." << std::endl;
+        return;
+    }
+
+
+    // Draw the sprite to the DIB section
+    curSprite->draw(bits, size);
+
+    HDC memDC = CreateCompatibleDC(hdc);
+    HBITMAP hOldBitmap = (HBITMAP)SelectObject(memDC, hBitmap);
+
+    BitBlt(hdc, position.x, position.y, size.x, size.y, memDC, 0, 0, SRCCOPY);
+
+    SelectObject(memDC, hOldBitmap);
+    DeleteDC(memDC);
+
+    // Clean up the DIB section
+    DeleteObject(hBitmap);
+}

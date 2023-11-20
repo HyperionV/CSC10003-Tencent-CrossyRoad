@@ -1,10 +1,6 @@
 {
     "files.associations": {
-        "chrono": "cpp",
-        "filesystem": "cpp",
-        "iosfwd": "cpp",
         "thread": "cpp",
         "cmath": "cpp"
-    },
-    "cmake.configureOnOpen": false
+    }
 }

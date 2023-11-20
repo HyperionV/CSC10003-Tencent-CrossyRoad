@@ -12,14 +12,20 @@
 #include <conio.h>
 #include "Lane.h"
 #include "Player.h"
+#include "Screen.h"
 
 // #define _WIN32_WINNT 0x0500
+
+
+#define KEY_UP 119
+#define KEY_DOWN 115
+#define KEY_LEFT 97
+#define KEY_RIGHT 100
 
 using namespace std;
 
 Frame mainFrame(Vector2i(1280, 760), Vector2i(0,0));
 Entity e1("car1_motion");
-
 
 
 void ShowConsoleCursor(bool showFlag)
@@ -53,6 +59,7 @@ void ShowConsoleCursor(bool showFlag)
 //     }
 // }
 
+Screen* Screen::instancePtr = nullptr;
 int main() {
 
 	HWND console = GetConsoleWindow();
@@ -61,7 +68,7 @@ int main() {
 	GetWindowRect(console, &r); 
 	
 	// Size 1280 - 760
-	MoveWindow(console, 0, 0, 1280, 760, TRUE);
+	MoveWindow(console, 0, 0, 1045, 695, TRUE);
 
 	HWND consoleWindow = GetConsoleWindow();
 	SetWindowLong(consoleWindow, GWL_STYLE, GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
@@ -74,8 +81,12 @@ int main() {
 	Entity bg1("street");
 	Entity _char("up");
 
+	
+	Screen* game = Screen::getInstance(&mainFrame, &hdc);
+	game->startGame();
+
 	Sprite* bg = mainFrame.addSprite(*(bg1.getCurrentTexture()), Vector2f(0,0));
-	bg->setEndPos(Vector2f(1480, 960), 0);
+	bg->setEndPos(Vector2f(1280, 720), 0);
 	// Lane l1(1, e1, 1);
 
 	Player _p(_char, mainFrame);
@@ -84,28 +95,29 @@ int main() {
 		// this_thread::sleep_for(50ms);
 		_p.animatePlayer();
 		if (_kbhit()) {
-			char curr = getch();
+			int curr = _getch();
 			int step{2};
 			Vector2f currPos = _p.getCurrentPos();
 			switch(curr) {
-				case 'a':
-					_p.setPosition(currPos.x-40, currPos.y);
+				case KEY_LEFT:
+					_p.setPosition(currPos.x - 40, currPos.y, 'a');
 					break;
-				case 'd':
-					_p.setPosition(currPos.x+40, currPos.y);
+				case KEY_RIGHT:
+					_p.setPosition(currPos.x+40, currPos.y, 'd');
 					break;
-				case 'w':
-					_p.setPosition(currPos.x, currPos.y+40);
+				case KEY_DOWN:
+					_p.setPosition(currPos.x, currPos.y, 's');
 					break;
-				case 's':
-					_p.setPosition(currPos.x, currPos.y-40);
+				case KEY_UP:
+					_p.setPosition(currPos.x, currPos.y, 'w');
 					break;
 				case 'q':
-					// quit = true;
+					if (game->screenPause()) return 0;
 					break;
 				default:
-					cout << "Invalid key pressed" << endl;
-					system("pause");
+					//cout << "Invalid key pressed" << endl;
+					//system("pause");
+					break;
 			}
 		}
 		mainFrame.update();

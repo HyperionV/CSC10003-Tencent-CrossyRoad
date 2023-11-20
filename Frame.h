@@ -25,4 +25,5 @@ public:
     void removeSprite(Sprite*& sprite);
     void update();
     void draw(HDC hdc);
+    void draw(HDC hdc, Sprite* curSprite);
 };
