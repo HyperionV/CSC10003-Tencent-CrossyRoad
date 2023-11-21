@@ -19,6 +19,7 @@ public:
 	bool screenPause();
 	void screenOption();
 	void screenPlay();
+	void changeTexture(const int& idx);
 	Screen(const Screen& screen) = delete;
 
 	static Screen* getInstance(Frame* curFrame, HDC* hdc) {
@@ -30,6 +31,7 @@ public:
 			return instancePtr;
 		}
 	}
+	
 	~Screen();
 private :
 	static Screen* instancePtr;
@@ -37,11 +39,7 @@ private :
 	Screen();
 	Frame* mainFrame;
 	Sprite* backGround;
-	vector<Sprite*>menu;
-	vector<Sprite*>option;
-	vector<Sprite*>pause;
-	vector<Sprite*>loadGame;
-	Sprite* leaderBoard;
+	vector<Entity> resources;
 	HDC* hdc;
 	bool isMusicOff;
 };

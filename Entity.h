@@ -13,6 +13,7 @@ public:
     Entity();
 
     Entity(const string&);
+    Entity(const string&, bool);
     void getResource();
     void shiftResource();
     Texture* getCurrentTexture();

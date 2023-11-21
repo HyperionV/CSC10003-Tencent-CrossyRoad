@@ -8,41 +8,28 @@ Screen::Screen(Frame* curFrame, HDC* hdc) {
 	this->isMusicOff = 0;
 	this->hdc = hdc;
 	this->mainFrame = curFrame;
-	for (int i = 1; i <= 5; i++) {
-		Entity menu("menu" + to_string(i));
-		Sprite* menu1 = new Sprite(Vector2f(0, 0), &(*(menu.getCurrentTexture())));
-		this->menu.push_back(menu1);
+	backGround = new Sprite;
+	for (int i = 1; i <= 5; i++) { // 0 -> 4
+		resources.push_back(Entity("menu"+to_string(i), true));
 	}
-
-	for (int i = 1; i <= 6; i++) {
-		Entity option("option" + to_string(i));
-		Sprite* option1 = new Sprite(Vector2f(0, 0), &(*(option.getCurrentTexture())));
-		this->option.push_back(option1);
+	for (int i = 1; i <= 6; i++) { // 5 -> 10
+		resources.push_back(Entity("option"+to_string(i), true));
 	}
-
-	for (int i = 1; i <= 6; i++) {
-		Entity pause("pause" + to_string(i));
-		Sprite* pause1 = new Sprite(Vector2f(0, 0), &(*(pause.getCurrentTexture())));
-		this->pause.push_back(pause1);
+	for (int i = 1; i <= 6; i++) { // 11 -> 16
+		resources.push_back(Entity("pause"+to_string(i), true));
 	}
-
-	for (int i = 1; i <= 3; i++) {
-		Entity loadGame("load_game" + to_string(i));
-		Sprite* loadGame1 = new Sprite(Vector2f(0, 0), &(*(loadGame.getCurrentTexture())));
-		this->loadGame.push_back(loadGame1);
+	for (int i = 1; i <= 3; i++) { // 17 -> 19
+		resources.push_back(Entity("load_game"+to_string(i), true));
 	}
-
-	
-	Entity leaderBoard("leader_board");
-	this->leaderBoard = new Sprite(Vector2f(0, 0), &(*(leaderBoard.getCurrentTexture())));
+	resources.push_back(Entity("leader_board", true));
 
 	
 }
 
 void Screen::startGame() {
 	int vertical = 0, horizon = 0;
-	this->backGround = menu[0];
-	mainFrame->draw(*this->hdc, this->backGround);
+	backGround->setTexture(resources[0].getCurrentTexture());
+	mainFrame->draw(*hdc, backGround);
 	while (true) {
 		// this_thread::sleep_for(50ms);
 		if (_kbhit()) {
@@ -53,7 +40,7 @@ void Screen::startGame() {
 					break;
 				if (horizon == 1) {
 					horizon = 0;
-					this->backGround = menu[3];
+					changeTexture(3);
 				}
 				break;
 			case KEY_RIGHT:
@@ -61,22 +48,22 @@ void Screen::startGame() {
 					break;
 				if (horizon == 0) {
 					horizon = 1;
-					this->backGround = menu[4];
+					changeTexture(4);
 				}
 				break;
 			case KEY_DOWN:
 				switch (vertical) {
 				case 0:
+					changeTexture(1);
 					vertical++;
-					this->backGround = menu[1];
 					break;
 				case 1:
+					changeTexture(2);
 					vertical++;
-					this->backGround = menu[2];
 					break;
 				case 2:
+					changeTexture(3);
 					vertical++;
-					this->backGround = menu[3];
 					break;
 				default:
 					break;
@@ -85,17 +72,17 @@ void Screen::startGame() {
 			case KEY_UP:
 				switch (vertical) {
 				case 1:
+					changeTexture(0);
 					vertical--;
-					this->backGround = menu[0];
 					break;
 				case 2:
+					changeTexture(1);
 					vertical--;
-					this->backGround = menu[1];
 					break;
 				case 3:
-					vertical--;
 					horizon = 0;
-					this->backGround = menu[2];
+					changeTexture(2);
+					vertical--;
 				default:
 					break;
 				}
@@ -129,7 +116,7 @@ void Screen::startGame() {
 //static void screenGame();
 bool Screen::screenPause() {
 	int vertical = 0;
-	this->backGround = pause[0 + 3 * isMusicOff];
+	changeTexture(11 + 3*isMusicOff);
 	mainFrame->draw(*this->hdc, this->backGround);
 	while (true) {
 		// this_thread::sleep_for(50ms);
@@ -140,11 +127,11 @@ bool Screen::screenPause() {
 				switch (vertical) {
 				case 0:
 					vertical++;
-					this->backGround = pause[1 + 3 * isMusicOff];
+					changeTexture(12 + 3 * isMusicOff);
 					break;
 				case 1:
 					vertical++;
-					this->backGround = pause[2 + 3 * isMusicOff];
+					changeTexture(13 + 3 * isMusicOff);
 					break;
 				default:
 					break;
@@ -154,11 +141,11 @@ bool Screen::screenPause() {
 				switch (vertical) {
 				case 1:
 					vertical--;
-					this->backGround = pause[0 + 3 * isMusicOff];
+					changeTexture(11 + 3 * isMusicOff);
 					break;
 				case 2:
 					vertical--;
-					this->backGround = pause[1 + 3 * isMusicOff];
+					changeTexture(12 + 3 * isMusicOff);
 					break;
 				default:
 					break;
@@ -171,7 +158,7 @@ bool Screen::screenPause() {
 				case 1:
 					if (isMusicOff) isMusicOff = 0;
 					else isMusicOff = 1;
-					this->backGround = pause[1 + 3 * isMusicOff];
+					changeTexture(12 + 3 * isMusicOff);
 					break;
 				case 2:
 					return 1;
@@ -188,7 +175,7 @@ bool Screen::screenPause() {
 }
 void Screen::screenOption() {
 	int vertical = 0;
-	this->backGround = option[0 + 3 * isMusicOff];
+	changeTexture(5 + 3 * isMusicOff);
 	mainFrame->draw(*this->hdc, this->backGround);
 	while (true) {
 		// this_thread::sleep_for(50ms);
@@ -199,11 +186,11 @@ void Screen::screenOption() {
 				switch (vertical) {
 				case 0:
 					vertical++;
-					this->backGround = option[1 + 3 * isMusicOff];
+					changeTexture(6 + 3 * isMusicOff);
 					break;
 				case 1:
 					vertical++;
-					this->backGround = option[2 + 3 * isMusicOff];
+					changeTexture(7 + 3 * isMusicOff);
 					break;
 				default:
 					break;
@@ -213,11 +200,11 @@ void Screen::screenOption() {
 				switch (vertical) {
 				case 1:
 					vertical--;
-					this->backGround = option[0 + 3 * isMusicOff];
+					changeTexture(5 + 3 * isMusicOff);
 					break;
 				case 2:
 					vertical--;
-					this->backGround = option[1 + 3 * isMusicOff];
+					changeTexture(6 + 3 * isMusicOff);
 					break;
 				default:
 					break;
@@ -226,15 +213,15 @@ void Screen::screenOption() {
 			case '\r':
 				switch (vertical) {
 				case 0:
-					this->backGround = leaderBoard;
+					changeTexture(20);
 					break;
 				case 1:
 					if (isMusicOff) isMusicOff = 0;
 					else isMusicOff = 1;
-					this->backGround = option[1 + 3 * isMusicOff];
+					changeTexture(6 + 3 * isMusicOff);
 					break;
 				case 2:
-					this->backGround = menu[0];
+					changeTexture(0);
 					return;
 				default:
 					break;
@@ -249,7 +236,7 @@ void Screen::screenOption() {
 }
 void Screen::screenPlay() {
 	int vertical = 0;
-	this->backGround = loadGame[0];
+	changeTexture(17);
 	mainFrame->draw(*this->hdc, this->backGround);
 	while (true) {
 		// this_thread::sleep_for(50ms);
@@ -260,11 +247,11 @@ void Screen::screenPlay() {
 				switch (vertical) {
 				case 0:
 					vertical++;
-					this->backGround = loadGame[1];
+					changeTexture(18);
 					break;
 				case 1:
 					vertical++;
-					this->backGround = loadGame[2];
+					changeTexture(19);
 					break;
 				default:
 					break;
@@ -274,11 +261,11 @@ void Screen::screenPlay() {
 				switch (vertical) {
 				case 1:
 					vertical--;
-					this->backGround = loadGame[0];
+					changeTexture(17);
 					break;
 				case 2:
 					vertical--;
-					this->backGround = loadGame[1];
+					changeTexture(18);
 					break;
 				default:
 					break;
@@ -287,7 +274,7 @@ void Screen::screenPlay() {
 			case '\r':
 				switch (vertical) {
 				case 2:
-					this->backGround = menu[0];
+					changeTexture(0);
 					return;
 				default:
 					break;
@@ -299,4 +286,8 @@ void Screen::screenPlay() {
 		mainFrame->draw(*hdc, this->backGround);
 	}
 	return;
+}
+
+void Screen::changeTexture(const int& idx) {
+	backGround->setTexture(resources[idx].getCurrentTexture());
 }
