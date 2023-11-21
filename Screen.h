@@ -50,6 +50,5 @@ private :
 	Sprite* leaderBoard;
 	HDC* hdc;
 	Audio* music;
-	Audio* soundEffect;
 	bool isMusicOff;
 };

@@ -10,7 +10,6 @@ Screen::Screen(Frame* curFrame, HDC* hdc) {
 	this->hdc = hdc;
 	this->mainFrame = curFrame;
 	this->music = new Audio;
-	this->soundEffect = new Audio;
 	for (int i = 1; i <= 5; i++) {
 		Entity menu("menu" + to_string(i));
 		Sprite* menu1 = new Sprite(Vector2f(0, 0), &(*(menu.getCurrentTexture())));
@@ -45,7 +44,7 @@ Screen::Screen(Frame* curFrame, HDC* hdc) {
 void Screen::startGame() {
 	int vertical = 0, horizon = 0;
 	this->backGround = menu[0];
-	this->music->Play("gameSound.wav");
+	this->music->Play("gameSound.wav", 1, 1);
 	mainFrame->draw(*this->hdc, this->backGround);
 	while (true) {
 		// this_thread::sleep_for(50ms);
@@ -319,7 +318,7 @@ void Screen::setMusic() {
 	}
 	else {
 		isMusicOff = 0;
-		music->Play("gameSound.wav");
+		music->Play("gameSound.wav", 1 ,1);
 	}
 	return;
 }

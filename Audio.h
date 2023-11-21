@@ -39,4 +39,21 @@ public:
     void clearBuffer();
 };
 string getCurrentDirectoryOnWindows();
+class MyVoiceCallback : public IXAudio2VoiceCallback
+{
+public:
+    virtual void STDMETHODCALLTYPE OnVoiceProcessingPassStart(UINT32 BytesRequired) override {}
+    virtual void STDMETHODCALLTYPE OnVoiceProcessingPassEnd() override {}
+    virtual void STDMETHODCALLTYPE OnStreamEnd() override {
+        SetEvent(hStreamEndEvent); // Signal the event when the stream ends
+    }
+    virtual void STDMETHODCALLTYPE OnBufferStart(void* pBufferContext) override {}
+    virtual void STDMETHODCALLTYPE OnBufferEnd(void* pBufferContext) override {}
+    virtual void STDMETHODCALLTYPE OnLoopEnd(void* pBufferContext) override {}
+    virtual void STDMETHODCALLTYPE OnVoiceError(void* pBufferContext, HRESULT Error) override {}
 
+    HANDLE hStreamEndEvent; // Event to signal when the stream ends
+
+    MyVoiceCallback() : hStreamEndEvent(CreateEvent(nullptr, FALSE, FALSE, nullptr)) {}
+    virtual ~MyVoiceCallback() { CloseHandle(hStreamEndEvent); }
+};

@@ -63,6 +63,7 @@ int Audio::Play(string path, float volume, bool ShouldLoop) {
     BYTE* pDataBuffer = new BYTE[dwChunkSize];
     ReadChunkData(hFile, pDataBuffer, dwChunkSize, dwChunkPosition);
 
+    //MyVoiceCallback myCallback;
     buffer.AudioBytes = dwChunkSize;  // size of the audio buffer in bytes
     buffer.pAudioData = pDataBuffer;  // buffer containing audio data
     buffer.Flags = XAUDIO2_END_OF_STREAM; // tell the source voice not to expect any data after this buffer

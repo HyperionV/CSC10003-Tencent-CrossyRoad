@@ -87,6 +87,8 @@ int main(int argc, char* argv[]) {
 	Entity bg1("street");
 	Entity _char("up");
 
+
+
 	
 	Screen* game = Screen::getInstance(&mainFrame, &hdc);
 	game->startGame();
@@ -100,7 +102,7 @@ int main(int argc, char* argv[]) {
 	Player _p(_char, mainFrame);
 	
 	while (true) {
-		 this_thread::sleep_for(100ms);
+		 //this_thread::sleep_for(100ms);
 		_p.animatePlayer();
 		if (_kbhit()) {
 			int curr = _getch();
@@ -120,7 +122,6 @@ int main(int argc, char* argv[]) {
 					_p.setPosition(currPos.x, currPos.y, 'w');
 					break;
 				case 'q':
-					if (game->screenPause()) return 0;
 					break;
 				default:
 					//cout << "Invalid key pressed" << endl;
