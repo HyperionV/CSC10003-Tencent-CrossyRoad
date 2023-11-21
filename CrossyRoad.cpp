@@ -17,7 +17,6 @@
 #include "Screen.h"
 #include "Audio.h"
 
-#pragma comment(lib, "winmm.lib")
 // #define _WIN32_WINNT 0x0500
 
 string getExePath(string x) // removes fileName from path i.e "D:\path\to\exe\sample.exe" changes it into "D:\path\to\exe"

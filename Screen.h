@@ -9,7 +9,7 @@
 #define KEY_DOWN 115
 #define KEY_LEFT 97
 #define KEY_RIGHT 100
-
+#define ON_CLICK 0
 
 
 #define mainScreen Vector2f(1280, 720)
