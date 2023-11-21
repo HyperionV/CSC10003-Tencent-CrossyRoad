@@ -5,10 +5,6 @@ Entity::Entity() {}
 
 Entity::Entity(const string& entityName) {
     this->entityName = entityName;
-    getResource();
-}
-
-void Entity::getResource() {
     int cnt{1};
     if (ifstream(("image_bin/"+entityName+".bin").c_str(), ios::binary).good()) 
         motion.push_back(new Texture("image_bin/"+entityName+".bin"));
@@ -18,6 +14,13 @@ void Entity::getResource() {
             break;
         }
         motion.push_back(new Texture(path));
+    }
+}
+
+Entity::Entity(const string& entityName, bool) {
+    this->entityName = entityName;
+    if (ifstream(("image_bin/" + entityName + ".bin").c_str(), ios::binary).good()) {
+        motion.push_back(new Texture("image_bin/" + entityName + ".bin"));
     }
 }
 

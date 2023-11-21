@@ -1,3 +1,5 @@
+#pragma comment(lib, "winmm.lib")
+
 #include <iostream>
 #include <Windows.h>
 #include <winuser.h>
@@ -45,26 +47,6 @@ void ShowConsoleCursor(bool showFlag)
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
 
-// char Input() {
-// 	if (_kbhit()) {
-//         char curr = getch();
-//         int step{2};
-//         switch(curr) {
-//             case 'a':	
-//                 break;
-//             case 'd':
-//                 break;
-//             case 'w':
-//                 break;
-//             case 's':
-//                 break;
-//             default:
-//                 cout << "Invalid key pressed" << endl;
-//                 system("pause");
-//         }
-//     }
-// }
-
 Screen* Screen::instancePtr = nullptr;
 int main(int argc, char* argv[]) {
 
@@ -74,7 +56,7 @@ int main(int argc, char* argv[]) {
 	GetWindowRect(console, &r); 
 	
 	// Size 1280 - 760
-	MoveWindow(console, 0, 0, 1045, 695, TRUE);
+	MoveWindow(console, 0, 0, 1280, 760, TRUE);
 
 	HWND consoleWindow = GetConsoleWindow();
 	SetWindowLong(consoleWindow, GWL_STYLE, GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
@@ -85,11 +67,7 @@ int main(int argc, char* argv[]) {
 	HDC hdc = GetDC(console);
 
 	Entity bg1("street");
-	Entity _char("up");
-
-
-
-	
+	Entity _char("up");	
 	Screen* game = Screen::getInstance(&mainFrame, &hdc);
 	game->startGame();
 
@@ -100,7 +78,6 @@ int main(int argc, char* argv[]) {
 	// Lane l1(1, e1, 1);
 
 	Player _p(_char, mainFrame);
-	
 	while (true) {
 		 //this_thread::sleep_for(100ms);
 		_p.animatePlayer();
