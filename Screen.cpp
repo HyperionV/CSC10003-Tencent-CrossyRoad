@@ -1,4 +1,5 @@
 #include "Screen.h"
+string sound[] = { "on_click", "coin1" };
 Screen::Screen() {
 	this->mainFrame = nullptr;
 }
@@ -8,6 +9,8 @@ Screen::Screen(Frame* curFrame, HDC* hdc) {
 	this->isMusicOff = 0;
 	this->hdc = hdc;
 	this->mainFrame = curFrame;
+	this->music = new Audio;
+	this->soundEffect = new Audio;
 	for (int i = 1; i <= 5; i++) {
 		Entity menu("menu" + to_string(i));
 		Sprite* menu1 = new Sprite(Vector2f(0, 0), &(*(menu.getCurrentTexture())));
@@ -42,6 +45,7 @@ Screen::Screen(Frame* curFrame, HDC* hdc) {
 void Screen::startGame() {
 	int vertical = 0, horizon = 0;
 	this->backGround = menu[0];
+	this->music->Play("gameSound.wav");
 	mainFrame->draw(*this->hdc, this->backGround);
 	while (true) {
 		// this_thread::sleep_for(50ms);
@@ -103,14 +107,17 @@ void Screen::startGame() {
 				case '\r':
 					switch (vertical) {
 						case 0:
+							playSound(0);
 							this->screenPlay();
 							vertical = 0, horizon = 0;
 							break;
 						case 1:
+							playSound(0);
 							this->screenOption();
 							vertical = 0, horizon = 0;
 							break;
 						case 2:
+							playSound(0);
 							return;
 						//case 3:
 						//	if (horizon == 0)
@@ -126,7 +133,6 @@ void Screen::startGame() {
 		mainFrame->draw(*hdc, this->backGround);
 	}
 }
-//static void screenGame();
 bool Screen::screenPause() {
 	int vertical = 0;
 	this->backGround = pause[0 + 3 * isMusicOff];
@@ -167,13 +173,15 @@ bool Screen::screenPause() {
 			case '\r':
 				switch (vertical) {
 				case 0:
+					playSound(0);
 					return 0;
 				case 1:
-					if (isMusicOff) isMusicOff = 0;
-					else isMusicOff = 1;
+					playSound(0);
+					setMusic();
 					this->backGround = pause[1 + 3 * isMusicOff];
 					break;
 				case 2:
+					playSound(0);
 					return 1;
 				default:
 					break;
@@ -226,14 +234,16 @@ void Screen::screenOption() {
 			case '\r':
 				switch (vertical) {
 				case 0:
+					playSound(0);
 					this->backGround = leaderBoard;
 					break;
 				case 1:
-					if (isMusicOff) isMusicOff = 0;
-					else isMusicOff = 1;
+					playSound(0);
+					setMusic();
 					this->backGround = option[1 + 3 * isMusicOff];
 					break;
 				case 2:
+					playSound(0);
 					this->backGround = menu[0];
 					return;
 				default:
@@ -287,6 +297,7 @@ void Screen::screenPlay() {
 			case '\r':
 				switch (vertical) {
 				case 2:
+					playSound(0);
 					this->backGround = menu[0];
 					return;
 				default:
@@ -298,5 +309,23 @@ void Screen::screenPlay() {
 		}
 		mainFrame->draw(*hdc, this->backGround);
 	}
+	return;
+}
+
+void Screen::setMusic() {
+	if (!isMusicOff) {
+		isMusicOff = 1;
+		music->Stop();
+	}
+	else {
+		isMusicOff = 0;
+		music->Play("gameSound.wav");
+	}
+	return;
+}
+
+void Screen::playSound(const int& type) {
+	PlaySound(0, 0, 0);
+	PlaySound(TEXT("on_click.wav"), nullptr, SND_FILENAME | SND_ASYNC);
 	return;
 }

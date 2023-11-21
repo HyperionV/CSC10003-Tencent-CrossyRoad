@@ -3,11 +3,14 @@
 #include "Sprite.h"
 #include "Entity.h"
 #include "Frame.h"
+#include "Audio.h"
 #include <conio.h>
 #define KEY_UP 119
 #define KEY_DOWN 115
 #define KEY_LEFT 97
 #define KEY_RIGHT 100
+
+
 
 #define mainScreen Vector2f(1280, 720)
 class Screen {
@@ -30,6 +33,9 @@ public:
 			return instancePtr;
 		}
 	}
+
+	void setMusic();
+	void playSound(const int& type);
 	~Screen();
 private :
 	static Screen* instancePtr;
@@ -43,5 +49,7 @@ private :
 	vector<Sprite*>loadGame;
 	Sprite* leaderBoard;
 	HDC* hdc;
+	Audio* music;
+	Audio* soundEffect;
 	bool isMusicOff;
 };

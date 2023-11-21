@@ -13,9 +13,16 @@
 #include "Lane.h"
 #include "Player.h"
 #include "Screen.h"
+#include "Audio.h"
 
+#pragma comment(lib, "winmm.lib")
 // #define _WIN32_WINNT 0x0500
 
+string getExePath(string x) // removes fileName from path i.e "D:\path\to\exe\sample.exe" changes it into "D:\path\to\exe"
+{
+	std::string f = x;
+	return f.substr(0, f.find_last_of("\\/"));
+}
 
 #define KEY_UP 119
 #define KEY_DOWN 115
@@ -25,7 +32,6 @@
 using namespace std;
 
 Frame mainFrame(Vector2i(1280, 760), Vector2i(0,0));
-Entity e1("car1_motion");
 
 
 void ShowConsoleCursor(bool showFlag)
@@ -60,7 +66,7 @@ void ShowConsoleCursor(bool showFlag)
 // }
 
 Screen* Screen::instancePtr = nullptr;
-int main() {
+int main(int argc, char* argv[]) {
 
 	HWND console = GetConsoleWindow();
 
@@ -85,6 +91,8 @@ int main() {
 	Screen* game = Screen::getInstance(&mainFrame, &hdc);
 	game->startGame();
 
+
+
 	Sprite* bg = mainFrame.addSprite(*(bg1.getCurrentTexture()), Vector2f(0,0));
 	bg->setEndPos(Vector2f(1280, 720), 0);
 	// Lane l1(1, e1, 1);
@@ -92,7 +100,7 @@ int main() {
 	Player _p(_char, mainFrame);
 	
 	while (true) {
-		// this_thread::sleep_for(50ms);
+		 this_thread::sleep_for(100ms);
 		_p.animatePlayer();
 		if (_kbhit()) {
 			int curr = _getch();
