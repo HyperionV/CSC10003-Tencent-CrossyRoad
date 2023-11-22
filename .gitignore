@@ -587,3 +587,6 @@ fabric.properties
 *.ipch
 
 .idea/
+CrossyRoad.sln
+CMakeLists.txt
+CMakeLists.txt
