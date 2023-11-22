@@ -31,7 +31,6 @@ void Lane::resetLane() {
 }
 
 void Lane::startLane(Frame& mainFrame) {
-    // system("pause");
     for (int i = 0; i < vehicleCounter; i++) {
         vehicles.push_back(mainFrame.addSprite(*model.getCurrentTexture(), start));
         vehicles[i]->setEndPos(end, speed);
@@ -59,3 +58,5 @@ bool Lane::checkCollision(Player* _p) {
     }
     return false;
 }
+
+//void Lane::draw

@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
 					_p.setPosition(currPos.x - 40, currPos.y, 'a');
 					break;
 				case KEY_RIGHT:
-					_p.setPosition(currPos.x + 40, currPos.y, 'd');
+					_p.setPosition(currPos.x+40, currPos.y, 'd');
 					break;
 				case KEY_DOWN:
 					_p.setPosition(currPos.x, currPos.y, 's');
