@@ -45,7 +45,7 @@ public:
     ~Lane();
     void resetLane(); 
     void startLane(Frame& mainFrame);
-    thread spawnThread(Frame& mainFrame);
     bool checkCollision(Player*);
     void animateLane();
+    void udpate();
 };
