@@ -9,7 +9,7 @@
 #define KEY_DOWN 115
 #define KEY_LEFT 97
 #define KEY_RIGHT 100
-
+#define ON_CLICK 0
 
 
 #define mainScreen Vector2f(1280, 720)
@@ -22,6 +22,7 @@ public:
 	bool screenPause();
 	void screenOption();
 	void screenPlay();
+	void changeTexture(const int& idx);
 	Screen(const Screen& screen) = delete;
 
 	static Screen* getInstance(Frame* curFrame, HDC* hdc) {
@@ -43,13 +44,8 @@ private :
 	Screen();
 	Frame* mainFrame;
 	Sprite* backGround;
-	vector<Sprite*>menu;
-	vector<Sprite*>option;
-	vector<Sprite*>pause;
-	vector<Sprite*>loadGame;
-	Sprite* leaderBoard;
+	vector<Entity> resources;
 	HDC* hdc;
 	Audio* music;
-	Audio* soundEffect;
 	bool isMusicOff;
 };

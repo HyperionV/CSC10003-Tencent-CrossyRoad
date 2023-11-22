@@ -148,8 +148,4 @@ void Audio::Stop() {
     this->pSourceVoice->FlushSourceBuffers();
     return ;
 }
-void Audio::clearBuffer() {
-    this->pSourceVoice->FlushSourceBuffers();
-    return;
-}
 
