@@ -26,18 +26,18 @@ public:
 	Texture();
 	Texture(int width, int height);
 	Texture(const Texture& other);
-    Texture(string filename);
-    Texture(Texture* other);
+	Texture(string filename);
+	Texture(Texture* other);
 	~Texture();
 
 	void setPixel(int x, int y, Pixel pixel);
 	Pixel getPixel(int x, int y);
 	int getWidth();
 	int getHeight();
-    Vector2i getSize();
+	Vector2i getSize();
 
 	void readTexture(string filename);
 	void print();
 	void drawTexture(int top, int left, Rect2D textureRect, HDC hdc);
-    void drawTexture(int top, int left, Rect2D textureRect, void* bits, Vector2i frameSize);
+	void drawTexture(int top, int left, Rect2D textureRect, void* bits, Vector2i frameSize);
 };
