@@ -22,6 +22,7 @@ Entity::Entity(const string& entityName, bool) {
     if (ifstream(("image_bin/" + entityName + ".bin").c_str(), ios::binary).good()) {
         motion.push_back(new Texture("image_bin/" + entityName + ".bin"));
     }
+    else system("pause");
 }
 
 void Entity::shiftResource() {
@@ -40,3 +41,15 @@ Texture* Entity::getPreviousTexture() {
 void Entity::setName(const string& _name) {
     entityName = _name;
 }
+
+int Entity::getMotionSize() {
+    return motion.size();
+}
+
+//Entity::~Entity() {
+//    while (motion.size() > 0) {
+//        Texture* dummy = motion.front();
+//        delete dummy;
+//        motion.pop_front();
+//    }
+//}

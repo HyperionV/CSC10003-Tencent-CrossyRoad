@@ -3,7 +3,7 @@
 int lanePos[] {143, 183, 252, 292, 355, 395, 465, 505, 575, 615};
 pair<int, int> path = pair<int, int>(-132, 1280);
 
-Lane::Lane(const int& laneCounter, const Entity& _entity, const int& _difficulty) {
+Lane::Lane(Frame* mainFrame, const int& laneCounter, const Entity& _entity, const int& _difficulty) {
     if (laneCounter % 2) {
         start = Vector2f(path.first, lanePos[laneCounter]);
         end = Vector2f(path.second, lanePos[laneCounter]);
@@ -16,6 +16,8 @@ Lane::Lane(const int& laneCounter, const Entity& _entity, const int& _difficulty
     timeBetweenSpawn = 2000 - (150 * (difficulty % 5)) * (1 + (difficulty % 5) / 4);
     vehicleCounter = floor(12000/timeBetweenSpawn);
     speed += floor(difficulty/5);
+    this->mainFrame = mainFrame;
+    model = _entity;
 }
 
 Lane::~Lane() {}
@@ -30,18 +32,18 @@ void Lane::resetLane() {
     }
 }
 
-void Lane::increaseDificulty(const int& increment) {
-    difficulty += increment;
-    resetLane();
+thread Lane::spawnThread() {
+    return std::thread([this]() {
+            this->startLane();
+        });
 }
 
-void Lane::startLane(Frame& mainFrame) {
+void Lane::startLane() {
     for (int i = 0; i < vehicleCounter; i++) {
-        // vehicles.push_back(mainFrame.addSprite(*model.getCurrentTexture(), start));
+        vehicles.push_back(mainFrame->addSprite(*model.getCurrentTexture(), start));
         vehicles[i]->setEndPos(end, speed);
-        // this_thread::sleep_for(chrono::milliseconds(timeBetweenSpawn));
+        this_thread::sleep_for(chrono::milliseconds(timeBetweenSpawn));
     }
-    cout << vehicles.size() << std::endl;
 }
 
 void Lane::animateLane() {

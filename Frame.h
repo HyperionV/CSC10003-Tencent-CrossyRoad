@@ -6,7 +6,8 @@
 
 using namespace std;
 
-class Frame {
+class Frame
+{
 private:
     Sprite* first;
     Sprite* last;
@@ -19,10 +20,10 @@ public:
     Frame(Vector2i size, Vector2i position);
     ~Frame();
 
-
+    void addSprite(Sprite* sprite);
     Sprite* addSprite(Texture texture, Vector2f position);
     void removeSprite(Sprite*& sprite);
-    void removeAllSprites();
+    void removeAllSprite(); 
     void update();
     void draw(HDC hdc);
     void draw(HDC hdc, Sprite* curSprite);

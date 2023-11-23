@@ -42,6 +42,19 @@ Sprite* Frame::addSprite(Texture texture, Vector2f position) {
     return sprite;
 }
 
+void Frame::addSprite(Sprite* sprite) {
+    if (first == nullptr) {
+        first = sprite;
+        last = sprite;
+    }
+    else {
+        last->next = sprite;
+        sprite->prev = last;
+        last = sprite;
+    }
+    return;
+}
+
 void Frame::removeSprite(Sprite*& sprite) {
     if (!sprite) {
             std::cerr << "Error: Attempt to remove a null node." << std::endl;
@@ -166,4 +179,14 @@ void Frame::draw(HDC hdc, Sprite* curSprite) {
 
     // Clean up the DIB section
     DeleteObject(hBitmap);
+}
+void Frame::removeAllSprite()
+{
+    Sprite* current = first;
+    while (current) {
+        Sprite* temp = current;
+        current = current->next;
+        delete temp;
+    }
+    first = last = nullptr;
 }

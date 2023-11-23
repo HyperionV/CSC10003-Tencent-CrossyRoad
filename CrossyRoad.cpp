@@ -65,49 +65,10 @@ int main(int argc, char* argv[]) {
 
 	HDC hdc = GetDC(console);
 
-	Entity bg1("street");
-	Entity _char("up");	
+
 	Screen* game = Screen::getInstance(&mainFrame, &hdc);
 	game->startGame();
 
-
-
-	Sprite* bg = mainFrame.addSprite(*(bg1.getCurrentTexture()), Vector2f(0,0));
-	bg->setEndPos(Vector2f(1280, 720), 0);
-	// Lane l1(1, e1, 1);
-
-	Player _p(_char, mainFrame);
-	while (true) {
-		 //this_thread::sleep_for(100ms);
-		_p.animatePlayer();
-		if (_kbhit()) {
-			int curr = _getch();
-			int step{2};
-			Vector2f currPos = _p.getCurrentPos();
-			switch(curr) {
-				case KEY_LEFT:
-					_p.setPosition(currPos.x - 40, currPos.y, 'a');
-					break;
-				case KEY_RIGHT:
-					_p.setPosition(currPos.x + 40, currPos.y, 'd');
-					break;
-				case KEY_DOWN:
-					_p.setPosition(currPos.x, currPos.y, 's');
-					break;
-				case KEY_UP:
-					_p.setPosition(currPos.x, currPos.y, 'w');
-					break;
-				case 'q':
-					break;
-				default:
-					//cout << "Invalid key pressed" << endl;
-					//system("pause");
-					break;
-			}
-		}
-		mainFrame.update();
-		mainFrame.draw(hdc);
-	}
 
 	ReleaseDC(console, hdc);
 	system("cls");

@@ -35,18 +35,19 @@ private:
     Entity model;
     int difficulty;
     vector<Sprite*> vehicles;
-    int vehicleCounter;
     int timeBetweenSpawn;
     Vector2f start;
     Vector2f end;
     float speed{5};
+    Frame* mainFrame;
+    int vehicleCounter;
 public:
-    Lane(const int&, const Entity&, const int&);
+    Lane(Frame*, const int&, const Entity&, const int&);
     ~Lane();
     void resetLane(); 
-    void increaseDificulty(const int&);
-    void startLane(Frame& mainFrame);
+    void startLane();
     bool checkCollision(Player*);
     void animateLane();
     void udpate();
+    thread spawnThread();
 };
