@@ -1,4 +1,5 @@
 #include "Screen.h"
+#include "Player.h"
 Screen::Screen() {
 	this->mainFrame = nullptr;
 }
@@ -8,7 +9,7 @@ Screen::Screen(Frame* curFrame, HDC* hdc) {
 	this->isMusicOff = 0;
 	this->hdc = hdc;
 	this->mainFrame = curFrame;
-	backGround = new Sprite;
+	this->backGround = new Sprite;
 	 this->music = new Audio;
 	for (int i = 1; i <= 5; i++) { // 0 -> 4
 		resources.push_back(Entity("menu"+to_string(i), true));
@@ -23,6 +24,14 @@ Screen::Screen(Frame* curFrame, HDC* hdc) {
 		resources.push_back(Entity("load_game"+to_string(i), true));
 	}
 	resources.push_back(Entity("leader_board", true));
+	resources.push_back(Entity("street", true));
+	for (int i = 0; i < 10; i++) {
+		resources.push_back(Entity("score_" + to_string(i), true));
+	}
+	for (int i = 1; i <= 5; i++) {
+		Sprite* scoreSprite = new Sprite(Vector2f(900 + 60 * i, 40), resources[22].getCurrentTexture());
+		score.push_back(scoreSprite);
+	}
 }
 
 void Screen::startGame() {
@@ -30,10 +39,14 @@ void Screen::startGame() {
 	backGround->setTexture(resources[0].getCurrentTexture());
 	mainFrame->draw(*hdc, backGround);
 	music->Play("gameSound.wav", 1, 1);
+	Entity e1("car1_motion");
+	Lane l1(mainFrame, 1, e1, 20);
+	thread t1 = l1.spawnThread();
 	while (true) {
+
 		// this_thread::sleep_for(50ms);
 		if (_kbhit()) {
-			int curr = getch();
+			int curr = _getch();
 			switch (curr) {
 			case KEY_LEFT:
 				if (vertical < 3)
@@ -92,6 +105,7 @@ void Screen::startGame() {
 						case 0:
 							playSound(ON_CLICK);
 							this->screenPlay();
+							changeTexture(0);
 							vertical = 0, horizon = 0;
 							break;
 						case 1:
@@ -123,7 +137,7 @@ bool Screen::screenPause() {
 	while (true) {
 		// this_thread::sleep_for(50ms);
 		if (_kbhit()) {
-			int curr = getch();
+			int curr = _getch();
 			switch (curr) {
 			case KEY_DOWN:
 				switch (vertical) {
@@ -157,6 +171,7 @@ bool Screen::screenPause() {
 				switch (vertical) {
 				case 0:
 					playSound(0);
+					changeTexture(21);
 					return 0;
 				case 1:
 					setMusic();
@@ -164,6 +179,7 @@ bool Screen::screenPause() {
 					break;
 				case 2:
 					playSound(0);
+
 					return 1;
 				default:
 					break;
@@ -183,7 +199,7 @@ void Screen::screenOption() {
 	while (true) {
 		// this_thread::sleep_for(50ms);
 		if (_kbhit()) {
-			int curr = getch();
+			int curr = _getch();
 			switch (curr) {
 			case KEY_DOWN:
 				switch (vertical) {
@@ -246,7 +262,7 @@ void Screen::screenPlay() {
 	while (true) {
 		// this_thread::sleep_for(50ms);
 		if (_kbhit()) {
-			int curr = getch();
+			int curr = _getch();
 			switch (curr) {
 			case KEY_DOWN:
 				switch (vertical) {
@@ -278,6 +294,11 @@ void Screen::screenPlay() {
 				break;
 			case '\r':
 				switch (vertical) {
+				case 0:
+					playSound(ON_CLICK);
+					crossyRoad();
+					changeTexture(0);
+					return;
 				case 2:
 					playSound(ON_CLICK);
 					changeTexture(0);
@@ -313,4 +334,78 @@ void Screen::changeTexture(const int& idx) {
  	PlaySound(0, 0, 0);
  	PlaySound(TEXT("on_click.wav"), nullptr, SND_FILENAME | SND_ASYNC);
  	return;
+ }
+
+string updateScore(int& score, int bonus) {
+	score += bonus;
+	if (score > 99999)
+		score = 99999;
+	string res = to_string(score);
+	while (res.length() < 5) {
+		res = "0" + res;
+	}
+	return res;
+ }
+
+ void Screen::updateScoreSprite(int& score, int bonus) {
+	 string Score = updateScore(score, bonus);
+	 for (int i = 4; i > -1; i--) {
+		 int idx = Score[i] - '0' + 22;
+		 this->score[i]->setTexture(resources[idx].getCurrentTexture());
+	 }
+	 return;
+ }
+
+ void Screen::crossyRoad() {
+	 int score = 0;
+	 Entity _char("up");
+	 Entity tl("trafficLight");
+	 changeTexture(21);
+	 mainFrame->addSprite(this->backGround);
+	 mainFrame->addSprite(tl.getCurrentTexture(), Vector2f(0, 0));
+	 for (int i = 0; i < 5; i++) {
+		 mainFrame->addSprite(this->score[i]);
+	 }
+	 //mainFrame->update();
+	 //mainFrame->draw(*this->hdc);
+	 // Lane l1(1, e1, 1);
+
+	 Player _p(_char, *mainFrame);
+	 while (true) {
+		 //this_thread::sleep_for(100ms);
+		 _p.animatePlayer();
+		 if (_kbhit()) {
+			 int curr = _getch();
+			 int step{ 2 };
+			 Vector2f currPos = _p.getCurrentPos();
+			 switch (curr) {
+			 case KEY_LEFT:
+				 _p.setPosition(currPos.x - 40, currPos.y, 'a');
+				 break;
+			 case KEY_RIGHT:
+				 _p.setPosition(currPos.x + 40, currPos.y, 'd');
+				 break;
+			 case KEY_DOWN:
+				 _p.setPosition(currPos.x, currPos.y, 's');
+				 break;
+			 case KEY_UP:
+				 this->updateScoreSprite(score, 1);
+				 _p.setPosition(currPos.x, currPos.y, 'w');
+				 break;
+			 case 'q':
+				 playSound(ON_CLICK);
+				 if (screenPause()) {
+					 //mainFrame->removeAllSprite();
+					 return;
+				 }
+				 break;
+			 default:
+				 //cout << "Invalid key pressed" << endl;
+				 //system("pause");
+				 break;
+			 }
+		 }
+		 mainFrame->update();
+		 mainFrame->draw(*hdc);
+	 }
  }

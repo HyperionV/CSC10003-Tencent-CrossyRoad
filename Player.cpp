@@ -33,7 +33,7 @@ void Player::setPosition(const float& x, const float& y,const char& dir) {
         _player->setPosition(Vector2f(0, pos[cnt]));
         return;
     }
-    if (x > 1200) {
+    if (x > 1210) {
         _player->setPosition(Vector2f(1200, pos[cnt]));
         return;
     }

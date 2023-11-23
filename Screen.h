@@ -4,7 +4,10 @@
 #include "Entity.h"
 #include "Frame.h"
 #include "Audio.h"
+#include "Lane.h"
 #include <conio.h>
+#include <thread>
+#include <chrono>
 #define KEY_UP 119
 #define KEY_DOWN 115
 #define KEY_LEFT 97
@@ -15,6 +18,7 @@
 #define mainScreen Vector2f(1280, 720)
 class Screen {
 public:
+	void crossyRoad();
 	void screenAbout();
 	void screenHelp();
 	void startGame();
@@ -22,6 +26,7 @@ public:
 	bool screenPause();
 	void screenOption();
 	void screenPlay();
+	void updateScoreSprite(int& score, int bonus);
 	void changeTexture(const int& idx);
 	Screen(const Screen& screen) = delete;
 
@@ -45,7 +50,9 @@ private :
 	Frame* mainFrame;
 	Sprite* backGround;
 	vector<Entity> resources;
+	vector<Sprite*> score;
 	HDC* hdc;
 	Audio* music;
+	Audio* soundEffect;
 	bool isMusicOff;
 };
