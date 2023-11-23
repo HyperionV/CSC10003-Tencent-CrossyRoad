@@ -44,6 +44,7 @@ public:
     Lane(const int&, const Entity&, const int&);
     ~Lane();
     void resetLane(); 
+    void increaseDificulty(const int&);
     void startLane(Frame& mainFrame);
     bool checkCollision(Player*);
     void animateLane();

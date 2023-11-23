@@ -6,10 +6,10 @@
 #include "Movable.h"
 #include "Texture.h"
 
-class Sprite : public Movable
+class Sprite : public Movable, public Drawable
 {
 private:
-    Texture texture;
+    Texture* texture;
     Rect2D textureRect;
 public:
     Sprite();
@@ -19,10 +19,10 @@ public:
     Texture getTexture();
     Vector2f getHitbox() const;
 
-    Sprite* next;
-    Sprite* prev;
+    // Sprite* next;
+    // Sprite* prev;
 
     void setTextureRect(int top, int left, int width, int height);
-    void updateSprite();
+    void update();
     void draw(void* bits, Vector2i frameSize);
 };

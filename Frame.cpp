@@ -43,26 +43,49 @@ Sprite* Frame::addSprite(Texture texture, Vector2f position) {
 }
 
 void Frame::removeSprite(Sprite*& sprite) {
+    if (!sprite) {
+            std::cerr << "Error: Attempt to remove a null node." << std::endl;
+            return;
+        }
+
     if (sprite == first) {
         first = sprite->next;
-        first->prev = nullptr;
-    }
-    else if (sprite == last) {
+        if (first) {
+            first->prev = nullptr;
+        }
+    } else if (sprite == last) {
         last = sprite->prev;
-        last->next = nullptr;
+        if (last) {
+            last->next = nullptr;
+        }
+    } else {
+        if (sprite->prev) {
+            sprite->prev->next = sprite->next;
+        }
+        if (sprite->next) {
+            sprite->next->prev = sprite->prev;
+        }
     }
-    else {
-        sprite->prev->next = sprite->next;
-        sprite->next->prev = sprite->prev;
-    }
+
     delete sprite;
     sprite = nullptr;
+}
+
+void Frame::removeAllSprites() {
+    Sprite* current = first;
+    while (current != nullptr) {
+        Sprite* next = current->next;
+        delete current;
+        current = next;
+    }
+    first = nullptr;
+    last = nullptr;
 }
 
 void Frame::update() {
     Sprite* current = first;
     while (current != nullptr) {
-        current->updateSprite();
+        current->update();
         // if (current->getPosition().x > current->getDestination().x || (current->getPosition().x < current->getDestination().x && current->getDestination().x < 0) ) {
         //     removeSprite(current);
         //     continue;
