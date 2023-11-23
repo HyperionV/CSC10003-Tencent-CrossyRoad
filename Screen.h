@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "Frame.h"
 #include "Audio.h"
+#include "Lane.h"
 #include <conio.h>
 #include <thread>
 #include <chrono>

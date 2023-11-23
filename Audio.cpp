@@ -3,9 +3,16 @@
 string getCurrentDirectoryOnWindows()
 {
     const unsigned long maxDir = 260;
-    char currentDir[maxDir];
+    TCHAR currentDir[maxDir];
     GetCurrentDirectory(maxDir, currentDir);
-    return string(currentDir);
+    string str;
+    #ifndef UNICODE
+        str = currentDir;
+    #else
+        std::wstring wStr = currentDir;
+        str = std::string(wStr.begin(), wStr.end());
+    #endif
+    return str;
 }
 
 Audio::Audio()

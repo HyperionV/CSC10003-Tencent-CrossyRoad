@@ -42,6 +42,10 @@ void Entity::setName(const string& _name) {
     entityName = _name;
 }
 
+int Entity::getMotionSize() {
+    return motion.size();
+}
+
 //Entity::~Entity() {
 //    while (motion.size() > 0) {
 //        Texture* dummy = motion.front();
