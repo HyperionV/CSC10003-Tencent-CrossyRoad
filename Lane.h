@@ -48,6 +48,6 @@ public:
     void startLane();
     bool checkCollision(Player*);
     void animateLane();
-    void udpate();
+    //void update();
     thread spawnThread();
 };

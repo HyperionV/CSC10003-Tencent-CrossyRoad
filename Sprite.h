@@ -5,6 +5,7 @@
 #include "Pixel.h"
 #include "Movable.h"
 #include "Texture.h"
+#include "Drawable.h"
 
 class Sprite : public Movable, public Drawable
 {
@@ -13,14 +14,14 @@ private:
     Rect2D textureRect;
 public:
     Sprite();
-    Sprite(Vector2f position ,Texture* texture);
+    Sprite(Vector2f position, Texture* texture);
     ~Sprite();
     void setTexture(Texture* texture);
-    Texture getTexture();
+    Texture* getTexture();
     Vector2f getHitbox() const;
 
-    // Sprite* next;
-    // Sprite* prev;
+    //Sprite* next;
+    //Sprite* prev;
 
     void setTextureRect(int top, int left, int width, int height);
     void update();

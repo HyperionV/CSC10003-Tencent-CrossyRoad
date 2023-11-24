@@ -20,9 +20,9 @@ Frame::Frame(Vector2i size, Vector2i position) {
 }
 
 Frame::~Frame() {
-    Sprite* current = first;
+    Drawable* current = first;
     while (current != nullptr) {
-        Sprite* next = current->next;
+        Drawable* next = current->next;
         delete current;
         current = next;
     }
@@ -55,7 +55,7 @@ void Frame::addSprite(Sprite* sprite) {
     return;
 }
 
-void Frame::removeSprite(Sprite*& sprite) {
+void Frame::removeSprite(Drawable*& sprite) {
     if (!sprite) {
             std::cerr << "Error: Attempt to remove a null node." << std::endl;
             return;
@@ -85,9 +85,9 @@ void Frame::removeSprite(Sprite*& sprite) {
 }
 
 void Frame::removeAllSprites() {
-    Sprite* current = first;
+    Drawable* current = first;
     while (current != nullptr) {
-        Sprite* next = current->next;
+        Drawable* next = current->next;
         delete current;
         current = next;
     }
@@ -96,7 +96,7 @@ void Frame::removeAllSprites() {
 }
 
 void Frame::update() {
-    Sprite* current = first;
+    Drawable* current = first;
     while (current != nullptr) {
         current->update();
         // if (current->getPosition().x > current->getDestination().x || (current->getPosition().x < current->getDestination().x && current->getDestination().x < 0) ) {
@@ -116,8 +116,8 @@ void Frame::draw(HDC hdc) {
     bmi.bmiHeader.biPlanes = 1;
     bmi.bmiHeader.biBitCount = 32; // 32 bits per pixel (for RGBA)
 
+    cerr << "1\n";
     void *bits;
-
     // Create a DIB section
     HBITMAP hBitmap = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
 
@@ -126,14 +126,14 @@ void Frame::draw(HDC hdc) {
         return;
     }
 
-
+    cerr << "2\n";
     // Draw the sprites to the DIB section
-    Sprite* current = first;
+    Drawable* current = first;
     while (current != nullptr) {
         current->draw(bits, size);
         current = current->next;
     }
-
+    cerr << "3\n";
     HDC memDC = CreateCompatibleDC(hdc);
     HBITMAP hOldBitmap = (HBITMAP)SelectObject(memDC, hBitmap);
 
@@ -182,9 +182,9 @@ void Frame::draw(HDC hdc, Sprite* curSprite) {
 }
 void Frame::removeAllSprite()
 {
-    Sprite* current = first;
+    Drawable* current = first;
     while (current) {
-        Sprite* temp = current;
+        Drawable* temp = current;
         current = current->next;
         delete temp;
     }

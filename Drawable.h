@@ -2,18 +2,14 @@
 
 #include "Utilities.h"
 
-class Drawable{
-    public:
-        Drawable* next;
-        Drawable* prev;
+class Drawable {
+public:
+    Drawable* next;
+    Drawable* prev;
 
-        Drawable(){
-            next = NULL;
-            prev = NULL;
-        }
+    Drawable();
 
-        virtual void draw(void* bits, Vector2i frameSize) = 0;
-        virtual void update() = 0;
-
+    virtual void draw(void* bits, utility::Vector2i frameSize) = 0;
+    virtual void update() = 0;
 };
 
