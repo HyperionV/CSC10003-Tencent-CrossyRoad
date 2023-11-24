@@ -49,9 +49,7 @@ void ShowConsoleCursor(bool showFlag)
 
 Screen* Screen::instancePtr = nullptr;
 int main(int argc, char* argv[]) {
-
 	HWND console = GetConsoleWindow();
-
 	RECT r;
 	GetWindowRect(console, &r); 
 	
@@ -76,8 +74,15 @@ int main(int argc, char* argv[]) {
 
 //	Screen* game = Screen::getInstance(&mainFrame, &hdc);
 //	game->startGame();
-
-	Map playMap(hdc, &mainFrame, 1);
+	int diff = 1;
+	Entity carEntity("car4_motion");
+	vector<Lane> mapLane;
+	for (int i = 0; i < 10; i++) {
+		Lane cur = Lane(&mainFrame, i, carEntity, diff);
+		mapLane.push_back(cur);
+	}
+	Map playMap(hdc, &mainFrame, diff, mapLane);
+	playMap.checkLane();
 	playMap.drawMap();
 
 	ReleaseDC(console, hdc);

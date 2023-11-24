@@ -42,7 +42,7 @@ void Lane::startLane() {
     for (int i = 0; i < vehicleCounter; i++) {
         vehicles.push_back(mainFrame->addSprite(*model.getCurrentTexture(), start));
         vehicles[i]->setEndPos(end, speed);
-        this_thread::sleep_for(chrono::milliseconds(timeBetweenSpawn));
+        //this_thread::sleep_for(chrono::milliseconds(timeBetweenSpawn));
     }
 }
 

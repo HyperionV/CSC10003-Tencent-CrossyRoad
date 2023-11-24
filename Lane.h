@@ -32,7 +32,6 @@
 
 class Lane {
 private:
-    Entity model;
     int difficulty;
     vector<Sprite*> vehicles;
     int timeBetweenSpawn;
@@ -42,6 +41,7 @@ private:
     Frame* mainFrame;
     int vehicleCounter;
 public:
+    Entity model;
     Lane(Frame*, const int&, const Entity&, const int&);
     ~Lane();
     void resetLane(); 

@@ -14,9 +14,9 @@ class Map {
     Sprite* bg;
 public:
 	Map();
-	Map(HDC hdc, Frame* mapFrame, int levelDifficulty);
+	Map(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane> &mapLane);
 	~Map();
 
-    void update();
+	void checkLane();
 	void drawMap();
 };
