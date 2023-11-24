@@ -3,11 +3,11 @@
 using namespace std;
 using namespace utility;
 
-Sprite::Sprite():Movable()
+Sprite::Sprite() : Movable()
 {
     next = nullptr;
     prev = nullptr;
-    this->texture = Texture();
+    //this->texture = Texture();
     this->textureRect = Rect2D();
 }
 
@@ -48,7 +48,7 @@ void Sprite::setTextureRect(int top, int left, int width, int height)
     this->textureRect.height = height;
 }
 
-void Sprite::updateSprite() {
+void Sprite::update() {
     Movable::update();
 }
 

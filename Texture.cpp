@@ -101,6 +101,8 @@ void Texture::drawTexture(int top, int left, Rect2D textureRect, void *bits, Vec
         for (int x = 0; x < textureRect.width; x++) {
             if (textureRect.top + y < 0 || textureRect.top + y >= frameSize.y || textureRect.left + x < 0 || textureRect.left + x >= frameSize.x)
                 continue;
+            if (textureRect.top + y > (int) pixels.size() || textureRect.left + x > (int) pixels[textureRect.top + y].size())
+                continue;
             if(pixels[textureRect.top + y][textureRect.left + x].getA() == 0)
                 continue;
             if(top + y < 0 || top + y >= frameSize.y || left + x < 0 || left + x >= frameSize.x)

@@ -16,6 +16,7 @@
 #include "Player.h"
 #include "Screen.h"
 #include "Audio.h"
+#include "Map.h"
 
 // #define _WIN32_WINNT 0x0500
 
@@ -65,14 +66,20 @@ int main(int argc, char* argv[]) {
 
 	HDC hdc = GetDC(console);
 
+	Entity bg1("street");
+	Entity _char("up");
 
-	Screen* game = Screen::getInstance(&mainFrame, &hdc);
-	game->startGame();
+	Sprite* bg = mainFrame.addSprite(*(bg1.getCurrentTexture()), Vector2f(0, 0));
+	bg->setEndPos(Vector2f(1480, 960), 0);
 
+	//Screen* game = Screen::getInstance(&mainFrame, &hdc);
+	//game->startGame();
+
+	Map playMap(hdc, &mainFrame, 1);
+	playMap.drawMap();
 
 	ReleaseDC(console, hdc);
 	system("cls");
-
 	cin.ignore();
 	return 0;
 }
