@@ -2,21 +2,14 @@ cmake_minimum_required(VERSION 3.24)
 project(CSC10003_Tencent_CrossyRoad)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
 include_directories(.)
 
-# Path to WinMM.Lib
-link_directories(C:\\Program Files \(x86\)\\Windows Kits\\10\\Lib\\10.0.18362.0\\um\\x64)
+# Path to WinMM.Lib and XAudio2.Lib
+link_directories(C:\\Program Files \(x86\)\\Windows Kits\\10\\Lib\\10.0.22621.0\\um\\x64)
 
-# Link to GLFW, GLEW and OpenGL
-#target_link_libraries(template PUBLIC
-#        ${GLFW_LIBRARIES}
-#        ${GLEW_LIBRARIES}
-#        ${OPENGL_LIBRARIES}
-#        ${winMM.Lib})
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
-
+# Add XAudio2 and WinMM to the target_link_libraries
 add_executable(CSC10003_Tencent_CrossyRoad
         CrossyRoad.cpp
         Game.cpp
@@ -26,4 +19,22 @@ add_executable(CSC10003_Tencent_CrossyRoad
         resource.h
         Texture.cpp
         Texture.h
-        Utilities.cpp Utilities.h Movable.cpp Movable.h Sprite.cpp Sprite.h Frame.cpp Frame.h Screen.cpp Player.cpp Entity.cpp Audio.cpp)
+        Utilities.cpp Utilities.h
+        Movable.cpp Movable.h
+        Sprite.cpp Sprite.h
+        Frame.cpp Frame.h
+        Screen.cpp
+        Player.cpp
+        Entity.cpp
+        Audio.cpp
+        Map.cpp
+        Lane.cpp
+        Text.cpp)
+
+# Link to GLFW, GLEW, OpenGL, WinMM, and XAudio2
+target_link_libraries(CSC10003_Tencent_CrossyRoad PUBLIC
+        ${GLFW_LIBRARIES}
+        ${GLEW_LIBRARIES}
+        ${OPENGL_LIBRARIES}
+        "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.22621.0/um/x64/winmm.lib"
+        "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.22621.0/um/x64/xaudio2.lib")

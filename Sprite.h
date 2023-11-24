@@ -5,9 +5,8 @@
 #include "Pixel.h"
 #include "Movable.h"
 #include "Texture.h"
-#include "Drawable.h"
 
-class Sprite : public Movable, public Drawable
+class Sprite : public Movable
 {
 private:
     Texture* texture;
@@ -20,8 +19,8 @@ public:
     Texture* getTexture();
     Vector2f getHitbox() const;
 
-    //Sprite* next;
-    //Sprite* prev;
+    Sprite* next;
+    Sprite* prev;
 
     void setTextureRect(int top, int left, int width, int height);
     void update();

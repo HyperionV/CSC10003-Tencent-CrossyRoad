@@ -10,11 +10,13 @@ class Map {
 	HDC hdc;
 	Frame *mainFrame;
 	vector<Lane*> mapLane;
-	Entity background;
+    Texture* bgTexture;
+    Sprite* bg;
 public:
 	Map();
 	Map(HDC hdc, Frame* mapFrame, int levelDifficulty);
 	~Map();
 
+    void update();
 	void drawMap();
 };

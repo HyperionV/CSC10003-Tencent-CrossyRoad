@@ -6,7 +6,7 @@ Entity::Entity() {}
 Entity::Entity(const string& entityName) {
     this->entityName = entityName;
     int cnt{1};
-    if (ifstream(("image_bin/"+entityName+".bin").c_str(), ios::binary).good()) 
+    if (ifstream(("image_bin/"+entityName+".bin").c_str(), ios::binary).good())
         motion.push_back(new Texture("image_bin/"+entityName+".bin"));
     while (true) {
         string path = "image_bin/"+entityName+to_string(cnt++)+".bin";

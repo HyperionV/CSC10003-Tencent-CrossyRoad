@@ -9,8 +9,8 @@ using namespace std;
 class Frame
 {
 private:
-    Drawable* first;
-    Drawable* last;
+    Sprite* first;
+    Sprite* last;
 
     Vector2i size;
     Vector2i position;
@@ -21,8 +21,9 @@ public:
     ~Frame();
 
     void addSprite(Sprite* sprite);
-    Sprite* addSprite(Texture texture, Vector2f position);
-    void removeSprite(Drawable*& sprite);
+    Sprite* addSprite(Texture &texture, Vector2f position);
+    Sprite* addSprite(Texture *texture, Vector2f position);
+    void removeSprite(Sprite*& sprite);
     void removeAllSprite(); 
     void removeAllSprites(); 
     void update();

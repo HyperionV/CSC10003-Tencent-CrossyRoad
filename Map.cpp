@@ -1,7 +1,7 @@
 #include "Map.h"
 
 Map::Map() {
-	background = Entity("street");
+//	background = Entity("street");
 }
 
 Map::Map(HDC hdc, Frame* mapFrame, int levelDifficulty) {
@@ -13,7 +13,9 @@ Map::Map(HDC hdc, Frame* mapFrame, int levelDifficulty) {
 		Lane tmp = Lane(mainFrame, i, carEntity, difficulty);
 		mapLane.push_back(&tmp);
 	}
-	background = Entity("street");
+	bgTexture = new Texture("image_bin/street.bin");
+    bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
+
 }
 
 Map::~Map() {
@@ -23,15 +25,14 @@ Map::~Map() {
 	mapLane.clear();
 }
 
+void Map::update() {
+
+}
+
 void Map::drawMap() {
-	Sprite* bg = mainFrame->addSprite(*(background.getCurrentTexture()), Vector2f(0, 0));
-	bg->setEndPos(Vector2f(1280, 720), 0);
-
 	while (true) {
-		//cout << "here\n";
-		mainFrame->update();
-		mainFrame->draw(hdc);
-	}
-
-	delete bg;
+        //cout << "here\n";
+        mainFrame->update();
+        mainFrame->draw(hdc);
+    }
 }

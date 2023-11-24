@@ -66,14 +66,16 @@ int main(int argc, char* argv[]) {
 
 	HDC hdc = GetDC(console);
 
-	Entity bg1("street");
-	Entity _char("up");
+//    Texture *test = new Texture("image_bin/street.bin");
 
-	Sprite* bg = mainFrame.addSprite(*(bg1.getCurrentTexture()), Vector2f(0, 0));
-	bg->setEndPos(Vector2f(1480, 960), 0);
+//	Entity bg1("street");
+//	Entity _char("up");
+//
+//	Sprite* bg = mainFrame.addSprite(*(bg1.getCurrentTexture()), Vector2f(0, 0));
+//	bg->setEndPos(Vector2f(1480, 960), 0);
 
-	//Screen* game = Screen::getInstance(&mainFrame, &hdc);
-	//game->startGame();
+//	Screen* game = Screen::getInstance(&mainFrame, &hdc);
+//	game->startGame();
 
 	Map playMap(hdc, &mainFrame, 1);
 	playMap.drawMap();
