@@ -55,3 +55,11 @@ void Player::setModel(const Entity& _model) {
 Vector2f Player::getHitbox() const {
     return Vector2f(width, height);
 }
+
+void Player::addPoint() {
+    point++;
+}
+
+void Player::addPoint(const int& value) {
+    point += value;
+}

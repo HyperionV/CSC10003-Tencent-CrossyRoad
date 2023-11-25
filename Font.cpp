@@ -7,7 +7,7 @@ Font::Font() {
 
 }
 
-Font::Font(string filename) {
+Font::Font(const string& filename) {
 	readFont(filename);
 }
 
@@ -15,7 +15,7 @@ Font::~Font() {
 	clearFont();
 }
 
-void Font::readFont(string fontName) {
+void Font::readFont(const string& fontName) {
 	clearFont();
 	string path = "font/" + fontName + "/" + fontName + "_";
 	for (int i = 32; i <= 126; i++) {
@@ -32,7 +32,7 @@ void Font::clearFont() {
 	characters.clear();
 }
 
-Texture* Font::getCharacter(char c) {
+Texture* Font::getCharacter(const char& c) {
 	return characters[c];
 }
 
