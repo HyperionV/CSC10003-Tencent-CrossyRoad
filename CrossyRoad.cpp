@@ -17,6 +17,7 @@
 #include "Screen.h"
 #include "Audio.h"
 #include "Map.h"
+#include "Item.h"
 
 // #define _WIN32_WINNT 0x0500
 
@@ -74,14 +75,20 @@ int main(int argc, char* argv[]) {
 
 //	Screen* game = Screen::getInstance(&mainFrame, &hdc);
 //	game->startGame();
-	int diff = 1;
+	int diff = 20;
 	Entity carEntity("car4_motion");
 	vector<Lane> mapLane;
 	for (int i = 0; i < 10; i++) {
 		Lane cur = Lane(&mainFrame, i, carEntity, diff);
 		mapLane.push_back(cur);
 	}
+	Entity coin("yc");
+	
+
 	Map playMap(hdc, &mainFrame, diff, mapLane);
+
+	Item c(mainFrame, coin, 5, Vector2f(1280 / 2, 760 / 2));
+
 	playMap.checkLane();
 	playMap.drawMap();
 

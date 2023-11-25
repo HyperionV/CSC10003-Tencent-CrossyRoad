@@ -13,7 +13,6 @@ class Map {
     Texture* bgTexture;
     Sprite* bg;
 public:
-	Map();
 	Map(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane> &mapLane);
 	~Map();
 

@@ -18,11 +18,11 @@ class Font {
 	map<char, Texture*> characters;
 public:
 	Font();
-	Font(string fontName);
+	Font(const string& fontName);
 	~Font();
 
-	void readFont(string fontName);
+	void readFont(const string& fontName);
 	void clearFont();
-	Texture* getCharacter(char c);
+	Texture* getCharacter(const char& c);
 };
 

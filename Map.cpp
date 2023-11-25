@@ -1,9 +1,5 @@
 #include "Map.h"
 
-Map::Map() {
-//	background = Entity("street");
-}
-
 Map::Map(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane> &mapLane) {
 	mainFrame = mapFrame;
 	this->hdc = hdc;
