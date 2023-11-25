@@ -15,7 +15,7 @@ Lane::Lane(Frame* mainFrame, const int& laneCounter, const Entity& _entity, cons
     difficulty = _difficulty;
     timeBetweenSpawn = 2000 - (150 * (difficulty % 5)) * (1 + (difficulty % 5) / 4);
     vehicleCounter = floor(12000/timeBetweenSpawn);
-    speed += floor(difficulty/5);
+    speed += floor((float) difficulty/5);
     this->mainFrame = mainFrame;
     model = _entity;
 }
@@ -40,8 +40,10 @@ thread Lane::spawnThread() {
 
 void Lane::startLane() {
     for (int i = 0; i < vehicleCounter; i++) {
+        //cerr << "i: " << i << " " << vehicleCounter << '\n';
         vehicles.push_back(mainFrame->addSprite(*model.getCurrentTexture(), start));
         vehicles[i]->setEndPos(end, speed);
+        //cerr << "time: " << timeBetweenSpawn << '\n';
         //this_thread::sleep_for(chrono::milliseconds(timeBetweenSpawn));
     }
 }
@@ -65,5 +67,14 @@ bool Lane::checkCollision(Player* _p) {
     }
     return false;
 }
+int Lane::getTotalVehicle() {
+    return (int) vehicles.size();
+}
 
+void Lane::printStart() {
+    cerr << "start pos: " << start.x << " " << start.y << '\n';
+}
+void Lane::printEnd() {
+    cerr << "end pos: " << end.x << " " << end.y << '\n';
+}
 //void Lane::draw

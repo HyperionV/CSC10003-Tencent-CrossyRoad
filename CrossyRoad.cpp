@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
 
 //	Screen* game = Screen::getInstance(&mainFrame, &hdc);
 //	game->startGame();
-	int diff = 1;
+	int diff = 50;
 	Entity carEntity("car4_motion");
 	vector<Lane> mapLane;
 	for (int i = 0; i < 10; i++) {
@@ -82,7 +82,6 @@ int main(int argc, char* argv[]) {
 		mapLane.push_back(cur);
 	}
 	Map playMap(hdc, &mainFrame, diff, mapLane);
-	playMap.checkLane();
 	playMap.drawMap();
 
 	ReleaseDC(console, hdc);

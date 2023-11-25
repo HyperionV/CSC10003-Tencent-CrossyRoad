@@ -22,6 +22,7 @@ public:
     Sprite* next;
     Sprite* prev;
 
+    void printPosition();
     void setTextureRect(int top, int left, int width, int height);
     void update();
     void draw(void* bits, Vector2i frameSize);

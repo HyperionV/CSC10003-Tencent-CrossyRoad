@@ -23,19 +23,18 @@ Map::~Map() {
 	mapLane.clear();
 }
 
-void Map::checkLane() {
-	for (int i = 0; i < (int)mapLane.size(); i++) {
-		cerr << "lane siz: " << mapLane[i]->model.getMotionSize() << '\n';
-	}
-}
-
 void Map::drawMap() {
 	//mapLane[0]->resetLane();
+	//mapLane[0]->printStart();
+	//mapLane[0]->printEnd();
+	//cerr << "\n\n";
+	for (int i = 0; i < (int)mapLane.size(); i++) 
+		mapLane[i]->startLane();
 	while (true) {
-		mapLane[0]->startLane();
-		mapLane[0]->animateLane();
-
-		//cerr << "3\n";
+		for (int i = 0; i < (int)mapLane.size(); i++) {
+			mapLane[i]->animateLane();
+		}
+		//mapLane[1]->vehicles[0]->printPosition(); 
         mainFrame->update();
         mainFrame->draw(hdc);
     }

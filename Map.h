@@ -17,6 +17,5 @@ public:
 	Map(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane> &mapLane);
 	~Map();
 
-	void checkLane();
 	void drawMap();
 };

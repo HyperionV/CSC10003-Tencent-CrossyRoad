@@ -8,7 +8,7 @@ Entity::Entity(const string& entityName) {
     int cnt{1};
     if (ifstream(("image_bin/" + entityName + ".bin").c_str(), ios::binary).good()) {
         motion.push_back(new Texture("image_bin/" + entityName + ".bin"));
-        cerr << "added\n";
+        //cerr << "added\n";
     }
     while (true) {
         string path = "image_bin/"+entityName+to_string(cnt++)+".bin";
@@ -16,7 +16,7 @@ Entity::Entity(const string& entityName) {
             break;
         }
         motion.push_back(new Texture(path));
-        cerr << "added " << path << '\n';
+        //cerr << "added " << path << '\n';
     }
 }
 
