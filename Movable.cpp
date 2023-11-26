@@ -114,12 +114,6 @@ bool Movable::reachedDestination() {
     }
 
     return true;
-    
-    //if (position.x > destination.x || position.x < destination.x && destination.x < 0)
-    //    return true;
-    //if (position.x == destination.x && position.y == destination.y)
-    //    return true;
-    //return false;
 }
 
 void Movable::update() {

@@ -30,7 +30,6 @@ void Map::drawMap() {
 		for (int i = 0; i < (int)mapLane.size(); i++) {
 			mapLane[i]->animateLane();
 		}
-		//mapLane[1]->vehicles[0]->printPosition(); 
         mainFrame->update();
         mainFrame->draw(hdc);
     }

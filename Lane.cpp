@@ -39,12 +39,20 @@ thread Lane::spawnThread() {
 }
 
 void Lane::startLane() {
+    cout << items.size() << endl;
     for (int i = 0; i < vehicleCounter; i++) {
         //cerr << "i: " << i << " " << vehicleCounter << '\n';
         vehicles.push_back(mainFrame->addSprite(*model.getCurrentTexture(), start));
         vehicles[i]->setEndPos(end, speed);
         //cerr << "time: " << timeBetweenSpawn << '\n';
         //this_thread::sleep_for(chrono::milliseconds(timeBetweenSpawn));
+    }
+    for (Item& item : items) {
+        cout << "Rendering " << item.getItemName() << endl;
+        item.setSprite(mainFrame->addSprite(item.getTexture(), item.getPosition()));
+        if (item.getItemName() == "Slime") {
+            item.getItemSprite()->setEndPos(end, speed);
+        }
     }
 }
 
@@ -53,18 +61,42 @@ void Lane::animateLane() {
     for (auto _sprite: vehicles) {
         _sprite->setTexture(model.getCurrentTexture());
     }
+    for (Item& item : items) {
+        item.animateItem();
+        item.getItemSprite()->setTexture(item.getTexture());
+    }
+}
+
+void Lane::addItem(const string& itemName, const Entity& model, const Vector2f& position) {
+    if (itemName == "Slime") {
+        cout << "Push back Slime??" << endl;
+        items.emplace_back(itemName, model, -5, position);
+        cout << items.size() << endl;
+    }
+    else {
+        items.emplace_back(itemName, model, 5, position);
+    }
+    cout << "Added " << itemName << endl;
 }
 
 bool Lane::checkCollision(Player* _p) {
     Vector2f topLeft = _p->getCurrentPos();
     Vector2f bottomRight = topLeft + _p->getHitbox();
-    for (auto _sprite: vehicles) {
+    for (const auto& _sprite: vehicles) {
         Vector2f vTopLeft = _sprite->getPosition();
         Vector2f vBottomRight = vTopLeft + _sprite->getHitbox();
         if (bottomRight.x > bottomRight.x && vBottomRight.y > vBottomRight.y) 
             if (topLeft.x < vTopLeft.x && topLeft.y < topLeft.y) return true;
         return false;
     }
+    //for (auto& item: items) {
+    //    if (item.useItem(_p)) {
+    //        mainFrame->removeSprite(item.getItemSprite());
+    //        auto it = find(items.begin(), items.end(), item);
+    //        //delete item;
+    //        items.erase(it);
+    //    }
+    //}
     return false;
 }
 int Lane::getTotalVehicle() {
@@ -77,4 +109,7 @@ void Lane::printStart() {
 void Lane::printEnd() {
     cerr << "end pos: " << end.x << " " << end.y << '\n';
 }
-//void Lane::draw
+
+Vector2f Lane::getStart() const {
+    return start;
+}

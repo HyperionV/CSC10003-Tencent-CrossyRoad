@@ -4,16 +4,42 @@
 #include "Utilities.h"
 #include "Player.h"
 
-
 class Item {
-	Frame mainFrame;
-	Sprite* _item;
+	string itemName;
 	Entity model;
 	int value;
 	Vector2f position;
+	Sprite* itemSprite;
 public:
-	Item(Frame& mainFrame, const Entity& model, const int& value, const Vector2f& position);
+	Item(const string& itemName, const Entity& model, const int& value, const Vector2f& position);
+	//Item(const Entity& model, const int& value, const Vector2f& position);
+	Item(const Item&);
+	~Item();
+
+	Texture* getTexture() const;
+	Sprite*& getItemSprite();
+	Vector2f getPosition() const;
+	string getItemName() const;
+	int getValue() const;
+	
+	void setSprite(Sprite*);
+	void setName(const string&);
+	void setModel(const Entity&);
+	void setValue(const int&);
+	void setPosition(const Vector2f&);
 
 	void animateItem();
-	void useItem(Player* _player);
+	bool useItem(Player* _player);
 };
+
+//class Slime : public Item {
+//public:
+//	Slime(const string& itemName, const Entity& model, const int& value, const Vector2f& position, const Vector2f& destination, const float& speed);;
+//	//Slime(const Entity& model, const int& value, const Vector2f& position, const Vector2f& destination, const float& speed);
+//};
+//
+//class Coin : public Item {
+//public:
+//	Coin(const string& itemName, const Entity& model, const int& value, const Vector2f& position);
+//	//Coin(const Entity& model, const int& value, const Vector2f& position);
+//};

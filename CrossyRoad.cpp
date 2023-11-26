@@ -74,12 +74,17 @@ int main(int argc, char* argv[]) {
 
 //	Screen* game = Screen::getInstance(&mainFrame, &hdc);
 //	game->startGame();
+
+	Entity coinModel("yc");
+	Entity slimeModel("blueSlime_jumpattack");
+
 	int diff = 50;
 	Entity carEntity("car4_motion");
 	vector<Lane> mapLane;
 	for (int i = 0; i < 10; i++) {
 		Lane cur = Lane(&mainFrame, i, carEntity, diff);
 		mapLane.push_back(cur);
+		cur.addItem("Slime", slimeModel, cur.getStart());
 	}
 	Map playMap(hdc, &mainFrame, diff, mapLane);
 	playMap.drawMap();
