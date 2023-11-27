@@ -24,11 +24,23 @@ void Map::drawMap() {
 	//mapLane[0]->printStart();
 	//mapLane[0]->printEnd();
 	//cerr << "\n\n";
-	for (int i = 0; i < (int)mapLane.size(); i++) 
+	for (int i = 0; i < (int)mapLane.size(); i++) {
+		mapLane[i]->resetLane();
 		mapLane[i]->startLane();
+	}
+	clock_t time = clock();
 	while (true) {
+		//if ((clock() - time)/CLOCKS_PER_SEC > 4)
+		//	for (int i = 0; i < (int)mapLane.size(); i++) {
+		//		mapLane[i]->stopLane();
+		//	}
+		//if ((clock() - time)/CLOCKS_PER_SEC > 6)
+		//	for (int i = 0; i < (int)mapLane.size(); i++) {
+		//		mapLane[i]->startLane();
+		//	}
+
 		for (int i = 0; i < (int)mapLane.size(); i++) {
-			mapLane[i]->animateLane();
+			mapLane[i]->update();
 		}
 		//mapLane[1]->vehicles[0]->printPosition(); 
         mainFrame->update();
