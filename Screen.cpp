@@ -1,5 +1,7 @@
 #include "Screen.h"
 #include "Player.h"
+#include "Text.h"
+#include "TrafficLight.h"
 Screen::Screen() {
 	this->mainFrame = nullptr;
 }
@@ -191,7 +193,6 @@ bool Screen::screenPause() {
 void Screen::screenOption() {
 	int vertical = 0;
 	changeTexture(5 + 3 * isMusicOff);
-	mainFrame->draw(*this->hdc, this->backGround);
 	while (true) {
 		// this_thread::sleep_for(50ms);
 		if (_kbhit()) {
@@ -228,8 +229,10 @@ void Screen::screenOption() {
 			case '\r':
 				switch (vertical) {
 				case 0:
-					changeTexture(20);
 					playSound(ON_CLICK);
+					changeTexture(20);
+					screenLeaderboard();
+					changeTexture(5 + 3 * isMusicOff);
 					break;
 				case 1:
 					playSound(ON_CLICK);
@@ -355,13 +358,31 @@ string updateScore(int& score, int bonus) {
  void Screen::crossyRoad() {
 	 int score = 0;
 	 Entity _char("up");
-	 Entity tl("trafficLight");
+	 TrafficLight tl1(Vector2f(216, 70.2));
+	 TrafficLight tl2(Vector2f(809.6, 180.4));
+	 TrafficLight tl3(Vector2f(635, 284));
+	 TrafficLight tl4(Vector2f(1195.4, 392.9));
+	 TrafficLight tl5(Vector2f(211.1, 500.8));
+
+	 
+	 vector<TrafficLight>traff;
+	 traff.emplace_back(tl1);
+	 traff.emplace_back(tl2);
+	 traff.emplace_back(tl3);
+	 traff.emplace_back(tl4);
+	 traff.emplace_back(tl5);
+
+
 	 changeTexture(21);
 	 mainFrame->addSprite(this->backGround);
-	 mainFrame->addSprite(tl.getCurrentTexture(), Vector2f(0, 0));
 	 for (int i = 0; i < 5; i++) {
 		 mainFrame->addSprite(this->score[i]);
 	 }
+	 for (int i = 0; i < 5; i++) {
+		 mainFrame->addSprite(traff[i].getSprite());
+	 }
+
+
 	 //mainFrame->update();
 	 //mainFrame->draw(*this->hdc);
 	 // Lane l1(1, e1, 1);
@@ -385,7 +406,7 @@ string updateScore(int& score, int bonus) {
 				 _p.setPosition(currPos.x, currPos.y, 's');
 				 break;
 			 case KEY_UP:
-				 this->updateScoreSprite(score, 1);
+				 this->updateScoreSprite(score, 5);
 				 _p.setPosition(currPos.x, currPos.y, 'w');
 				 break;
 			 case 'q':
@@ -401,7 +422,45 @@ string updateScore(int& score, int bonus) {
 				 break;
 			 }
 		 }
+		 trafficControl(traff);
 		 mainFrame->update();
 		 mainFrame->draw(*hdc);
 	 }
+ }
+
+
+ void Screen::screenLeaderboard() {
+	 //vector<leaderBoardInfo> info = readLeaderBoardFromFile("leaderBoardInfo.bin");
+	 
+	 leaderBoardInfo A("ngobang", "99999", "27/11/2023");
+	 mainFrame->addSprite(this->backGround);
+	 Text a(A.getName());
+	 Text b(A.getScore());
+	 Text c(A.getDate());
+	 a.writeText(getScoreBoardCoord(a.getLength(), NAME_COL), ROW2_OFFSET, mainFrame);
+	 b.writeText(getScoreBoardCoord(b.getLength(), SCORE_COL), ROW2_OFFSET, mainFrame);
+	 c.writeText(getScoreBoardCoord(c.getLength(), DATE_COL), ROW2_OFFSET, mainFrame);
+	 
+	 while (true) {
+		 //this_thread::sleep_for(100ms);
+		 if (_kbhit()) {
+			 int curr = _getch();
+			 int step{ 2 };
+			 switch (curr) {
+			 case 'q':
+				 playSound(ON_CLICK);
+				 mainFrame->removeAllSprite();
+				 return;
+				 break;
+			 default:
+				 //cout << "Invalid key pressed" << endl;
+				 //system("pause");
+				 break;
+			 }
+		 }
+		 mainFrame->draw(*hdc);
+	 }
+
+	 return;
+
  }

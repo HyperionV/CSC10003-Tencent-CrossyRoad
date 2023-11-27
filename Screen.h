@@ -4,14 +4,33 @@
 #include "Entity.h"
 #include "Frame.h"
 #include "Audio.h"
+#include "Supportive.h"
+#include "Text.h"
 #include <conio.h>
 #include <thread>
 #include <chrono>
+#include <fstream>
 #define KEY_UP 119
 #define KEY_DOWN 115
 #define KEY_LEFT 97
 #define KEY_RIGHT 100
 #define ON_CLICK 0
+#define NAME_COLUMN_WIDTH 309
+#define NAME_COLUMN_OFFSET 216
+#define SCORE_COLUMN_WIDTH 220
+#define SCORE_COLUMN_OFFSET 542
+#define DATE_COLUMN_WIDTH 265
+#define DATE_COLUMN_OFFSET 763
+#define ROW1_OFFSET 237
+#define ROW2_OFFSET 317
+#define ROW3_OFFSET 397
+#define ROW4_OFFSET 478
+#define ROW5_OFFSET 560
+#define NAME_COL 1
+#define SCORE_COL 2
+#define DATE_COL 3
+
+
 
 
 #define mainScreen Vector2f(1280, 720)
@@ -25,6 +44,7 @@ public:
 	bool screenPause();
 	void screenOption();
 	void screenPlay();
+	void screenLeaderboard();
 	void updateScoreSprite(int& score, int bonus);
 	void changeTexture(const int& idx);
 	Screen(const Screen& screen) = delete;
