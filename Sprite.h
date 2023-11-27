@@ -9,20 +9,21 @@
 class Sprite : public Movable
 {
 private:
-    Texture texture;
+    Texture* texture;
     Rect2D textureRect;
 public:
     Sprite();
-    Sprite(Vector2f position ,Texture* texture);
+    Sprite(Vector2f position, Texture* texture);
     ~Sprite();
     void setTexture(Texture* texture);
-    Texture getTexture();
+    Texture* getTexture();
     Vector2f getHitbox() const;
 
     Sprite* next;
     Sprite* prev;
 
+    void printPosition();
     void setTextureRect(int top, int left, int width, int height);
-    void updateSprite();
+    void update();
     void draw(void* bits, Vector2i frameSize);
 };

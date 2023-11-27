@@ -41,10 +41,14 @@ void Screen::startGame() {
 	backGround->setTexture(resources[0].getCurrentTexture());
 	mainFrame->draw(*hdc, backGround);
 	music->Play("gameSound.wav", 1, 1);
+	Entity e1("car1_motion");
+	Lane l1(mainFrame, 1, e1, 20);
+	thread t1 = l1.spawnThread();
 	while (true) {
+
 		// this_thread::sleep_for(50ms);
 		if (_kbhit()) {
-			int curr = getch();
+			int curr = _getch();
 			switch (curr) {
 			case KEY_LEFT:
 				if (vertical < 3)
@@ -135,7 +139,7 @@ bool Screen::screenPause() {
 	while (true) {
 		// this_thread::sleep_for(50ms);
 		if (_kbhit()) {
-			int curr = getch();
+			int curr = _getch();
 			switch (curr) {
 			case KEY_DOWN:
 				switch (vertical) {
@@ -196,7 +200,7 @@ void Screen::screenOption() {
 	while (true) {
 		// this_thread::sleep_for(50ms);
 		if (_kbhit()) {
-			int curr = getch();
+			int curr = _getch();
 			switch (curr) {
 			case KEY_DOWN:
 				switch (vertical) {
@@ -261,7 +265,7 @@ void Screen::screenPlay() {
 	while (true) {
 		// this_thread::sleep_for(50ms);
 		if (_kbhit()) {
-			int curr = getch();
+			int curr = _getch();
 			switch (curr) {
 			case KEY_DOWN:
 				switch (vertical) {

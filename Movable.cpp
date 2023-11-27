@@ -88,25 +88,52 @@ void Movable::setSpeed(float speed) {
 }
 
 bool Movable::reachedDestination() {
-    if (position.x > destination.x || position.x < destination.x && destination.x < 0) 
-        return true;
-    if (position.x == destination.x && position.y == destination.y)
-        return true;
-    return false;
+    bool isPositiveX = 1;
+    if (startingPosition.x > destination.x)
+        isPositiveX = 0;
+    bool isPositiveY = 1;
+    if (startingPosition.y > destination.y) 
+        isPositiveY = 0;
+    
+    if (isPositiveX) {
+        if (position.x < destination.x)
+            return false;
+    }
+    else {
+        if (position.x > destination.x)
+            return false;
+    }
+
+    if (isPositiveY) {
+        if (position.y < destination.y)
+            return false;
+    }
+    else {
+        if (position.y > destination.y)
+            return false;
+    }
+
+    return true;
+    
+    //if (position.x > destination.x || position.x < destination.x && destination.x < 0)
+    //    return true;
+    //if (position.x == destination.x && position.y == destination.y)
+    //    return true;
+    //return false;
 }
 
 void Movable::update() {
-//    cerr << "Movable::update()" << endl;
 //    cerr << "isMoving: " << isMoving << endl;
 //    cerr << "velocity: " << velocity.x << ", " << velocity.y << endl;
 //    cerr << "acceleration: " << acceleration.x << ", " << acceleration.y << endl;
     if (isMoving) {
         if (reachedDestination()) {
-            // isMoving = false;
-            // velocity = Vector2f();
-            // acceleration = Vector2f();
-            // system("pause");
+            isMoving = false;
+            velocity = Vector2f();
+            //acceleration = Vector2f();
+            //system("pause");
             position = startingPosition;
+            destination = position;
             // startingPosition = destination;
         }
         else {

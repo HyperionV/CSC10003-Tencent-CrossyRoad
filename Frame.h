@@ -21,9 +21,11 @@ public:
     ~Frame();
 
     void addSprite(Sprite* sprite);
-    Sprite* addSprite(Texture texture, Vector2f position);
+    Sprite* addSprite(Texture &texture, Vector2f position);
+    Sprite* addSprite(Texture *texture, Vector2f position);
     void removeSprite(Sprite*& sprite);
     void removeAllSprite(); 
+    void removeAllSprites(); 
     void update();
     void draw(HDC hdc);
     void draw(HDC hdc, Sprite* curSprite);

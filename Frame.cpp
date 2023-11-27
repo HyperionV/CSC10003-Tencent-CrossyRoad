@@ -28,8 +28,22 @@ Frame::~Frame() {
     }
 }
 
-Sprite* Frame::addSprite(Texture texture, Vector2f position) {
+Sprite* Frame::addSprite(Texture &texture, Vector2f position) {
     Sprite* sprite = new Sprite(position, &texture);
+    if (first == nullptr) {
+        first = sprite;
+        last = sprite;
+    }
+    else {
+        last->next = sprite;
+        sprite->prev = last;
+        last = sprite;
+    }
+    return sprite;
+}
+
+Sprite* Frame::addSprite(Texture *texture, Vector2f position) {
+    Sprite* sprite = new Sprite(position, texture);
     if (first == nullptr) {
         first = sprite;
         last = sprite;
@@ -56,26 +70,49 @@ void Frame::addSprite(Sprite* sprite) {
 }
 
 void Frame::removeSprite(Sprite*& sprite) {
+    if (!sprite) {
+            std::cerr << "Error: Attempt to remove a null node." << std::endl;
+            return;
+        }
+
     if (sprite == first) {
         first = sprite->next;
-        first->prev = nullptr;
-    }
-    else if (sprite == last) {
+        if (first) {
+            first->prev = nullptr;
+        }
+    } else if (sprite == last) {
         last = sprite->prev;
-        last->next = nullptr;
+        if (last) {
+            last->next = nullptr;
+        }
+    } else {
+        if (sprite->prev) {
+            sprite->prev->next = sprite->next;
+        }
+        if (sprite->next) {
+            sprite->next->prev = sprite->prev;
+        }
     }
-    else {
-        sprite->prev->next = sprite->next;
-        sprite->next->prev = sprite->prev;
-    }
+
     delete sprite;
     sprite = nullptr;
+}
+
+void Frame::removeAllSprites() {
+    Sprite* current = first;
+    while (current != nullptr) {
+        Sprite* next = current->next;
+        delete current;
+        current = next;
+    }
+    first = nullptr;
+    last = nullptr;
 }
 
 void Frame::update() {
     Sprite* current = first;
     while (current != nullptr) {
-        current->updateSprite();
+        current->update();
         // if (current->getPosition().x > current->getDestination().x || (current->getPosition().x < current->getDestination().x && current->getDestination().x < 0) ) {
         //     removeSprite(current);
         //     continue;
@@ -94,7 +131,6 @@ void Frame::draw(HDC hdc) {
     bmi.bmiHeader.biBitCount = 32; // 32 bits per pixel (for RGBA)
 
     void *bits;
-
     // Create a DIB section
     HBITMAP hBitmap = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
 
@@ -103,14 +139,12 @@ void Frame::draw(HDC hdc) {
         return;
     }
 
-
     // Draw the sprites to the DIB section
     Sprite* current = first;
     while (current != nullptr) {
         current->draw(bits, size);
         current = current->next;
     }
-
     HDC memDC = CreateCompatibleDC(hdc);
     HBITMAP hOldBitmap = (HBITMAP)SelectObject(memDC, hBitmap);
 

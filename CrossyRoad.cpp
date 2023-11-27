@@ -21,6 +21,7 @@
 #include "Audio.h"
 #include "Text.h"
 #include "TrafficLight.h"
+#include "Map.h"
 
 // #define _WIN32_WINNT 0x0500
 
@@ -51,9 +52,7 @@ vector<Entity> Text::numeric;
 vector<Entity> Text::alphabet;
 vector<Entity> TrafficLight::lightTexture;
 int main(int argc, char* argv[]) {
-
 	HWND console = GetConsoleWindow();
-
 	RECT r;
 	GetWindowRect(console, &r); 
 	
@@ -70,11 +69,29 @@ int main(int argc, char* argv[]) {
 	Text::INIT();
 	TrafficLight::INIT();
 
+//    Texture *test = new Texture("image_bin/street.bin");
 
-	Screen* game = Screen::getInstance(&mainFrame, &hdc);
-	game->startGame();
+//	Entity bg1("street");
+//	Entity _char("up");
+//
+//	Sprite* bg = mainFrame.addSprite(*(bg1.getCurrentTexture()), Vector2f(0, 0));
+//	bg->setEndPos(Vector2f(1480, 960), 0);
+
+//	Screen* game = Screen::getInstance(&mainFrame, &hdc);
+//	game->startGame();
+	int diff = 50;
+	Entity carEntity("car4_motion");
+	vector<Lane> mapLane;
+	for (int i = 0; i < 10; i++) {
+		Lane cur = Lane(&mainFrame, i, carEntity, diff);
+		mapLane.push_back(cur);
+	}
+	Map playMap(hdc, &mainFrame, diff, mapLane);
+	playMap.drawMap();
 
 	ReleaseDC(console, hdc);
+	system("cls");
+
 	cin.ignore();
 	return 0;
 }

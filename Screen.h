@@ -5,6 +5,7 @@
 #include "Frame.h"
 #include "Audio.h"
 #include "Supportive.h"
+#include "Lane.h"
 #include "Text.h"
 #include <conio.h>
 #include <thread>

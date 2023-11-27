@@ -23,7 +23,7 @@ Texture::Texture(const Texture& other) {
     pixels = other.pixels;
 }
 
-Texture::Texture(string filename) {
+Texture::Texture(const string& filename) {
     width = 0;
     height = 0;
     pixels = vector<vector<Pixel>>();
@@ -65,6 +65,12 @@ void Texture::readTexture(string filename) {
     file.read(reinterpret_cast<char*>(&width), sizeof(int));
     file.read(reinterpret_cast<char*>(&height), sizeof(int));
     pixels = vector<vector<Pixel>>(height, vector<Pixel>(width));
+//    cerr << "Height: " << pixels.size() << "\n";
+//    if(pixels.size() > 0)
+//        cerr << "Width: " << pixels[0].size() << "\n";
+//    else
+//        cerr << "Width: 0\n";
+//    cerr << "\n";
 
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++)
@@ -86,6 +92,11 @@ void Texture::readTexture(string filename) {
 void Texture::print() {
     cerr << "Width: " << width << "\n";
     cerr << "Height: " << height << "\n";
+    cerr << "Height: " << pixels.size() << "\n";
+    if(pixels.size() > 0)
+        cerr << "Width: " << pixels[0].size() << "\n";
+    else
+        cerr << "Width: 0\n";
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++)
         {
@@ -100,6 +111,8 @@ void Texture::drawTexture(int top, int left, Rect2D textureRect, void *bits, Vec
     for (int y = 0; y < textureRect.height; y++) {
         for (int x = 0; x < textureRect.width; x++) {
             if (textureRect.top + y < 0 || textureRect.top + y >= frameSize.y || textureRect.left + x < 0 || textureRect.left + x >= frameSize.x)
+                continue;
+            if (textureRect.top + y >= (int) pixels.size() || textureRect.left + x >= (int) pixels[textureRect.top + y].size())
                 continue;
             if(pixels[textureRect.top + y][textureRect.left + x].getA() == 0)
                 continue;
