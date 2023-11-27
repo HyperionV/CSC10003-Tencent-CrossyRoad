@@ -12,6 +12,7 @@ private:
     Sprite* _player;
     size_t point = 0;
 public:
+    Player() {};
     Player(const Entity&, Frame&);
     ~Player();
 
