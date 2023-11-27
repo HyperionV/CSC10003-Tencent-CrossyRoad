@@ -7,8 +7,10 @@ void TrafficLight::INIT() {
 	return;
 }
 
-TrafficLight::TrafficLight(Vector2f pos, const int& status) {
+TrafficLight::TrafficLight(Vector2f pos, Lane* lane1, Lane* lane2, const int& status) {
 	sprite = new Sprite(pos, lightTexture[0].getCurrentTexture());
+	lane.push_back(lane1);
+	lane.push_back(lane2);
 }
 
 TrafficLight::~TrafficLight() {
@@ -16,6 +18,8 @@ TrafficLight::~TrafficLight() {
 }
 
 void TrafficLight::green() {
+	lane[0]->startLane();
+	lane[1]->startLane();
 	status = 0;
 }
 
@@ -24,7 +28,10 @@ void TrafficLight::yellow() {
 }
 
 void TrafficLight::red() {
+	lane[0]->stopLane();
+	lane[1]->stopLane();
 	status = 2;
+	//sprite->setTexture(lightTexture[0].getCurrentTexture());
 }
 
 void TrafficLight::setStatus(const int& Status) {
@@ -46,18 +53,6 @@ void TrafficLight::setStatus(const int& Status) {
 
 Sprite* TrafficLight::getSprite() const {
 	return sprite;
-}
-void TrafficLight::randomLight() {
-	int random = getRandomInRange(0, 1000000);
-
-	//if (random <= 1000000 - 70) {
-	//	status = 0;
-	//}
-	//else if (random <= 1000000 - 50) {
-	//	status = 1;
-	//}
-	//else status = 2;
-	setStatus(random % 3);
 }
 
 void trafficControl(vector<TrafficLight> trafficLight) {

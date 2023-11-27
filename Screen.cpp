@@ -362,19 +362,19 @@ string updateScore(int& score, int bonus) {
  void Screen::crossyRoad() {
 	 int score = 0;
 	 Entity _char("up");
-	 TrafficLight tl1(Vector2f(216, 70.2));
-	 TrafficLight tl2(Vector2f(809.6, 180.4));
-	 TrafficLight tl3(Vector2f(635, 284));
-	 TrafficLight tl4(Vector2f(1195.4, 392.9));
-	 TrafficLight tl5(Vector2f(211.1, 500.8));
+	 //TrafficLight tl1(Vector2f(216, 70.2));
+	 //TrafficLight tl2(Vector2f(809.6, 180.4));
+	 //TrafficLight tl3(Vector2f(635, 284));
+	 //TrafficLight tl4(Vector2f(1195.4, 392.9));
+	 //TrafficLight tl5(Vector2f(211.1, 500.8));
 
-	 
-	 vector<TrafficLight>traff;
-	 traff.emplace_back(tl1);
-	 traff.emplace_back(tl2);
-	 traff.emplace_back(tl3);
-	 traff.emplace_back(tl4);
-	 traff.emplace_back(tl5);
+	 //
+	 //vector<TrafficLight>traff;
+	 //traff.emplace_back(tl1);
+	 //traff.emplace_back(tl2);
+	 //traff.emplace_back(tl3);
+	 //traff.emplace_back(tl4);
+	 //traff.emplace_back(tl5);
 
 
 	 changeTexture(21);
@@ -382,9 +382,7 @@ string updateScore(int& score, int bonus) {
 	 for (int i = 0; i < 5; i++) {
 		 mainFrame->addSprite(this->score[i]);
 	 }
-	 for (int i = 0; i < 5; i++) {
-		 mainFrame->addSprite(traff[i].getSprite());
-	 }
+
 
 
 	 //mainFrame->update();
@@ -426,7 +424,7 @@ string updateScore(int& score, int bonus) {
 				 break;
 			 }
 		 }
-		 trafficControl(traff);
+		 //trafficControl(traff);
 		 mainFrame->update();
 		 mainFrame->draw(*hdc);
 	 }

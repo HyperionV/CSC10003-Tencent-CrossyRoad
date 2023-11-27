@@ -35,6 +35,7 @@ public:
     void resetLane(); 
     void startLane();
     void stopLane();
+    void slowdownLane();
 
     void spawnCar();
 

@@ -3,6 +3,7 @@
 #include "Utilities.h"
 #include "Sprite.h"
 #include "Entity.h"
+#include "TrafficLight.h"
 #include "Lane.h"
 
 class Map {
@@ -12,6 +13,7 @@ class Map {
 	vector<Lane*> mapLane;
     Texture* bgTexture;
     Sprite* bg;
+	vector<TrafficLight> trafficLight;
 	Player player;
 public:
 	Map(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane> &mapLane);

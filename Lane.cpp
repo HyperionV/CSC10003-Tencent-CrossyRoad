@@ -87,6 +87,12 @@ void Lane::stopLane() {
 	}
 }
 
+//void Lane::slowdownLane() {
+//	isRunning = true;
+//	for (int i = 0; i < vehicles.size(); i++) {
+//		vehicles[i]->setSpeed(speed - 50);
+//	}
+//}
 
 
 void Lane::animateLane() {
