@@ -3,28 +3,28 @@
 #include <iostream>
 #include <Windows.h>
 #include <winuser.h>
+#include <sstream>
+#include <iomanip>
 #include <cmath>
-#include <time.h>
 #include <chrono>
 #include <thread>
+#include <time.h>
+#include <conio.h>
 #include "Texture.h"
 #include "Sprite.h"
 #include "Frame.h"
 #include "Entity.h"
-#include <conio.h>
+#include "Supportive.h"
 #include "Lane.h"
 #include "Player.h"
 #include "Screen.h"
 #include "Audio.h"
+#include "Text.h"
+#include "TrafficLight.h"
 #include "Map.h"
 
 // #define _WIN32_WINNT 0x0500
 
-string getExePath(string x) // removes fileName from path i.e "D:\path\to\exe\sample.exe" changes it into "D:\path\to\exe"
-{
-	std::string f = x;
-	return f.substr(0, f.find_last_of("\\/"));
-}
 
 #define KEY_UP 119
 #define KEY_DOWN 115
@@ -48,6 +48,9 @@ void ShowConsoleCursor(bool showFlag)
 }
 
 Screen* Screen::instancePtr = nullptr;
+vector<Entity> Text::numeric;
+vector<Entity> Text::alphabet;
+vector<Entity> TrafficLight::lightTexture;
 int main(int argc, char* argv[]) {
 	HWND console = GetConsoleWindow();
 	RECT r;
@@ -63,6 +66,8 @@ int main(int argc, char* argv[]) {
 
 
 	HDC hdc = GetDC(console);
+	Text::INIT();
+	TrafficLight::INIT();
 
 //    Texture *test = new Texture("image_bin/street.bin");
 
@@ -88,6 +93,7 @@ int main(int argc, char* argv[]) {
 
 	ReleaseDC(console, hdc);
 	system("cls");
+
 	cin.ignore();
 	return 0;
 }

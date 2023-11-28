@@ -200,4 +200,5 @@ void Frame::removeAllSprite()
         delete temp;
     }
     first = last = nullptr;
+    return;
 }
