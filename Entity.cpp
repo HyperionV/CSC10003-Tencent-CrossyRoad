@@ -32,7 +32,7 @@ void Entity::shiftResource() {
     motion.pop_front();
 }
 
-Texture* Entity::getCurrentTexture() {
+Texture* Entity::getCurrentTexture() const {
     return motion.front();
 }
 

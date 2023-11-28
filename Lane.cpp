@@ -39,6 +39,15 @@ void Lane::resetLane() {
 	while (vehicles.size() < vehicleCounter) {
 		vehicles.push_back(mainFrame->addSprite(*model.getCurrentTexture(), start));
 	}
+	for (auto& _item : items) {
+		cout << _item->getItemName() << endl;
+		if (_item->getItemSprite() == nullptr) {
+			_item->setSprite(mainFrame->addSprite(_item->getTexture(), _item->getPosition()));
+			if (_item->getItemName() == "Slime") {
+				_item->getItemSprite()->setEndPos(end, speed);
+			}
+		}
+	}
 	speed += floor((difficulty % 5) / 4);
 	for (auto& _sprite: vehicles) {
 		_sprite->setPosition(start);
@@ -47,6 +56,14 @@ void Lane::resetLane() {
 	lastSpawn = clock();
 	timeTilNextSpawn = rand() % RANDOM_INTERVAL / 1000.0;
 	isRunning = false;
+	//clearItems();
+}
+
+void Lane::clearItems() {
+	for (auto& _item : items) {
+		delete _item;
+	}
+	items.clear();
 }
 
 void Lane::spawnCar() {
@@ -56,24 +73,12 @@ void Lane::spawnCar() {
 
 	vehicles[spawnNow]->setEndPos(end, speed);
 
+	
 	lastSpawn = clock();
 	timeTilNextSpawn = 1.f * timeBetweenSpawn / 1000 + rand() % RANDOM_INTERVAL / (float) 1000;
 }
 
-thread Lane::spawnThread() {
-	return std::thread([this]() {
-			this->startLane();
-		});
-}
-
 void Lane::startLane() {
-	//for (int i = 0; i < vehicleCounter; i++) {
-	//    //cerr << "i: " << i << " " << vehicleCounter << '\n';
-	//    vehicles.push_back(mainFrame->addSprite(*model.getCurrentTexture(), start));
-	//    vehicles[i]->setEndPos(end, speed);
-	//    //cerr << "time: " << timeBetweenSpawn << '\n';
-	//    //this_thread::sleep_for(chrono::milliseconds(timeBetweenSpawn));
-	//}
 	isRunning = true;
 	for (int i = 0; i < vehicles.size(); i++) {
 		vehicles[i]->setIsMoving(true);
@@ -96,11 +101,22 @@ void Lane::animateLane() {
 	}
 }
 
+void Lane::animateItem() {
+	for (auto& _item : items) {
+		_item->animateItem();
+	}
+}
+
 void Lane::update() {
+	animateItem();
 	animateLane();
 	if ((float)(clock() - lastSpawn) / CLOCKS_PER_SEC >= timeTilNextSpawn && isRunning) {
 		spawnCar();
 	}
+}
+
+Vector2f Lane::getStart() const {
+	return start;
 }
 
 bool Lane::checkCollision(Player* _p) {
@@ -113,8 +129,25 @@ bool Lane::checkCollision(Player* _p) {
 			if (topLeft.x < vTopLeft.x && topLeft.y < topLeft.y) return true;
 		return false;
 	}
+	/*for (auto& _item : items) {
+		if (_item->useItem(_p)) {
+			mainFrame->removeSprite(_item->getItemSprite());
+			delete _item;
+			items.erase(find(items.begin(), items.end(), _item));
+		}
+	}*/
 	return false;
 }
+
+void Lane::addItem(const string& itemName, const Entity& model, const Vector2f& position) {
+	if (itemName == "Slime") {
+		items.push_back(new Item(itemName, model, -2, start));
+	}
+	else {
+		items.push_back(new Item(itemName, model, 5, position));
+	}
+}
+
 int Lane::getTotalVehicle() {
 	return (int) vehicles.size();
 }

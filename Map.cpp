@@ -38,7 +38,6 @@ void Map::drawMap() {
 		//	for (int i = 0; i < (int)mapLane.size(); i++) {
 		//		mapLane[i]->startLane();
 		//	}
-
 		for (int i = 0; i < (int)mapLane.size(); i++) {
 			mapLane[i]->update();
 		}
