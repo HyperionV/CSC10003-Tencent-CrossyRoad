@@ -6,6 +6,7 @@
 #include <time.h>
 #include <random>
 #include "Player.h"
+#include "Item.h"
 
 class Lane {
 private:
@@ -25,6 +26,7 @@ private:
     deque<int> nextSpawn;
     bool isRunning;
     vector<bool> onTrack;
+    vector<Item*> items;
 
     float timeTilNextSpawn;
     mt19937 rand;
@@ -40,11 +42,14 @@ public:
     void spawnCar();
 
     bool checkCollision(Player*);
+    void addItem(const string& itemName, const Entity& model, const Vector2f& postion);
+
     void animateLane();
-
+    void animateItem();
+    void clearItems();
     void update();
+    Vector2f getStart() const;
 
-    thread spawnThread();
     int getTotalVehicle();
     void printStart();
     void printEnd();

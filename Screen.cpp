@@ -43,7 +43,7 @@ void Screen::startGame() {
 	music->Play("gameSound.wav", 1, 1);
 	Entity e1("car1_motion");
 	Lane l1(mainFrame, 1, e1, 20);
-	thread t1 = l1.spawnThread();
+	//thread t1 = l1.spawnThread();
 	while (true) {
 
 		// this_thread::sleep_for(50ms);

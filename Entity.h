@@ -15,7 +15,7 @@ public:
     Entity(const string&);
     Entity(const string&, bool);
     void shiftResource();
-    Texture* getCurrentTexture();
+    Texture* getCurrentTexture() const;
     Texture* getPreviousTexture();
     int getMotionSize();
 

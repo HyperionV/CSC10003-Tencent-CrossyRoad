@@ -1,4 +1,7 @@
+#pragma warning(disable:4996)
+#define _CRT_SECURE_NO_DEPRECATE
 #include "Supportive.h"
+
 
 string return_current_time_and_date()
 {

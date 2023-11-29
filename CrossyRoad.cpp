@@ -81,9 +81,11 @@ int main(int argc, char* argv[]) {
 	//game->startGame();
 	int diff = 50;
 	Entity carEntity("car4_motion");
+	Entity coin("blueSlime_run");
 	vector<Lane> mapLane;
 	for (int i = 0; i < 10; i++) {
 		Lane cur = Lane(&mainFrame, i, carEntity, diff);
+		cur.addItem("Slime", coin, cur.getStart());
 		mapLane.push_back(cur);
 	}
 	Map playMap(hdc, &mainFrame, diff, mapLane);
