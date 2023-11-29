@@ -77,8 +77,8 @@ int main(int argc, char* argv[]) {
 //	Sprite* bg = mainFrame.addSprite(*(bg1.getCurrentTexture()), Vector2f(0, 0));
 //	bg->setEndPos(Vector2f(1480, 960), 0);
 
-//	Screen* game = Screen::getInstance(&mainFrame, &hdc);
-//	game->startGame();
+	//Screen* game = Screen::getInstance(&mainFrame, &hdc);
+	//game->startGame();
 	int diff = 50;
 	Entity carEntity("car4_motion");
 	vector<Lane> mapLane;
