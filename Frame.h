@@ -3,6 +3,7 @@
 #include "Sprite.h"
 #include "Texture.h"
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -21,8 +22,8 @@ public:
     ~Frame();
 
     void addSprite(Sprite* sprite);
-    Sprite* addSprite(Texture &texture, Vector2f position);
-    Sprite* addSprite(Texture *texture, Vector2f position);
+    Sprite* addSprite(Texture& texture, Vector2f position, int priority = 0);
+    Sprite* addSprite(Texture* texture, Vector2f position, int priority = 0);
     void removeSprite(Sprite*& sprite);
     void removeAllSprite(); 
     void removeAllSprites(); 

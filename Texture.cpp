@@ -40,6 +40,17 @@ Texture::~Texture() {
     // Do nothing
 }
 
+void Texture::flipHorizontal() {
+    for (int row = 0; row < height; row++) {
+        for (int col = 0; col < width / 2; col++) {
+            Pixel temp = pixels[row][col];
+            pixels[row][col] = pixels[row][width - col - 1];
+            pixels[row][width - col - 1] = temp;
+        }
+    }
+}
+
+
 void Texture::setPixel(int x, int y, Pixel pixel) {
     pixels[y][x] = pixel;
 }

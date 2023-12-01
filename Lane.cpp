@@ -4,7 +4,7 @@
 int lanePos[] {143, 183, 252, 292, 355, 395, 465, 505, 575, 615};
 pair<int, int> path = pair<int, int>(-132, 1280);
 
-
+Lane::Lane() {}
 
 Lane::Lane(Frame* mainFrame, const int& laneCounter, const Entity& _entity, const int& _difficulty) 
 	: rand(time(NULL) + laneCounter)
@@ -117,6 +117,9 @@ void Lane::animateItem() {
 void Lane::update() {
 	animateItem();
 	animateLane();
+	if (!isRunning) {
+		lastSpawn = clock();
+	}
 	if ((float)(clock() - lastSpawn) / CLOCKS_PER_SEC >= timeTilNextSpawn && isRunning) {
 		spawnCar();
 	}

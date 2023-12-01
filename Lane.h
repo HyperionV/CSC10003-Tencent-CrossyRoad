@@ -32,6 +32,7 @@ private:
     mt19937 rand;
 
 public:
+    Lane();
     Lane(Frame*, const int&, const Entity&, const int&);
     ~Lane();
     void resetLane(); 

@@ -14,10 +14,12 @@ public:
     //~Entity();
     Entity(const string&);
     Entity(const string&, bool);
+    Entity(const Entity&);
     void shiftResource();
     Texture* getCurrentTexture() const;
     Texture* getPreviousTexture();
     int getMotionSize();
+    void flipHorizontal();
 
     void setName(const string&);
 };

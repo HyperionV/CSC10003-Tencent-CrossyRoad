@@ -81,12 +81,24 @@ int main(int argc, char* argv[]) {
 //	game->startGame();
 	int diff = 50;
 	Entity carEntity("car4_motion");
+	Entity revCarEntity("car4_motion");
+	revCarEntity.flipHorizontal();
 	Entity coin("blueSlime_run");
 	vector<Lane> mapLane;
 	for (int i = 0; i < 10; i++) {
 		Lane cur = Lane(&mainFrame, i, carEntity, diff);
 		cur.addItem("Slime", coin, cur.getStart());
 		mapLane.push_back(cur);
+		if (i % 2 == 1) {
+			Lane cur1 = Lane(&mainFrame, i, carEntity, diff);
+			cur1.addItem("Slime", coin, cur1.getStart());
+			mapLane.push_back(cur1);
+		}
+		else {
+			Lane cur2 = Lane(&mainFrame, i, revCarEntity, diff);
+			cur2.addItem("Slime", coin, cur2.getStart());
+			mapLane.push_back(cur2);
+		}
 	}
 	Map playMap(hdc, &mainFrame, diff, mapLane);
 	playMap.drawMap();

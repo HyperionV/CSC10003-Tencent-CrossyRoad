@@ -28,8 +28,8 @@ Frame::~Frame() {
     }
 }
 
-Sprite* Frame::addSprite(Texture &texture, Vector2f position) {
-    Sprite* sprite = new Sprite(position, &texture);
+Sprite* Frame::addSprite(Texture& texture, Vector2f position, int priority) {
+    Sprite* sprite = new Sprite(position, &texture, priority);
     if (first == nullptr) {
         first = sprite;
         last = sprite;
@@ -42,8 +42,8 @@ Sprite* Frame::addSprite(Texture &texture, Vector2f position) {
     return sprite;
 }
 
-Sprite* Frame::addSprite(Texture *texture, Vector2f position) {
-    Sprite* sprite = new Sprite(position, texture);
+Sprite* Frame::addSprite(Texture* texture, Vector2f position, int priority) {
+    Sprite* sprite = new Sprite(position, texture, priority);
     if (first == nullptr) {
         first = sprite;
         last = sprite;
@@ -140,11 +140,20 @@ void Frame::draw(HDC hdc) {
     }
 
     // Draw the sprites to the DIB section
+    vector<Sprite*> sprites;
     Sprite* current = first;
     while (current != nullptr) {
-        current->draw(bits, size);
+        sprites.push_back(current);
         current = current->next;
     }
+
+    stable_sort(sprites.begin(), sprites.end(), [](Sprite* a, Sprite* b) {
+        return a->getPriority() < b->getPriority();
+    });
+    for (Sprite* sprite : sprites) {
+        sprite->draw(bits, size);
+    }
+
     HDC memDC = CreateCompatibleDC(hdc);
     HBITMAP hOldBitmap = (HBITMAP)SelectObject(memDC, hBitmap);
 
@@ -152,6 +161,7 @@ void Frame::draw(HDC hdc) {
 
     SelectObject(memDC, hOldBitmap);
     DeleteDC(memDC);
+
 
     // Clean up the DIB section
     DeleteObject(hBitmap);

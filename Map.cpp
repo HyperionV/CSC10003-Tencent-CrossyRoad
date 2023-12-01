@@ -22,8 +22,13 @@ Map::Map(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane> &MapLane) {
 	trafficLight.emplace_back(tl4);
 	trafficLight.emplace_back(tl5);
 	for (int i = 0; i < 5; i++) {
+		Sprite* tmp = trafficLight[i].getSprite();
+		tmp->setPriority(10);
 		mainFrame->addSprite(trafficLight[i].getSprite());
 	}
+	Entity playerEntity("up");
+	player = Player(playerEntity, *mapFrame);
+
 }
 
 Map::~Map() {
