@@ -1,3 +1,4 @@
+#pragma warning(disable:4244)
 #include "Sprite.h"
 #include <iostream>
 using namespace std;

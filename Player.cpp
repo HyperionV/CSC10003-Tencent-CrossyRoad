@@ -1,3 +1,4 @@
+#pragma warning(disable:4244)
 #include "Player.h"
 float pos[] = { 665, 610, 570, 500, 460, 391, 350, 284, 242, 180, 140 };
 

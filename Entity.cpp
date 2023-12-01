@@ -45,7 +45,7 @@ void Entity::setName(const string& _name) {
 }
 
 int Entity::getMotionSize() {
-    return motion.size();
+    return (int)motion.size();
 }
 
 //Entity::~Entity() {

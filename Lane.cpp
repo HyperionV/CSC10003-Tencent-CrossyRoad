@@ -1,3 +1,4 @@
+#pragma warning(disable:4244)
 #include "Lane.h"
 
 int lanePos[] {143, 183, 252, 292, 355, 395, 465, 505, 575, 615};
@@ -5,11 +6,11 @@ pair<int, int> path = pair<int, int>(-132, 1280);
 
 
 
-Lane::Lane(Frame* mainFrame, const int& laneCounter, const Entity& _entity, const int& _difficulty) :
-	rand(time(NULL) + laneCounter)
+Lane::Lane(Frame* mainFrame, const int& laneCounter, const Entity& _entity, const int& _difficulty) 
+	: rand(time(NULL) + laneCounter)
 {
 	if (laneCounter % 2) {
-		start = Vector2f(path.first, lanePos[laneCounter]);
+		start = Vector2f(path.first, lanePos[laneCounter]*1.0);
 		end = Vector2f(path.second, lanePos[laneCounter]);
 	}
 	else {
@@ -44,7 +45,7 @@ void Lane::resetLane() {
 		if (_item->getItemSprite() == nullptr) {
 			_item->setSprite(mainFrame->addSprite(_item->getTexture(), _item->getPosition()));
 			if (_item->getItemName() == "Slime") {
-				_item->getItemSprite()->setEndPos(end, speed);
+				_item->getItemSprite()->setEndPos(_item->getDestination(), speed);
 			}
 		}
 	}
@@ -135,22 +136,22 @@ bool Lane::checkCollision(Player* _p) {
 			if (topLeft.x < vTopLeft.x && topLeft.y < topLeft.y) return true;
 		return false;
 	}
-	/*for (auto& _item : items) {
+	for (auto& _item : items) {
 		if (_item->useItem(_p)) {
 			mainFrame->removeSprite(_item->getItemSprite());
 			delete _item;
 			items.erase(find(items.begin(), items.end(), _item));
 		}
-	}*/
+	}
 	return false;
 }
 
 void Lane::addItem(const string& itemName, const Entity& model, const Vector2f& position) {
 	if (itemName == "Slime") {
-		items.push_back(new Item(itemName, model, -2, start));
+		items.push_back(new Slime(itemName, start));
 	}
 	else {
-		items.push_back(new Item(itemName, model, 5, position));
+		items.push_back(new Coin(itemName, position));
 	}
 }
 

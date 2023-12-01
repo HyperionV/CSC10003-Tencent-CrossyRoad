@@ -1,3 +1,4 @@
+#pragma warning(disable:4244)
 #include "Map.h"
 
 Map::Map(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane> &MapLane) {
@@ -10,11 +11,11 @@ Map::Map(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane> &MapLane) {
 	for (int i = 0; i < (int)MapLane.size(); i++) {
 		this->mapLane.push_back(&MapLane[i]);
 	}
-	TrafficLight tl1(Vector2f(216, 70.2), mapLane[0], mapLane[1], 0);
-	TrafficLight tl2(Vector2f(809.6, 180.4), mapLane[2], mapLane[3], 0);
-	TrafficLight tl3(Vector2f(635, 284), mapLane[4], mapLane[5], 0);
-	TrafficLight tl4(Vector2f(1195.4, 392.9), mapLane[6], mapLane[7], 0);
-	TrafficLight tl5(Vector2f(211.1, 500.8), mapLane[8], mapLane[9], 0);
+	TrafficLight tl1(Vector2f(216, 70.2f), mapLane[0], mapLane[1], 0);
+	TrafficLight tl2(Vector2f(809.6f, 180.4f), mapLane[2], mapLane[3], 0);
+	TrafficLight tl3(Vector2f(635, 284.f), mapLane[4], mapLane[5], 0);
+	TrafficLight tl4(Vector2f(1195.4f, 392.9f), mapLane[6], mapLane[7], 0);
+	TrafficLight tl5(Vector2f(211.1f, 500.8f), mapLane[8], mapLane[9], 0);
 	trafficLight.emplace_back(tl1);
 	trafficLight.emplace_back(tl2);
 	trafficLight.emplace_back(tl3);

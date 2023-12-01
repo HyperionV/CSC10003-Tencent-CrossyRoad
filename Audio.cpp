@@ -1,3 +1,4 @@
+#pragma warning(disable:4244)
 #include "Audio.h"
 
 string getCurrentDirectoryOnWindows()

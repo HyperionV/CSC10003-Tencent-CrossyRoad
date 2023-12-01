@@ -1,20 +1,19 @@
+#pragma warning(disable:4244)
 #include "Item.h"
 
-Item::Item(const string& _itemName, const Entity& model, const int& value, const Vector2f& position)
-	:itemName{_itemName}, model{ model }, value{ value }, position{ position }
+Item::Item(const string& _itemName, const Vector2f& position)
+	:itemName{_itemName}, position{ position }
 {
 	itemSprite = nullptr;
 }
 
-//Item::Item(const Entity& model, const int& value, const Vector2f& position)
-//	:model{ model }, value{ value }, position{ position }
-//{
-//	itemSprite = nullptr;
-//}
-
 Item::Item(const Item& item)
-	:Item(item.itemName, item.model, item.value, item.position)
+	:Item(item.itemName, item.position)
 {}
+
+Item::~Item() {
+	delete model;
+}
 
 void Item::setSprite(Sprite* _sprite) {
 	itemSprite = _sprite;
@@ -24,12 +23,12 @@ void Item::setName(const string& _name) {
 	itemName = _name;
 }
 
-void Item::setModel(const Entity& _e) {
-	model = _e;
-}
-
 void Item::setValue(const int& val) {
 	value = val;
+}
+
+void Item::setModel(Entity* _model) {
+	model = _model;
 }
 
 void Item::setPosition(const Vector2f& _pos) {
@@ -37,7 +36,7 @@ void Item::setPosition(const Vector2f& _pos) {
 }
 
 Texture* Item::getTexture() const {
-	return model.getCurrentTexture();
+	return model->getCurrentTexture();
 }
 
 Sprite*& Item::getItemSprite() {
@@ -56,9 +55,20 @@ int Item::getValue() const {
 	return value;
 }
 
+void Item::removeItem(Frame& mainFrame) {
+	mainFrame.removeSprite(itemSprite);
+}
+
 void Item::animateItem() {
-	model.shiftResource();
-	itemSprite->setTexture(model.getCurrentTexture());
+	model->shiftResource();
+	itemSprite->setTexture(model->getCurrentTexture());
+}
+
+bool Item::checkCollision(Player* _player) {
+	Vector2f topLeft = _player->getCurrentPos();
+	Vector2f bottomRight = topLeft + _player->getHitbox();
+	//to be implemented
+	return true;
 }
 
 bool Item::useItem(Player* _player) {
@@ -69,18 +79,23 @@ bool Item::useItem(Player* _player) {
 	return false;
 }
 
-//Slime::Slime(const string& _itemName, const Entity& _model, const int& _value, const Vector2f& _position, const Vector2f& _destination, const float& _speed)
-//	:Item(_itemName, _model, _value, _position), destination{ _destination }, speed{ _speed }
-//{}
+Slime::Slime(const string& _itemName, const Vector2f& _position)
+	:Item(_itemName, _position)
+{
+	value = -2;
+	model = new Entity("blueSlime_jumpattack");
+	this->position.y -= 15;
+	this->destination = Vector2f((this->position.x == -132) ? 1280 : -132, this->position.y);
+}
 
-//Slime::Slime(const Entity& _model, const int& _value, const Vector2f& _position, const Vector2f& _destination, const float& _speed)
-//	:Item(_model, _value, _position), destination{ _destination }, speed{ _speed }
-//{}
+Vector2f Item::getDestination() const {
+	return destination;
+}
 
-//Coin::Coin(const string& _itemName, const Entity& _model, const int& _value, const Vector2f& _position)
-//	:Item(_itemName, _model, _value, _position)
-//{}
-
-//Coin::Coin(const Entity& _model, const int& _value, const Vector2f& _position)
-//	:Item(_model, _value, _position)
-//{}
+Coin::Coin(const string& _itemName, const Vector2f& _position)
+	:Item(_itemName, _position)
+{
+	model = new Entity("yc");
+	value = 5;
+	destination = position;
+}
