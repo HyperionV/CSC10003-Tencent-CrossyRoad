@@ -10,18 +10,17 @@
 #include <thread>
 #include <time.h>
 #include <conio.h>
-#include "Item.h"
-#include "Texture.h"
-#include "Sprite.h"
-#include "Frame.h"
-#include "Entity.h"
-#include "Supportive.h"
-#include "Lane.h"
-#include "Player.h"
-#include "Screen.h"
-#include "Audio.h"
-#include "Text.h"
-#include "TrafficLight.h"
+//#include "Item.h"
+//#include "Texture.h"
+//#include "Sprite.h"
+//#include "Frame.h"
+//#include "Entity.h"
+//#include "Supportive.h"
+//#include "Lane.h"
+//#include "Player.h"
+//#include "Screen.h"
+//#include "Audio.h"
+//#include "Text.h"
 #include "Map.h"
 
 // #define _WIN32_WINNT 0x0500
@@ -52,6 +51,7 @@ Screen* Screen::instancePtr = nullptr;
 vector<Entity> Text::numeric;
 vector<Entity> Text::alphabet;
 vector<Entity> TrafficLight::lightTexture;
+vector<vector<int>> Lane::lanePos;
 int main(int argc, char* argv[]) {
 	HWND console = GetConsoleWindow();
 	RECT r;
@@ -69,6 +69,7 @@ int main(int argc, char* argv[]) {
 	HDC hdc = GetDC(console);
 	Text::INIT();
 	TrafficLight::INIT();
+	Lane::INIT();
 
 //    Texture *test = new Texture("image_bin/street.bin");
 
@@ -80,30 +81,15 @@ int main(int argc, char* argv[]) {
 
 	//Screen* game = Screen::getInstance(&mainFrame, &hdc);
 	//game->startGame();
-	int diff = 50;
-	Entity carEntity("car4_motion");
-	Entity revCarEntity("car4_motion");
-	revCarEntity.flipHorizontal();
-	Entity coin("blueSlime_run");
-	vector<Lane> mapLane;
-	for (int i = 0; i < 10; i++) {
-		Lane cur = Lane(&mainFrame, i, carEntity, diff);
-		cur.addItem("Slime", coin, cur.getStart());
-		mapLane.push_back(cur);
-		if (i % 2 == 1) {
-			Lane cur1 = Lane(&mainFrame, i, carEntity, diff);
-			cur1.addItem("Slime", coin, cur1.getStart());
-			mapLane.push_back(cur1);
-		}
-		else {
-			Lane cur2 = Lane(&mainFrame, i, revCarEntity, diff);
-			cur2.addItem("Slime", coin, cur2.getStart());
-			mapLane.push_back(cur2);
-		}
-	}
-	Map playMap(hdc, &mainFrame, diff, mapLane);
-	playMap.drawMap();
+	int diff =90;
+	//Entity carEntity("car4_motion");
+	//Entity revCarEntity("car4_motion");
+	//revCarEntity.flipHorizontal();
+	//Entity coin("blueSlime_run");
 
+
+	StreetMap playMap(hdc, &mainFrame, diff);
+	playMap.drawMap();
 	ReleaseDC(console, hdc);
 	system("cls");
 

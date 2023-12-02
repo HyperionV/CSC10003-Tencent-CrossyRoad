@@ -56,3 +56,7 @@ void Sprite::setPriority(int priority) {
 void Sprite::update() {
     Movable::update();
 }
+void Sprite::draw(void* bits, Vector2i frameSize)
+{
+    texture->drawTexture((int)position.y, (int)position.x, textureRect, bits, frameSize);
+}

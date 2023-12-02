@@ -3,6 +3,7 @@
 #include <xaudio2.h>
 #include <iostream>
 #include <string>
+#include <deque>
 using namespace std;
 #ifdef _XBOX 
 #define fourccRIFF 'RIFF'

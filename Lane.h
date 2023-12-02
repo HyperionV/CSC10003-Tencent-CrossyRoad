@@ -1,12 +1,17 @@
 #pragma once
-#include "Entity.h"
 #include <cmath>
 #include <thread>
 #include <chrono>
 #include <time.h>
 #include <random>
+#include "Entity.h"
 #include "Player.h"
+#include "Supportive.h"
 #include "Item.h"
+
+#define STREET_MAP 0
+#define CHESS_MAP 1
+#define TRAIN_MAP 2
 
 class Lane {
 private:
@@ -14,14 +19,15 @@ private:
 
     int difficulty;
     int timeBetweenSpawn;
+    vector<Entity*> model;
+    vector<Sprite*> vehicles;
+    static vector<vector<int>>lanePos;
 
     Vector2f start;
     Vector2f end;
     float speed{5};
     Frame* mainFrame;
     int vehicleCounter;
-    Entity model;
-    vector<Sprite*> vehicles;
     clock_t lastSpawn;
     deque<int> nextSpawn;
     bool isRunning;
@@ -33,12 +39,12 @@ private:
 
 public:
     Lane();
-    Lane(Frame*, const int&, const Entity&, const int&);
+    Lane(Frame*, const int&, vector<Entity>& _entity, const int&, const int&);
     ~Lane();
     void resetLane(); 
     void startLane();
     void stopLane();
-    void slowdownLane();
+    static void INIT();
 
     void spawnCar();
 
@@ -54,4 +60,5 @@ public:
     int getTotalVehicle();
     void printStart();
     void printEnd();
+    void setVehicleCounter(const int&);
 };

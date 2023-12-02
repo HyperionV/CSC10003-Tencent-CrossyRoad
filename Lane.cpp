@@ -1,44 +1,87 @@
 #pragma warning(disable:4244)
 #include "Lane.h"
 
-int lanePos[] {143, 183, 252, 292, 355, 395, 465, 505, 575, 615};
-pair<int, int> path = pair<int, int>(-132, 1280);
+int laneStreetPos[] {130, 170, 240, 276, 344, 384, 450, 490, 559, 602};
+int laneChessPos[] { 130, 170, 240, 276, 344 };
+
+
+pair<int, int> path = pair<int, int>(-150, 1280);
+
+void Lane::INIT() {
+	vector<int>street;
+	vector<int>chess;
+	vector<int>train;
+
+
+	street.push_back(130);
+	street.push_back(170);
+	street.push_back(240);
+	street.push_back(276);
+	street.push_back(344);
+	street.push_back(384);
+	street.push_back(450);
+	street.push_back(490);
+	street.push_back(559);
+	street.push_back(602);
+
+
+	chess.push_back(90);
+	chess.push_back(200);
+	chess.push_back(300);
+	chess.push_back(400);
+	chess.push_back(510);
+
+	lanePos.push_back(street);
+	lanePos.push_back(chess);
+	return;
+
+}
 
 Lane::Lane() {}
+void Lane::setVehicleCounter(const int& counter) {
+	this->vehicleCounter = counter;
+	return;
+}
 
-Lane::Lane(Frame* mainFrame, const int& laneCounter, const Entity& _entity, const int& _difficulty) 
+Lane::Lane(Frame* mainFrame, const int& laneCounter, vector<Entity>& _entity, const int& _difficulty, const int& mapType) 
 	: rand(time(NULL) + laneCounter)
 {
+	for (int i = 0; i < _entity.size(); i++) {
+		if (laneCounter % 2 != i % 2) {
+			Entity* temp = &_entity[i];
+			model.push_back(temp);
+		}
+	}
 	if (laneCounter % 2) {
-		start = Vector2f(path.first, lanePos[laneCounter]*1.0);
-		end = Vector2f(path.second, lanePos[laneCounter]);
+		start = Vector2f(path.first, lanePos[mapType][laneCounter]*1.0);
+		end = Vector2f(path.second, lanePos[mapType][laneCounter]);
 	}
 	else {
-		start = Vector2f(path.second, lanePos[laneCounter]);
-		end = Vector2f(path.first, lanePos[laneCounter]);
+		start = Vector2f(path.second, lanePos[mapType][laneCounter]);
+		end = Vector2f(path.first, lanePos[mapType][laneCounter]);
 	}
 	difficulty = _difficulty;
 	timeBetweenSpawn = 2000 - (150 * (difficulty % 5)) * (1 + (difficulty % 5) / 4);
 	vehicleCounter = floor(12000/timeBetweenSpawn);
 	speed += floor((float) difficulty/5);
 	this->mainFrame = mainFrame;
-	model = _entity;
 
-	
 }
 
 Lane::~Lane() {}
 
 void Lane::resetLane() {
 	timeBetweenSpawn = 2000 - (150 * (difficulty % 5)) * (1 + (difficulty % 5) / 4);
-	vehicleCounter = floor(12000/timeBetweenSpawn);
+	vehicleCounter = floor(12000 / timeBetweenSpawn);
 	nextSpawn.clear();
+
 	for (int i = 0; i < vehicleCounter; i++) {
 		nextSpawn.push_back(i);
 	}
 	onTrack.resize(vehicleCounter, false);
 	while (vehicles.size() < vehicleCounter) {
-		vehicles.push_back(mainFrame->addSprite(*model.getCurrentTexture(), start));
+		int idx = vehicles.size() % model.size();
+		vehicles.push_back(mainFrame->addSprite(model[idx]->getCurrentTexture(), start));
 	}
 	for (auto& _item : items) {
 		cout << _item->getItemName() << endl;
@@ -93,19 +136,11 @@ void Lane::stopLane() {
 	}
 }
 
-//void Lane::slowdownLane() {
-//	isRunning = true;
-//	for (int i = 0; i < vehicles.size(); i++) {
-//		vehicles[i]->setSpeed(speed - 50);
-//	}
-//}
-
-
 void Lane::animateLane() {
-	model.shiftResource();
-	for (auto _sprite: vehicles) {
-		_sprite->setTexture(model.getCurrentTexture());
+	for(int i= 0; i< vehicles.size(); i++) {
+		vehicles[i]->setTexture(model[i % model.size()]->getCurrentTexture());
 	}
+
 }
 
 void Lane::animateItem() {
@@ -168,4 +203,3 @@ void Lane::printStart() {
 void Lane::printEnd() {
 	cerr << "end pos: " << end.x << " " << end.y << '\n';
 }
-//void Lane::draw

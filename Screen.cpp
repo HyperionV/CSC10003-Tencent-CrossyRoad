@@ -43,7 +43,7 @@ void Screen::startGame() {
 	mainFrame->draw(*hdc, backGround);
 	music->Play("gameSound.wav", 1, 1);
 	Entity e1("car1_motion");
-	Lane l1(mainFrame, 1, e1, 20);
+	//Lane l1(mainFrame, 1, e1, 20);
 	//thread t1 = l1.spawnThread();
 	while (true) {
 
@@ -363,19 +363,6 @@ string updateScore(int& score, int bonus) {
  void Screen::crossyRoad() {
 	 int score = 0;
 	 Entity _char("up");
-	 //TrafficLight tl1(Vector2f(216, 70.2));
-	 //TrafficLight tl2(Vector2f(809.6, 180.4));
-	 //TrafficLight tl3(Vector2f(635, 284));
-	 //TrafficLight tl4(Vector2f(1195.4, 392.9));
-	 //TrafficLight tl5(Vector2f(211.1, 500.8));
-
-	 //
-	 //vector<TrafficLight>traff;
-	 //traff.emplace_back(tl1);
-	 //traff.emplace_back(tl2);
-	 //traff.emplace_back(tl3);
-	 //traff.emplace_back(tl4);
-	 //traff.emplace_back(tl5);
 
 
 	 changeTexture(21);
