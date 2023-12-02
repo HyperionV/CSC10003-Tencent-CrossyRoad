@@ -39,5 +39,6 @@ public:
 	void readTexture(string filename);
 	void print();
 	void drawTexture(int top, int left, Rect2D textureRect, HDC hdc);
+	void drawTextureReverse(int top, int left, Rect2D textureRect, void* bits, Vector2i frameSize);
 	void drawTexture(int top, int left, Rect2D textureRect, void* bits, Vector2i frameSize);
 };

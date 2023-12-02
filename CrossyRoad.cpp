@@ -10,6 +10,7 @@
 #include <thread>
 #include <time.h>
 #include <conio.h>
+#include "Item.h"
 #include "Texture.h"
 #include "Sprite.h"
 #include "Frame.h"
