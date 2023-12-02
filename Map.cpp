@@ -53,12 +53,12 @@ void Map::drawMap() {
 		//mapLane[0]->update();
 		trafficControl(trafficLight);
 		bool collide = 0;
-		for (int i = 0; i < (int)mapLane.size(); i++) {
-			if (mapLane[i]->checkCollision(&player)) {
+		int playerCurrentLane = player.convertLane();
+		if (playerCurrentLane < 10) {
+			if (mapLane[playerCurrentLane]->checkCollision(&player))
 				collide = 1;
-				break;
-			}
 		}
+
         mainFrame->update();
         mainFrame->draw(hdc);
 		if (collide)

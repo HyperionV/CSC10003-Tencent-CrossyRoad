@@ -145,7 +145,6 @@ bool Lane::checkCollision(Player* _p) {
 		if (vTopLeft.y < vBottomRight.y) {
 			swap(vTopLeft.y, vBottomRight.y);
 		}
-
 		if (bottomRight.x < vTopLeft.x || vBottomRight.x < topLeft.x)
 			continue; // no overlap
 		if (topLeft.y < vBottomRight.y || vTopLeft.y < bottomRight.y)

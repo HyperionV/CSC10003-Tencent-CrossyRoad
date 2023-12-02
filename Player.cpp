@@ -7,8 +7,8 @@ Player::Player(Frame& mainFrame) {
     model.push_back(new Entity("player/up"));
     model.push_back(new Entity("player/right"));
     _player = mainFrame.addSprite(model[state]->getCurrentTexture(), Vector2f(1280 / 2, 655));
-    width = 38;
-    height = 45;
+    width = 36;
+    height = 40;
     cnt = 0;
 }
 
@@ -73,6 +73,10 @@ void Player::addPoint() {
 
 void Player::addPoint(const int& value) {
     point += value;
+}
+
+int Player::convertLane() {
+    return 10 - cnt;
 }
 
 void Player::playerHandler()

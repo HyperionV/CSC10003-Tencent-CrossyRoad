@@ -31,6 +31,7 @@ public:
     Vector2f getHitbox() const;
     void addPoint();
     void addPoint(const int& value);
+    int convertLane();
 
     void playerHandler();
     thread launchHandler();
