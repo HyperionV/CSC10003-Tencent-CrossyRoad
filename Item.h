@@ -3,16 +3,20 @@
 #include "Sprite.h"
 #include "Utilities.h"
 #include "Player.h"
+#include <map>
 
 class Item {
 	string itemName;
-	Entity model;
-	int value;
-	Vector2f position;
 	Sprite* itemSprite;
+protected:
+	int value;
+	Entity* model;
+	Vector2f position;
+	Vector2f destination;
 public:
-	Item(const string& itemName, const Entity& model, const int& value, const Vector2f& position);
+	Item(const string& itemName, const Vector2f& position);
 	Item(const Item&);
+	~Item();
 
 	Texture* getTexture() const;
 	Sprite*& getItemSprite();
@@ -22,22 +26,23 @@ public:
 
 	void setSprite(Sprite*);
 	void setName(const string&);
-	void setModel(const Entity&);
 	void setValue(const int&);
+	void setModel(Entity*);
 	void setPosition(const Vector2f&);
+	Vector2f getDestination() const;
 
+	void removeItem(Frame& mainFrame);
 	void animateItem();
+	bool checkCollision(Player* _player);
 	bool useItem(Player* _player);
 };
 
-//class Slime : public Item {
-//public:
-//	Slime(const string& itemName, const Entity& model, const int& value, const Vector2f& position, const Vector2f& destination, const float& speed);;
-//	//Slime(const Entity& model, const int& value, const Vector2f& position, const Vector2f& destination, const float& speed);
-//};
-//
-//class Coin : public Item {
-//public:
-//	Coin(const string& itemName, const Entity& model, const int& value, const Vector2f& position);
-//	//Coin(const Entity& model, const int& value, const Vector2f& position);
-//};
+class Slime : public Item {
+public:
+	Slime(const string& itemName, const Vector2f& position);
+};
+
+class Coin : public Item {
+public:
+	Coin(const string& itemName, const Vector2f& position);
+};

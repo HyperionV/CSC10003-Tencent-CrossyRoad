@@ -1,3 +1,4 @@
+#pragma warning(disable:4244)
 #include "Text.h"
 int spaceChar[] = { 21, 21, 21, 21, 21, 21, 21, 21, 6, 10, 21, 10, 29, 21, 21, 21, 21, 18, 19, 16, 21, 21, 34, 21, 21, 21 };
 // i was so dumb...

@@ -14,7 +14,7 @@ TrafficLight::TrafficLight(Vector2f pos, Lane* lane1, Lane* lane2, const int& st
 }
 
 TrafficLight::~TrafficLight() {
-	;
+	
 }
 
 void TrafficLight::green() {

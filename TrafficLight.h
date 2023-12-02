@@ -13,7 +13,7 @@ private :
 	int status; //0 is green, 1 is yellow, 2 is red
 	int preStatus;
 	Sprite* sprite;
-	static vector<Entity>lightTexture;
+	static vector<Entity> lightTexture;
 	vector<Lane*> lane;
 public : 
 	static void INIT();

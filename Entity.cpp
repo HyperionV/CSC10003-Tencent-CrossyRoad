@@ -27,6 +27,13 @@ Entity::Entity(const string& entityName, bool) {
     }
 }
 
+Entity::Entity(const Entity& other) {
+    entityName = other.entityName;
+    for (auto& i : other.motion) {
+        motion.push_back(new Texture(*i));
+    }
+}
+
 void Entity::shiftResource() {
     motion.push_back(motion.front());
     motion.pop_front();
@@ -40,12 +47,18 @@ Texture* Entity::getPreviousTexture() {
     return motion.back();
 }
 
+void Entity::flipHorizontal() {
+    for (auto& i : motion) {
+        i->flipHorizontal();
+    }
+}
+
 void Entity::setName(const string& _name) {
     entityName = _name;
 }
 
 int Entity::getMotionSize() {
-    return motion.size();
+    return (int)motion.size();
 }
 
 //Entity::~Entity() {

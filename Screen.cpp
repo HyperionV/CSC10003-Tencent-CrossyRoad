@@ -1,3 +1,4 @@
+#pragma warning(disable:4244)
 #include "Screen.h"
 #include "Player.h"
 #include "Text.h"
