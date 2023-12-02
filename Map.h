@@ -5,6 +5,7 @@
 #include "Entity.h"
 #include "TrafficLight.h"
 #include "Lane.h"
+#include <thread>
 
 class Map {
 	int difficulty;

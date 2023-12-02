@@ -26,9 +26,7 @@ Map::Map(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane> &MapLane) {
 		tmp->setPriority(10);
 		mainFrame->addSprite(trafficLight[i].getSprite());
 	}
-	Entity playerEntity("up");
-	player = Player(playerEntity, *mapFrame);
-
+	player = Player(*mapFrame);
 }
 
 Map::~Map() {
@@ -39,28 +37,17 @@ Map::~Map() {
 }
 
 void Map::drawMap() {
-	//mapLane[0]->resetLane();
-	//mapLane[0]->printStart();
-	//mapLane[0]->printEnd();
-	//cerr << "\n\n";
 	for (int i = 0; i < (int)mapLane.size(); i++) {
 		mapLane[i]->resetLane();
 		mapLane[i]->startLane();
 	}
 	clock_t time = clock();
+	thread t = player.launchHandler();
+	//player.playerHandler();
 	while (true) {
-		//if ((clock() - time)/CLOCKS_PER_SEC > 4)
-		//	for (int i = 0; i < (int)mapLane.size(); i++) {
-		//		mapLane[i]->stopLane();
-		//	}
-		//if ((clock() - time)/CLOCKS_PER_SEC > 6)
-		//	for (int i = 0; i < (int)mapLane.size(); i++) {
-		//		mapLane[i]->startLane();
-		//	}
 		for (int i = 0; i < (int)mapLane.size(); i++) {
 			mapLane[i]->update();
 		}
-		//mapLane[1]->vehicles[0]->printPosition(); 
 		trafficControl(trafficLight);
         mainFrame->update();
         mainFrame->draw(hdc);

@@ -390,7 +390,7 @@ string updateScore(int& score, int bonus) {
 	 //mainFrame->draw(*this->hdc);
 	 // Lane l1(1, e1, 1);
 
-	 Player _p(_char, *mainFrame);
+	 Player _p(*mainFrame);
 	 while (true) {
 		 //this_thread::sleep_for(100ms);
 		 _p.animatePlayer();

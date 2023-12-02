@@ -69,16 +69,6 @@ int main(int argc, char* argv[]) {
 	Text::INIT();
 	TrafficLight::INIT();
 
-//    Texture *test = new Texture("image_bin/street.bin");
-
-//	Entity bg1("street");
-//	Entity _char("up");
-//
-//	Sprite* bg = mainFrame.addSprite(*(bg1.getCurrentTexture()), Vector2f(0, 0));
-//	bg->setEndPos(Vector2f(1480, 960), 0);
-
-//	Screen* game = Screen::getInstance(&mainFrame, &hdc);
-//	game->startGame();
 	int diff = 50;
 	Entity carEntity("car4_motion");
 	Entity revCarEntity("car4_motion");

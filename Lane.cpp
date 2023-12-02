@@ -23,8 +23,6 @@ Lane::Lane(Frame* mainFrame, const int& laneCounter, const Entity& _entity, cons
 	speed += floor((float) difficulty/5);
 	this->mainFrame = mainFrame;
 	model = _entity;
-
-	
 }
 
 Lane::~Lane() {}
@@ -41,7 +39,7 @@ void Lane::resetLane() {
 		vehicles.push_back(mainFrame->addSprite(*model.getCurrentTexture(), start));
 	}
 	for (auto& _item : items) {
-		cout << _item->getItemName() << endl;
+		//cout << _item->getItemName() << endl;
 		if (_item->getItemSprite() == nullptr) {
 			_item->setSprite(mainFrame->addSprite(_item->getTexture(), _item->getPosition()));
 			if (_item->getItemName() == "Slime") {

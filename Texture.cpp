@@ -118,6 +118,10 @@ void Texture::print() {
     }
 }
 
+//void Texture::drawTexture(int top, int left, Rect2D textureRect, HDC hdc)
+//{
+//}
+
 void Texture::drawTexture(int top, int left, Rect2D textureRect, void *bits, Vector2i frameSize) {
     for (int y = 0; y < textureRect.height; y++) {
         for (int x = 0; x < textureRect.width; x++) {
