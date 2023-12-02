@@ -76,9 +76,6 @@ int main(int argc, char* argv[]) {
 	Entity coin("blueSlime_run");
 	vector<Lane> mapLane;
 	for (int i = 0; i < 10; i++) {
-		Lane cur = Lane(&mainFrame, i, carEntity, diff);
-		cur.addItem("Slime", coin, cur.getStart());
-		mapLane.push_back(cur);
 		if (i % 2 == 1) {
 			Lane cur1 = Lane(&mainFrame, i, carEntity, diff);
 			cur1.addItem("Slime", coin, cur1.getStart());

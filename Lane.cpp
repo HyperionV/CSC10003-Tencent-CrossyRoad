@@ -130,13 +130,30 @@ Vector2f Lane::getStart() const {
 bool Lane::checkCollision(Player* _p) {
 	Vector2f topLeft = _p->getCurrentPos();
 	Vector2f bottomRight = topLeft + _p->getHitbox();
+	if (topLeft.x > bottomRight.x) {
+		swap(topLeft.x, bottomRight.x);
+	}
+	if (topLeft.y < bottomRight.y) {
+		swap(topLeft.y, bottomRight.y);
+	}
 	for (auto _sprite: vehicles) {
 		Vector2f vTopLeft = _sprite->getPosition();
 		Vector2f vBottomRight = vTopLeft + _sprite->getHitbox();
-		if (bottomRight.x > bottomRight.x && vBottomRight.y > vBottomRight.y) 
-			if (topLeft.x < vTopLeft.x && topLeft.y < topLeft.y) return true;
-		return false;
+		if (vTopLeft.x > vBottomRight.x) {
+			swap(vTopLeft.x, vBottomRight.x);
+		}
+		if (vTopLeft.y < vBottomRight.y) {
+			swap(vTopLeft.y, vBottomRight.y);
+		}
+
+		if (bottomRight.x < vTopLeft.x || vBottomRight.x < topLeft.x)
+			continue; // no overlap
+		if (topLeft.y < vBottomRight.y || vTopLeft.y < bottomRight.y)
+			continue; // no overlap
+		return true; // overlap
 	}
+	return false;
+
 	for (auto& _item : items) {
 		if (_item->useItem(_p)) {
 			mainFrame->removeSprite(_item->getItemSprite());

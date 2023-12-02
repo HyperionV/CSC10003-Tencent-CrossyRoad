@@ -41,6 +41,8 @@ void Map::drawMap() {
 		mapLane[i]->resetLane();
 		mapLane[i]->startLane();
 	}
+	//mapLane[0]->resetLane();
+	//mapLane[0]->startLane();
 	clock_t time = clock();
 	thread t = player.launchHandler();
 	//player.playerHandler();
@@ -48,8 +50,18 @@ void Map::drawMap() {
 		for (int i = 0; i < (int)mapLane.size(); i++) {
 			mapLane[i]->update();
 		}
+		//mapLane[0]->update();
 		trafficControl(trafficLight);
+		bool collide = 0;
+		for (int i = 0; i < (int)mapLane.size(); i++) {
+			if (mapLane[i]->checkCollision(&player)) {
+				collide = 1;
+				break;
+			}
+		}
         mainFrame->update();
         mainFrame->draw(hdc);
+		if (collide)
+			break;
     }
 }
