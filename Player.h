@@ -22,6 +22,7 @@ private:
     Sprite* _player;
     size_t point = 0;
     int state = 1; // left - 0; up - 1; right - 2;
+    bool isRunning;
 public:
     Player() {};
     Player(Frame&, const int&);
@@ -33,8 +34,11 @@ public:
     Vector2f getHitbox() const;
     void addPoint();
     void addPoint(const int& value);
+    int convertLane();
 
     static void INIT();
     void playerHandler();
     thread launchHandler();
+    void stopPlayerHandler();
+    int let_Megumin_cook();
 };

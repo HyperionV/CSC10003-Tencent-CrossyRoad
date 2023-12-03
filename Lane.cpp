@@ -136,6 +136,9 @@ void Lane::stopLane() {
 	for (int i = 0; i<vehicles.size();i++) {
 		vehicles[i]->setIsMoving(false);
 	}
+	for (auto& _item : items) {
+		_item->getItemSprite()->setEndPos(_item->getItemSprite()->getPosition(), 0);
+	}
 }
 
 void Lane::animateLane() {
@@ -184,7 +187,6 @@ bool Lane::checkCollision(Player* _p) {
 		if (vTopLeft.y < vBottomRight.y) {
 			swap(vTopLeft.y, vBottomRight.y);
 		}
-
 		if (bottomRight.x < vTopLeft.x || vBottomRight.x < topLeft.x)
 			continue; // no overlap
 		if (vBottomRight.y < ((bottomRight.y - topLeft.y) / 2 + bottomRight.y))
@@ -195,10 +197,12 @@ bool Lane::checkCollision(Player* _p) {
 			continue; // no overlap
 		return true; // overlap
 	}
-	return false;
+	//return false;
 
 	for (auto& _item : items) {
-		if (_item->useItem(_p)) {
+		if (_item->checkCollision(_p)) {
+			_p->addPoint(_item->getValue());
+			cout << "Item used" << endl;
 			mainFrame->removeSprite(_item->getItemSprite());
 			delete _item;
 			items.erase(find(items.begin(), items.end(), _item));

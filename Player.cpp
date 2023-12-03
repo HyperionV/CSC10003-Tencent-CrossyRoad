@@ -93,10 +93,6 @@ void Player::animatePlayer() {
     _player->setTexture(model[state]->getCurrentTexture());
 }
 
-//void Player::setModel(const Entity& _model) {
-//    model = _model;
-//}
-
 Vector2f Player::getHitbox() const {
     return Vector2f(width, height);
 }
@@ -109,9 +105,13 @@ void Player::addPoint(const int& value) {
     point += value;
 }
 
+int Player::convertLane() {
+    return 10 - cnt;
+}
+
 void Player::playerHandler()
 {
-    while (true) {
+    while (true && isRunning) {
         int vertical{}, horizon{};
         animatePlayer();
         if (_kbhit()) {
@@ -144,7 +144,17 @@ void Player::playerHandler()
 }
 
 thread Player::launchHandler() {
+    isRunning = true;
     return thread([this]() { 
         this->playerHandler(); 
     });
+}
+
+void Player::stopPlayerHandler() {
+    isRunning = false;
+}
+
+int Player::let_Megumin_cook() {
+    state = 3;
+    return model[state]->getMotionSize();
 }

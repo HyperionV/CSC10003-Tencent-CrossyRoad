@@ -46,18 +46,32 @@ void StreetMap::drawMap() {
 			mapLane[i]->update();
 		}
 		bool collide = 0;
-		for (int i = 0; i < (int)mapLane.size(); i++) {
-			if (mapLane[i]->checkCollision(&player)) {
+		int playerCurrentLane = player.convertLane();
+		if (playerCurrentLane < 10) {
+			if (mapLane[playerCurrentLane]->checkCollision(&player))
 				collide = 1;
-				break;
-			}
 		}
 		mainFrame->update();
 		mainFrame->draw(hdc);
-		if (collide)
+		if (collide) {
+			player.stopPlayerHandler();
+			t.join();
+			for (auto& s : mapLane) {
+				s->stopLane();
+			}
+			int sz = player.let_Megumin_cook();
+			while (sz--) {
+				this_thread::sleep_for(200ms);
+				player.animatePlayer();
+				mainFrame->update();
+				mainFrame->draw(hdc);
+			}
 			break;
+			// do something
+		}
 	}
 }
+
 
 void StreetMap::loadResource() {
 	for (int i = 0; i < 7; i++) {
@@ -166,3 +180,4 @@ TrainMap::~TrainMap() {
 void TrainMap::loadResource() {
 	;
 }
+

@@ -33,8 +33,7 @@ public:
 
 	void removeItem(Frame& mainFrame);
 	void animateItem();
-	bool checkCollision(Player* _player);
-	bool useItem(Player* _player);
+	bool checkCollision(Player* _p);
 };
 
 class Slime : public Item {

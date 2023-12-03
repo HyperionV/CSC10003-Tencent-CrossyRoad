@@ -74,7 +74,7 @@ int main(int argc, char* argv[]) {
 	Player::INIT();
 
 	int diff = 90;
-	ChessMap playMap(hdc, &mainFrame, diff);
+	StreetMap playMap(hdc, &mainFrame, diff);
 	playMap.drawMap();
 
 	ReleaseDC(console, hdc);
