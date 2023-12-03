@@ -1,0 +1,3257 @@
+
+```Audio.h```
+
+#pragma once
+
+#include <xaudio2.h>
+#include <iostream>
+#include <string>
+using namespace std;
+#ifdef _XBOX 
+#define fourccRIFF 'RIFF'
+#define fourccDATA 'data'
+#define fourccFMT 'fmt '
+#define fourccWAVE 'WAVE'
+#define fourccXWMA 'XWMA'
+#define fourccDPDS 'dpds'
+#endif
+
+#ifndef _XBOX
+#define fourccRIFF 'FFIR'
+#define fourccDATA 'atad'
+#define fourccFMT ' tmf'
+#define fourccWAVE 'EVAW'
+#define fourccXWMA 'AMWX'
+#define fourccDPDS 'sdpd'
+#endif
+class Audio
+{
+protected:
+    HRESULT hr;
+    IXAudio2* pXAudio2;
+    IXAudio2SourceVoice* pSourceVoice;
+    IXAudio2MasteringVoice* pMasterVoice;
+    HRESULT FindChunk(HANDLE hFile, DWORD fourcc, DWORD& dwChunkSize, DWORD& dwChunkDataPosition);
+    HRESULT ReadChunkData(HANDLE hFile, void* buffer, DWORD buffersize, DWORD bufferoffset);
+public:
+
+    Audio();
+    int Play(string path, float volume = 1, bool ShouldLoop = false); // plays the audio file with specified volume and can be looped
+    string BasePath; // Directory where all audio files (relevant to project) are stored i.e if all audio files are stored in "D:\game" than set BasePath to "D:\game", this will be automatically added in path of every audio file
+    void Stop();
+};
+string getExePath(string x);
+string getCurrentDirectoryOnWindows();
+
+```Entity.h```
+
+#pragma once
+#include "Texture.h"
+#include "Sprite.h"
+#include "Frame.h"
+#include <deque>
+#include "Utilities.h"
+
+class Entity : public Rect2D {
+private:
+    deque<Texture*> motion;
+    string entityName{};    
+public:
+    Entity();
+    //~Entity();
+    Entity(const string&);
+    Entity(const string&, bool);
+    Entity(const Entity&);
+    void shiftResource();
+    Texture* getCurrentTexture() const;
+    Texture* getPreviousTexture();
+    int getMotionSize();
+    void flipHorizontal();
+
+    void setName(const string&);
+};
+
+
+```Font.h```
+
+#pragma once
+#include "Texture.h"
+#include <map>
+
+using namespace std;
+
+//docstring
+
+/* Font class
+* Filename format: fontName_character.png
+* Only supports characters from ASCII 32 to 126
+* This class is used to store a font
+* A font is a map of characters to textures
+* This class also provides methods to read a font from a file
+*/
+
+class Font {
+	map<char, Texture*> characters;
+public:
+	Font();
+	Font(const string& fontName);
+	~Font();
+
+	void readFont(const string& fontName);
+	void clearFont();
+	Texture* getCharacter(const char& c);
+};
+
+
+```Frame.h```
+
+#pragma once
+#include "Utilities.h"
+#include "Sprite.h"
+#include "Texture.h"
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+class Frame
+{
+private:
+    Sprite* first;
+    Sprite* last;
+
+    Vector2i size;
+    Vector2i position;
+
+public:
+    Frame();
+    Frame(Vector2i size, Vector2i position);
+    ~Frame();
+
+    void addSprite(Sprite* sprite);
+    Sprite* addSprite(Texture& texture, Vector2f position, int priority = 0);
+    Sprite* addSprite(Texture* texture, Vector2f position, int priority = 0);
+    void removeSprite(Sprite*& sprite);
+    void removeAllSprite(); 
+    void removeAllSprites(); 
+    void update();
+    void draw(HDC hdc);
+    void draw(HDC hdc, Sprite* curSprite);
+};
+
+```Game.h```
+
+#pragma once
+
+#include <iostream>
+#include <Windows.h>
+#include <winuser.h>
+#include <cmath>
+#include <chrono>
+#include <thread>
+#include "Player.h"
+
+class Game {
+private:
+	Player* _player;
+public:
+	Game();
+	~Game();
+
+	Game(int width, int height, int fpsCap);
+
+	
+};
+
+```Item.h```
+
+#pragma once
+#include "Entity.h"
+#include "Sprite.h"
+#include "Utilities.h"
+#include "Player.h"
+#include <map>
+
+class Item {
+	string itemName;
+	Sprite* itemSprite;
+protected:
+	int value;
+	Entity* model;
+	Vector2f position;
+	Vector2f destination;
+public:
+	Item(const string& itemName, const Vector2f& position);
+	Item(const Item&);
+	~Item();
+
+	Texture* getTexture() const;
+	Sprite*& getItemSprite();
+	Vector2f getPosition() const;
+	string getItemName() const;
+	int getValue() const;
+
+	void setSprite(Sprite*);
+	void setName(const string&);
+	void setValue(const int&);
+	void setModel(Entity*);
+	void setPosition(const Vector2f&);
+	Vector2f getDestination() const;
+
+	void removeItem(Frame& mainFrame);
+	void animateItem();
+	bool checkCollision(Player* _player);
+	bool useItem(Player* _player);
+};
+
+class Slime : public Item {
+public:
+	Slime(const string& itemName, const Vector2f& position);
+};
+
+class Coin : public Item {
+public:
+	Coin(const string& itemName, const Vector2f& position);
+};
+
+```Lane.h```
+
+#pragma once
+#include "Entity.h"
+#include <cmath>
+#include <thread>
+#include <chrono>
+#include <time.h>
+#include <random>
+#include "Player.h"
+#include "Item.h"
+
+class Lane {
+private:
+    const int RANDOM_INTERVAL = 4000;
+
+    int difficulty;
+    int timeBetweenSpawn;
+
+    Vector2f start;
+    Vector2f end;
+    float speed{5};
+    Frame* mainFrame;
+    int vehicleCounter;
+    Entity model;
+    vector<Sprite*> vehicles;
+    clock_t lastSpawn;
+    deque<int> nextSpawn;
+    bool isRunning;
+    vector<bool> onTrack;
+    vector<Item*> items;
+
+    float timeTilNextSpawn;
+    mt19937 rand;
+
+public:
+    Lane();
+    Lane(Frame*, const int&, const Entity&, const int&);
+    ~Lane();
+    void resetLane(); 
+    void startLane();
+    void stopLane();
+    void slowdownLane();
+
+    void spawnCar();
+
+    bool checkCollision(Player*);
+    void addItem(const string& itemName, const Entity& model, const Vector2f& postion);
+
+    void animateLane();
+    void animateItem();
+    void clearItems();
+    void update();
+    Vector2f getStart() const;
+
+    int getTotalVehicle();
+    void printStart();
+    void printEnd();
+};
+
+```Map.h```
+
+#pragma once
+
+#include "Utilities.h"
+#include "Sprite.h"
+#include "Entity.h"
+#include "TrafficLight.h"
+#include "Lane.h"
+#include <thread>
+
+class Map {
+	int difficulty;
+	HDC hdc;
+	Frame *mainFrame;
+	vector<Lane*> mapLane;
+    Texture* bgTexture;
+    Sprite* bg;
+	vector<TrafficLight> trafficLight;
+	Player player;
+public:
+	Map(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane> &mapLane);
+	~Map();
+
+	void drawMap();
+};
+
+```Movable.h```
+
+#pragma once
+
+#include "Utilities.h"
+
+using namespace std;
+using namespace utility;
+
+class Movable
+{
+protected:
+    Vector2f position;
+    Vector2f startingPosition;
+    Vector2f velocity;
+    Vector2f acceleration;
+    Vector2f destination;
+    bool isMoving;
+    float speed;
+
+public:
+    bool reachedDestination();
+    Movable();
+    Movable(Vector2f position, Vector2f velocity, Vector2f acceleration);
+    Movable(const Movable& other);
+    ~Movable();
+
+    Vector2f getPosition();
+    Vector2f getVelocity();
+    Vector2f getAcceleration();
+    Vector2f getDestination();
+    bool getIsMoving();
+    float getSpeed();
+
+    void setPosition(Vector2f position);
+    void setVelocity(Vector2f velocity);
+    void setAcceleration(Vector2f acceleration);
+    void setDestination(Vector2f destination);
+    void setIsMoving(bool isMoving);
+    void setSpeed(float speed);
+
+    void update();
+    void setEndPos(Vector2f endPos, float speed);
+};
+
+```Pixel.h```
+
+#pragma once
+
+#include <Windows.h>
+#include <winuser.h>
+
+class Pixel
+{
+private:
+    int r;
+    int g;
+    int b;
+    int a;
+public:
+    Pixel();
+    Pixel(int r, int g, int b, int a);
+    Pixel(const Pixel& other);
+    ~Pixel();
+
+    int getR();
+    int getG();
+    int getB();
+    int getA();
+
+    void drawPixel(int x, int y, HDC hdc);
+    void print();
+};
+
+```Player.h```
+
+#pragma once
+#include "Utilities.h"
+#include "Sprite.h"
+#include "Entity.h"
+#include <conio.h>
+#include <chrono>
+#include <thread>
+
+using namespace std;
+
+#define KEY_UP 119
+#define KEY_DOWN 115
+#define KEY_LEFT 97
+#define KEY_RIGHT 100
+
+class Player: Rect2D {
+private:
+    int cnt = 0;
+    vector<Entity*> model;
+    Sprite* _player;
+    size_t point = 0;
+    int state = 1; // left - 0; up - 1; right - 2;
+public:
+    Player() {};
+    Player(Frame&);
+    ~Player();
+
+    Vector2f getCurrentPos() const;
+    void setPosition(const float& x, const float& y, const char& dir);
+    void animatePlayer();
+    Vector2f getHitbox() const;
+    void addPoint();
+    void addPoint(const int& value);
+    int convertLane();
+
+    void playerHandler();
+    thread launchHandler();
+};
+
+```resource.h```
+
+//{{NO_DEPENDENCIES}}
+// Microsoft Visual C++ generated include file.
+// Used by Crossy Road.rc
+
+// Next default values for new objects
+// 
+#ifdef APSTUDIO_INVOKED
+#ifndef APSTUDIO_READONLY_SYMBOLS
+#define _APS_NEXT_RESOURCE_VALUE        101
+#define _APS_NEXT_COMMAND_VALUE         40001
+#define _APS_NEXT_CONTROL_VALUE         1001
+#define _APS_NEXT_SYMED_VALUE           101
+#endif
+#endif
+
+```Screen.h```
+
+#pragma once
+
+#include "Sprite.h"
+#include "Entity.h"
+#include "Frame.h"
+#include "Audio.h"
+#include "Supportive.h"
+#include "Lane.h"
+#include "Text.h"
+#include <conio.h>
+#include <thread>
+#include <chrono>
+#include <fstream>
+#define KEY_UP 119
+#define KEY_DOWN 115
+#define KEY_LEFT 97
+#define KEY_RIGHT 100
+#define ON_CLICK 0
+#define NAME_COLUMN_WIDTH 309
+#define NAME_COLUMN_OFFSET 216
+#define SCORE_COLUMN_WIDTH 220
+#define SCORE_COLUMN_OFFSET 542
+#define DATE_COLUMN_WIDTH 265
+#define DATE_COLUMN_OFFSET 763
+#define ROW1_OFFSET 237
+#define ROW2_OFFSET 317
+#define ROW3_OFFSET 397
+#define ROW4_OFFSET 478
+#define ROW5_OFFSET 560
+#define NAME_COL 1
+#define SCORE_COL 2
+#define DATE_COL 3
+
+
+
+
+#define mainScreen Vector2f(1280, 720)
+class Screen {
+public:
+	void crossyRoad();
+	void screenAbout();
+	void screenHelp();
+	void startGame();
+	void screenGame();
+	bool screenPause();
+	void screenOption();
+	void screenPlay();
+	void screenLeaderboard();
+	void updateScoreSprite(int& score, int bonus);
+	void changeTexture(const int& idx);
+	Screen(const Screen& screen) = delete;
+
+	static Screen* getInstance(Frame* curFrame, HDC* hdc) {
+		if (instancePtr == nullptr) {
+			instancePtr = new Screen(curFrame, hdc);
+			return instancePtr;
+		}
+		else {
+			return instancePtr;
+		}
+	}
+
+	void setMusic();
+	void playSound(const int& type);
+	~Screen();
+private :
+	static Screen* instancePtr;
+	Screen(Frame*, HDC* hdc);
+	Screen();
+	Frame* mainFrame;
+	Sprite* backGround;
+	vector<Entity> resources;
+	vector<Sprite*> score;
+	HDC* hdc;
+	Audio* music;
+	Audio* soundEffect;
+	bool isMusicOff;
+};
+
+```Sprite.h```
+
+#pragma once
+
+#include <Windows.h>
+#include "Utilities.h"
+#include "Pixel.h"
+#include "Movable.h"
+#include "Texture.h"
+
+class Sprite : public Movable
+{
+private:
+    Texture* texture;
+    Rect2D textureRect;
+    int priority;
+public:
+    Sprite();
+    Sprite(Vector2f position, Texture* texture, int priority = 0);
+    ~Sprite();
+    void setTexture(Texture* texture);
+    Texture* getTexture();
+    Vector2f getHitbox() const;
+    Sprite* next;
+    Sprite* prev;
+    int getPriority();
+    void setPriority(int priority);
+
+    void printPosition();
+    void setTextureRect(int top, int left, int width, int height);
+    void update();
+    void draw(void* bits, Vector2i frameSize);
+};
+
+```Supportive.h```
+
+#pragma once
+#include <iostream>
+#include <chrono>
+#include <vector>
+#include <sstream>
+#include <iomanip>
+#include "Text.h"
+#include "Screen.h"
+
+class leaderBoardInfo {
+private:
+	string name;
+	string score;
+	string date;
+public:
+	leaderBoardInfo(const string& name, const string& score, const string& date) {
+		this->name = name;
+		this->score = score;
+		this->date = date;
+	}
+	string getName() const {
+		return name;
+	}
+
+	string getScore() const {
+		return score;
+	}
+	string getDate() const {
+		return date;
+	}
+
+};
+
+using namespace std;
+
+string return_current_time_and_date();
+
+string getExePath(string x);
+
+vector<leaderBoardInfo> readLeaderBoardFromFile(const string& filename);
+
+int getScoreBoardCoord(const int& len, const int& col);
+
+void writeLeaderboardToFile(const vector<leaderBoardInfo>& leaderboard, const string& filename);
+
+int getRandomInRange(int a, int b);
+
+```Text.h```
+
+#pragma once
+
+
+#include "Entity.h"
+#include "Sprite.h"
+#include <iostream>
+#include <vector>
+
+class Text {
+private : 
+	vector<Sprite*> text;
+	string t;
+	int length;
+	static vector<Entity>alphabet;
+	static vector<Entity>numeric;
+public :
+	static void INIT();
+	int getLength() const;
+	Text();
+	Text(const string& text);
+	void writeText(const int& x, const int& y, Frame* frame);
+	~Text();
+
+};
+
+```Texture.h```
+
+#pragma once
+
+#include <vector>
+#include <string>
+#include <Windows.h>
+#include <winuser.h>
+#include "Pixel.h"
+#include "Utilities.h"
+
+using namespace std;
+using namespace utility;
+
+class Texture
+/* Texture class
+ * This class is used to store a texture
+ * A texture is a 2D array of pixels
+ * This class also provides methods to read a texture from a file
+ * and draw a texture to a device context
+ */
+{
+protected:
+	int width;
+	int height;
+	vector<vector<Pixel>> pixels;
+public:
+	Texture();
+	Texture(int width, int height);
+    Texture(const string& filename);
+	Texture(const Texture& other);
+	Texture(Texture* other);
+	~Texture();
+
+	void setPixel(int x, int y, Pixel pixel);
+	Pixel getPixel(int x, int y);
+	int getWidth();
+	int getHeight();
+	//Vector2i getSize();
+
+	void readTexture(string filename);
+	void print();
+	void flipHorizontal();
+	//void drawTexture(int top, int left, Rect2D textureRect, HDC hdc);
+	void drawTexture(int top, int left, Rect2D textureRect, void* bits, Vector2i frameSize);
+};
+
+```TrafficLight.h```
+
+#pragma once
+
+#include <cstdlib> 
+#include <ctime>
+#include "Entity.h"
+#include "Sprite.h"
+#include "Supportive.h"
+
+//#define TRAFFIC_LIGHT_POS_1 Vector2f()
+
+class TrafficLight {
+private :
+	int status; //0 is green, 1 is yellow, 2 is red
+	int preStatus;
+	Sprite* sprite;
+	static vector<Entity> lightTexture;
+	vector<Lane*> lane;
+public : 
+	static void INIT();
+	TrafficLight() {};
+	TrafficLight(Vector2f pos, Lane* lane1, Lane* lane2, const int& status = 0);
+	~TrafficLight();
+	Sprite* getSprite() const;
+	void setStatus(const int& status);
+	void green();
+	void yellow();
+	void red();
+};
+void trafficControl(vector<TrafficLight> trafficLight);
+
+
+
+
+
+
+
+
+```Utilities.h```
+
+#pragma once
+
+namespace utility {
+
+//    float SPEED_MULTIPLIER = 1.0f;
+//    void setSpeedMultiplier(float speedMultiplier);
+
+    struct Vector2i {
+        int x;
+        int y;
+
+        Vector2i();
+
+        Vector2i(int x, int y);
+
+        Vector2i(const Vector2i &other);
+
+        ~Vector2i();
+
+        Vector2i operator+(const Vector2i &other);
+
+        Vector2i operator-(const Vector2i &other);
+
+        Vector2i operator*(const int &other);
+
+        Vector2i operator/(const int &other);
+
+        Vector2i operator+=(const Vector2i &other);
+
+        Vector2i operator-=(const Vector2i &other);
+
+        Vector2i operator*=(const int &other);
+
+        Vector2i operator/=(const int &other);
+
+        bool operator==(const Vector2i &other);
+
+        bool operator!=(const Vector2i &other);
+
+        float modulus();
+    };
+
+    struct Vector2f {
+        float x;
+        float y;
+
+        Vector2f();
+
+        Vector2f(float x, float y);
+
+        Vector2f(const Vector2f &other);
+
+        ~Vector2f();
+
+        Vector2f operator+(const Vector2f &other);
+
+        Vector2f operator-(const Vector2f &other);
+
+        Vector2f operator*(const float &other);
+
+        Vector2f operator/(const float &other);
+
+        Vector2f operator+=(const Vector2f &other);
+
+        Vector2f operator-=(const Vector2f &other);
+
+        Vector2f operator*=(const float &other);
+
+        Vector2f operator/=(const float &other);
+
+        bool operator==(const Vector2f &other);
+
+        bool operator!=(const Vector2f &other);
+
+        float modulus();
+    };
+
+    struct Rect2D{
+        int top;
+        int left;
+        int width;
+        int height;
+
+        Rect2D();
+        Rect2D(int top, int left, int width, int height);
+        Rect2D(Vector2i topLeft, Vector2i bottomRight);
+        Rect2D(Vector2i topLeft, int width, int height);
+        Rect2D(const Rect2D& other);
+        ~Rect2D();
+    };
+
+}
+
+```Audio.cpp```
+
+#pragma warning(disable:4244)
+#include "Audio.h"
+
+string getCurrentDirectoryOnWindows()
+{
+    const unsigned long maxDir = 260;
+    TCHAR currentDir[maxDir];
+    GetCurrentDirectory(maxDir, currentDir);
+    string str;
+    #ifndef UNICODE
+        str = currentDir;
+    #else
+        std::wstring wStr = currentDir;
+        str = std::string(wStr.begin(), wStr.end());
+    #endif
+    return str;
+}
+
+Audio::Audio()
+{
+    BasePath = getCurrentDirectoryOnWindows();
+    hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    if (FAILED(hr))
+        cout << hr;
+    pXAudio2 = nullptr;
+    if (FAILED(hr = XAudio2Create(&pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR)))
+        cout << hr;
+
+    pMasterVoice = nullptr;
+    if (FAILED(hr = pXAudio2->CreateMasteringVoice(&pMasterVoice)))
+        cout << hr;
+}
+int Audio::Play(string path, float volume, bool ShouldLoop) {
+    path = BasePath + "\\" + path;
+    WAVEFORMATEXTENSIBLE wfx = { 0 };
+    XAUDIO2_BUFFER buffer = { 0 };
+#ifdef _XBOX
+    char* strFileName = path;
+#else
+    TCHAR* strFileName = new TCHAR[path.size() + 1];
+    strFileName[path.size()] = 0;
+    std::copy(path.begin(), path.end(), strFileName);
+#endif
+    // Open the file
+    HANDLE hFile = CreateFile(
+        strFileName,
+        GENERIC_READ,
+        FILE_SHARE_READ,
+        NULL,
+        OPEN_EXISTING,
+        0,
+        NULL);
+
+    if (INVALID_HANDLE_VALUE == hFile) {
+        return HRESULT_FROM_WIN32(GetLastError());
+    }
+    if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))
+        return HRESULT_FROM_WIN32(GetLastError());
+    DWORD dwChunkSize;
+    DWORD dwChunkPosition;
+    //check the file type, should be fourccWAVE or 'XWMA'
+    FindChunk(hFile, fourccRIFF, dwChunkSize, dwChunkPosition);
+    DWORD filetype;
+    ReadChunkData(hFile, &filetype, sizeof(DWORD), dwChunkPosition);
+    if (filetype != fourccWAVE)
+        return S_FALSE;
+
+    FindChunk(hFile, fourccFMT, dwChunkSize, dwChunkPosition);
+    ReadChunkData(hFile, &wfx, dwChunkSize, dwChunkPosition);
+    FindChunk(hFile, fourccDATA, dwChunkSize, dwChunkPosition);
+    BYTE* pDataBuffer = new BYTE[dwChunkSize];
+    ReadChunkData(hFile, pDataBuffer, dwChunkSize, dwChunkPosition);
+
+    buffer.AudioBytes = dwChunkSize;  // size of the audio buffer in bytes
+    buffer.pAudioData = pDataBuffer;  // buffer containing audio data
+    buffer.Flags = XAUDIO2_END_OF_STREAM; // tell the source voice not to expect any data after this buffer
+    if (ShouldLoop) buffer.LoopCount = XAUDIO2_LOOP_INFINITE;
+    if (FAILED(hr = pXAudio2->CreateSourceVoice(&pSourceVoice, (WAVEFORMATEX*)&wfx))) cout << hr;
+    //if (FAILED(hr = pSourceVoice->SetSourceSampleRate(20000))) cout << hr;
+    if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&buffer))) cout << hr;
+    //if (FAILED(hr = pSourceVoice->SetFrequencyRatio(1.2))) cout << hr;
+    pSourceVoice->SetVolume(volume);
+    if (FAILED(hr = pSourceVoice->Start(0)))
+        cout << hr;
+
+    return 0;
+}
+
+
+HRESULT Audio::FindChunk(HANDLE hFile, DWORD fourcc, DWORD& dwChunkSize, DWORD& dwChunkDataPosition)
+{
+    HRESULT hr = S_OK;
+    if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))
+        return HRESULT_FROM_WIN32(GetLastError());
+
+    DWORD dwChunkType;
+    DWORD dwChunkDataSize;
+    DWORD dwRIFFDataSize = 0;
+    DWORD dwFileType;
+    DWORD bytesRead = 0;
+    DWORD dwOffset = 0;
+
+    while (hr == S_OK)
+    {
+        DWORD dwRead;
+        if (0 == ReadFile(hFile, &dwChunkType, sizeof(DWORD), &dwRead, NULL))
+            hr = HRESULT_FROM_WIN32(GetLastError());
+
+        if (0 == ReadFile(hFile, &dwChunkDataSize, sizeof(DWORD), &dwRead, NULL))
+            hr = HRESULT_FROM_WIN32(GetLastError());
+
+        switch (dwChunkType)
+        {
+        case fourccRIFF:
+            dwRIFFDataSize = dwChunkDataSize;
+            dwChunkDataSize = 4;
+            if (0 == ReadFile(hFile, &dwFileType, sizeof(DWORD), &dwRead, NULL))
+                hr = HRESULT_FROM_WIN32(GetLastError());
+            break;
+
+        default:
+            if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, dwChunkDataSize, NULL, FILE_CURRENT))
+                return HRESULT_FROM_WIN32(GetLastError());
+        }
+
+        dwOffset += sizeof(DWORD) * 2;
+
+        if (dwChunkType == fourcc)
+        {
+            dwChunkSize = dwChunkDataSize;
+            dwChunkDataPosition = dwOffset;
+            return S_OK;
+        }
+
+        dwOffset += dwChunkDataSize;
+
+        if (bytesRead >= dwRIFFDataSize) return S_FALSE;
+
+    }
+
+    return S_OK;
+
+}
+HRESULT Audio::ReadChunkData(HANDLE hFile, void* buffer, DWORD buffersize, DWORD bufferoffset)
+{
+    HRESULT hr = S_OK;
+    if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, bufferoffset, NULL, FILE_BEGIN))
+        return HRESULT_FROM_WIN32(GetLastError());
+    DWORD dwRead;
+    if (0 == ReadFile(hFile, buffer, buffersize, &dwRead, NULL))
+        hr = HRESULT_FROM_WIN32(GetLastError());
+    return hr;
+}
+void Audio::Stop() {
+    this->pSourceVoice->Stop(0);
+    this->pSourceVoice->FlushSourceBuffers();
+    return ;
+}
+
+
+```Entity.cpp```
+
+#include "Entity.h"
+#include <fstream>
+
+Entity::Entity() {}
+
+Entity::Entity(const string& entityName) {
+    this->entityName = entityName;
+    int cnt{1};
+    if (ifstream(("image_bin/" + entityName + ".bin").c_str(), ios::binary).good()) {
+        motion.push_back(new Texture("image_bin/" + entityName + ".bin"));
+        //cerr << "added\n";
+    }
+    while (true) {
+        string path = "image_bin/"+entityName+to_string(cnt++)+".bin";
+        if (!ifstream(path.c_str(), ios::binary).good()) {
+            break;
+        }
+        motion.push_back(new Texture(path));
+        //cerr << "added " << path << '\n';
+    }
+}
+
+Entity::Entity(const string& entityName, bool) {
+    this->entityName = entityName;
+    if (ifstream(("image_bin/" + entityName + ".bin").c_str(), ios::binary).good()) {
+        motion.push_back(new Texture("image_bin/" + entityName + ".bin"));
+    }
+}
+
+Entity::Entity(const Entity& other) {
+    entityName = other.entityName;
+    for (auto& i : other.motion) {
+        motion.push_back(new Texture(*i));
+    }
+}
+
+void Entity::shiftResource() {
+    motion.push_back(motion.front());
+    motion.pop_front();
+}
+
+Texture* Entity::getCurrentTexture() const {
+    return motion.front();
+}
+
+Texture* Entity::getPreviousTexture() {
+    return motion.back();
+}
+
+void Entity::flipHorizontal() {
+    for (auto& i : motion) {
+        i->flipHorizontal();
+    }
+}
+
+void Entity::setName(const string& _name) {
+    entityName = _name;
+}
+
+int Entity::getMotionSize() {
+    return (int)motion.size();
+}
+
+//Entity::~Entity() {
+//    while (motion.size() > 0) {
+//        Texture* dummy = motion.front();
+//        delete dummy;
+//        motion.pop_front();
+//    }
+//}
+
+```Font.cpp```
+
+#include "Font.h"
+#include "Utilities.h"
+
+using namespace utility;
+
+Font::Font() {
+
+}
+
+Font::Font(const string& filename) {
+	readFont(filename);
+}
+
+Font::~Font() {
+	clearFont();
+}
+
+void Font::readFont(const string& fontName) {
+	clearFont();
+	string path = "font/" + fontName + "/" + fontName + "_";
+	for (int i = 32; i <= 126; i++) {
+		string filename = path + to_string(i) + ".bin";
+		Texture* texture = new Texture(filename);
+		characters[i] = texture;
+	}
+}
+
+void Font::clearFont() {
+	for (auto& x : characters) {
+		delete x.second;
+	}
+	characters.clear();
+}
+
+Texture* Font::getCharacter(const char& c) {
+	return characters[c];
+}
+
+
+
+
+
+```Frame.cpp```
+
+#include "Frame.h"
+#include <Windows.h>
+#include <wingdi.h>
+#include <iostream>
+
+using namespace std;
+
+Frame::Frame() {
+    first = nullptr;
+    last = nullptr;
+    size = Vector2i();
+    position = Vector2i();
+}
+
+Frame::Frame(Vector2i size, Vector2i position) {
+    first = nullptr;
+    last = nullptr;
+    this->size = size;
+    this->position = position;
+}
+
+Frame::~Frame() {
+    Sprite* current = first;
+    while (current != nullptr) {
+        Sprite* next = current->next;
+        delete current;
+        current = next;
+    }
+}
+
+Sprite* Frame::addSprite(Texture& texture, Vector2f position, int priority) {
+    Sprite* sprite = new Sprite(position, &texture, priority);
+    if (first == nullptr) {
+        first = sprite;
+        last = sprite;
+    }
+    else {
+        last->next = sprite;
+        sprite->prev = last;
+        last = sprite;
+    }
+    return sprite;
+}
+
+Sprite* Frame::addSprite(Texture* texture, Vector2f position, int priority) {
+    Sprite* sprite = new Sprite(position, texture, priority);
+    if (first == nullptr) {
+        first = sprite;
+        last = sprite;
+    }
+    else {
+        last->next = sprite;
+        sprite->prev = last;
+        last = sprite;
+    }
+    return sprite;
+}
+
+void Frame::addSprite(Sprite* sprite) {
+    if (first == nullptr) {
+        first = sprite;
+        last = sprite;
+    }
+    else {
+        last->next = sprite;
+        sprite->prev = last;
+        last = sprite;
+    }
+    return;
+}
+
+void Frame::removeSprite(Sprite*& sprite) {
+    if (!sprite) {
+            std::cerr << "Error: Attempt to remove a null node." << std::endl;
+            return;
+        }
+
+    if (sprite == first) {
+        first = sprite->next;
+        if (first) {
+            first->prev = nullptr;
+        }
+    } else if (sprite == last) {
+        last = sprite->prev;
+        if (last) {
+            last->next = nullptr;
+        }
+    } else {
+        if (sprite->prev) {
+            sprite->prev->next = sprite->next;
+        }
+        if (sprite->next) {
+            sprite->next->prev = sprite->prev;
+        }
+    }
+
+    delete sprite;
+    sprite = nullptr;
+}
+
+void Frame::removeAllSprites() {
+    Sprite* current = first;
+    while (current != nullptr) {
+        Sprite* next = current->next;
+        delete current;
+        current = next;
+    }
+    first = nullptr;
+    last = nullptr;
+}
+
+void Frame::update() {
+    Sprite* current = first;
+    while (current != nullptr) {
+        current->update();
+        // if (current->getPosition().x > current->getDestination().x || (current->getPosition().x < current->getDestination().x && current->getDestination().x < 0) ) {
+        //     removeSprite(current);
+        //     continue;
+        // }
+        current = current->next;
+    }
+}
+
+void Frame::draw(HDC hdc) {
+    BITMAPINFO bmi;
+    ZeroMemory(&bmi, sizeof(BITMAPINFO));
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biWidth = size.x;
+    bmi.bmiHeader.biHeight = -size.y; // Negative height to specify a top-down DIB
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = 32; // 32 bits per pixel (for RGBA)
+
+    void *bits;
+    // Create a DIB section
+    HBITMAP hBitmap = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
+
+    if (hBitmap == nullptr) {
+        std::cerr << "Failed to create DIB section." << std::endl;
+        return;
+    }
+
+    // Draw the sprites to the DIB section
+    vector<Sprite*> sprites;
+    Sprite* current = first;
+    while (current != nullptr) {
+        sprites.push_back(current);
+        current = current->next;
+    }
+
+    stable_sort(sprites.begin(), sprites.end(), [](Sprite* a, Sprite* b) {
+        return a->getPriority() < b->getPriority();
+    });
+    for (Sprite* sprite : sprites) {
+        sprite->draw(bits, size);
+    }
+
+    HDC memDC = CreateCompatibleDC(hdc);
+    HBITMAP hOldBitmap = (HBITMAP)SelectObject(memDC, hBitmap);
+
+    BitBlt(hdc, position.x, position.y, size.x, size.y, memDC, 0, 0, SRCCOPY);
+
+    SelectObject(memDC, hOldBitmap);
+    DeleteDC(memDC);
+
+
+    // Clean up the DIB section
+    DeleteObject(hBitmap);
+}
+
+void Frame::draw(HDC hdc, Sprite* curSprite) {
+    BITMAPINFO bmi;
+    ZeroMemory(&bmi, sizeof(BITMAPINFO));
+    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmi.bmiHeader.biWidth = size.x;
+    bmi.bmiHeader.biHeight = -size.y; // Negative height to specify a top-down DIB
+    bmi.bmiHeader.biPlanes = 1;
+    bmi.bmiHeader.biBitCount = 32; // 32 bits per pixel (for RGBA)
+
+    void* bits;
+
+    // Create a DIB section
+    HBITMAP hBitmap = CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
+
+    if (hBitmap == nullptr) {
+        std::cerr << "Failed to create DIB section." << std::endl;
+        return;
+    }
+
+
+    // Draw the sprite to the DIB section
+    curSprite->draw(bits, size);
+
+    HDC memDC = CreateCompatibleDC(hdc);
+    HBITMAP hOldBitmap = (HBITMAP)SelectObject(memDC, hBitmap);
+
+    BitBlt(hdc, position.x, position.y, size.x, size.y, memDC, 0, 0, SRCCOPY);
+
+    SelectObject(memDC, hOldBitmap);
+    DeleteDC(memDC);
+
+    // Clean up the DIB section
+    DeleteObject(hBitmap);
+}
+void Frame::removeAllSprite()
+{
+    Sprite* current = first;
+    while (current) {
+        Sprite* temp = current;
+        current = current->next;
+        delete temp;
+    }
+    first = last = nullptr;
+    return;
+}
+
+```Game.cpp```
+
+# include "Game.h"
+
+
+```Item.cpp```
+
+#pragma warning(disable:4244)
+#include "Item.h"
+
+Item::Item(const string& _itemName, const Vector2f& position)
+	:itemName{_itemName}, position{ position }
+{
+	itemSprite = nullptr;
+}
+
+Item::Item(const Item& item)
+	:Item(item.itemName, item.position)
+{}
+
+Item::~Item() {
+	delete model;
+}
+
+void Item::setSprite(Sprite* _sprite) {
+	itemSprite = _sprite;
+}
+
+void Item::setName(const string& _name) {
+	itemName = _name;
+}
+
+void Item::setValue(const int& val) {
+	value = val;
+}
+
+void Item::setModel(Entity* _model) {
+	model = _model;
+}
+
+void Item::setPosition(const Vector2f& _pos) {
+	position = _pos;
+}
+
+Texture* Item::getTexture() const {
+	return model->getCurrentTexture();
+}
+
+Sprite*& Item::getItemSprite() {
+	return itemSprite;
+}
+
+Vector2f Item::getPosition() const {
+	return position;
+}
+
+string Item::getItemName() const {
+	return itemName;
+}
+
+int Item::getValue() const {
+	return value;
+}
+
+void Item::removeItem(Frame& mainFrame) {
+	mainFrame.removeSprite(itemSprite);
+}
+
+void Item::animateItem() {
+	model->shiftResource();
+	itemSprite->setTexture(model->getCurrentTexture());
+}
+
+bool Item::checkCollision(Player* _player) {
+	Vector2f topLeft = _player->getCurrentPos();
+	Vector2f bottomRight = topLeft + _player->getHitbox();
+	//to be implemented
+	return true;
+}
+
+bool Item::useItem(Player* _player) {
+	if (_player->getCurrentPos() == position) {
+		_player->addPoint(value);
+		return true;
+	}
+	return false;
+}
+
+Slime::Slime(const string& _itemName, const Vector2f& _position)
+	:Item(_itemName, _position)
+{
+	value = -2;
+	model = new Entity("blueSlime_jumpattack");
+	this->position.y -= 15;
+	this->destination = Vector2f((this->position.x == -132) ? 1280 : -132, this->position.y);
+}
+
+Vector2f Item::getDestination() const {
+	return destination;
+}
+
+Coin::Coin(const string& _itemName, const Vector2f& _position)
+	:Item(_itemName, _position)
+{
+	model = new Entity("yc");
+	value = 5;
+	destination = position;
+}
+
+```Lane.cpp```
+
+#pragma warning(disable:4244)
+#include "Lane.h"
+
+int lanePos[] {143, 183, 252, 292, 355, 395, 465, 505, 575, 615};
+pair<int, int> path = pair<int, int>(-132, 1280);
+
+Lane::Lane() {}
+
+Lane::Lane(Frame* mainFrame, const int& laneCounter, const Entity& _entity, const int& _difficulty) 
+	: rand(time(NULL) + laneCounter)
+{
+	if (laneCounter % 2) {
+		start = Vector2f(path.first, lanePos[laneCounter]*1.0);
+		end = Vector2f(path.second, lanePos[laneCounter]);
+	}
+	else {
+		start = Vector2f(path.second, lanePos[laneCounter]);
+		end = Vector2f(path.first, lanePos[laneCounter]);
+	}
+	difficulty = _difficulty;
+	timeBetweenSpawn = 2000 - (150 * (difficulty % 5)) * (1 + (difficulty % 5) / 4);
+	vehicleCounter = floor(12000/timeBetweenSpawn);
+	speed += floor((float) difficulty/5);
+	this->mainFrame = mainFrame;
+	model = _entity;
+}
+
+Lane::~Lane() {}
+
+void Lane::resetLane() {
+	timeBetweenSpawn = 2000 - (150 * (difficulty % 5)) * (1 + (difficulty % 5) / 4);
+	vehicleCounter = floor(12000/timeBetweenSpawn);
+	nextSpawn.clear();
+	for (int i = 0; i < vehicleCounter; i++) {
+		nextSpawn.push_back(i);
+	}
+	onTrack.resize(vehicleCounter, false);
+	while (vehicles.size() < vehicleCounter) {
+		vehicles.push_back(mainFrame->addSprite(*model.getCurrentTexture(), start));
+	}
+	for (auto& _item : items) {
+		//cout << _item->getItemName() << endl;
+		if (_item->getItemSprite() == nullptr) {
+			_item->setSprite(mainFrame->addSprite(_item->getTexture(), _item->getPosition()));
+			if (_item->getItemName() == "Slime") {
+				_item->getItemSprite()->setEndPos(_item->getDestination(), speed);
+			}
+		}
+	}
+	speed += floor((difficulty % 5) / 4);
+	for (auto& _sprite: vehicles) {
+		_sprite->setPosition(start);
+		//_sprite->setEndPos(start, 0);
+	}
+	lastSpawn = clock();
+	timeTilNextSpawn = rand() % RANDOM_INTERVAL / 1000.0;
+	isRunning = false;
+	//clearItems();
+}
+
+void Lane::clearItems() {
+	for (auto& _item : items) {
+		delete _item;
+	}
+	items.clear();
+}
+
+void Lane::spawnCar() {
+	int spawnNow = nextSpawn.front();
+	nextSpawn.pop_front();
+	nextSpawn.push_back(spawnNow);
+
+	vehicles[spawnNow]->setEndPos(end, speed);
+
+	
+	lastSpawn = clock();
+	timeTilNextSpawn = 1.f * timeBetweenSpawn / 1000 + rand() % RANDOM_INTERVAL / (float) 1000;
+}
+
+void Lane::startLane() {
+	isRunning = true;
+	for (int i = 0; i < vehicles.size(); i++) {
+		vehicles[i]->setIsMoving(true);
+	}
+}
+
+void Lane::stopLane() {
+	isRunning = false;
+	for (int i = 0; i<vehicles.size();i++) {
+		vehicles[i]->setIsMoving(false);
+	}
+}
+
+//void Lane::slowdownLane() {
+//	isRunning = true;
+//	for (int i = 0; i < vehicles.size(); i++) {
+//		vehicles[i]->setSpeed(speed - 50);
+//	}
+//}
+
+
+void Lane::animateLane() {
+	model.shiftResource();
+	for (auto _sprite: vehicles) {
+		_sprite->setTexture(model.getCurrentTexture());
+	}
+}
+
+void Lane::animateItem() {
+	for (auto& _item : items) {
+		_item->animateItem();
+	}
+}
+
+void Lane::update() {
+	animateItem();
+	animateLane();
+	if (!isRunning) {
+		lastSpawn = clock();
+	}
+	if ((float)(clock() - lastSpawn) / CLOCKS_PER_SEC >= timeTilNextSpawn && isRunning) {
+		spawnCar();
+	}
+}
+
+Vector2f Lane::getStart() const {
+	return start;
+}
+
+bool Lane::checkCollision(Player* _p) {
+	Vector2f topLeft = _p->getCurrentPos();
+	Vector2f bottomRight = topLeft + _p->getHitbox();
+	if (topLeft.x > bottomRight.x) {
+		swap(topLeft.x, bottomRight.x);
+	}
+	if (topLeft.y < bottomRight.y) {
+		swap(topLeft.y, bottomRight.y);
+	}
+	for (auto _sprite: vehicles) {
+		Vector2f vTopLeft = _sprite->getPosition();
+		Vector2f vBottomRight = vTopLeft + _sprite->getHitbox();
+		if (vTopLeft.x > vBottomRight.x) {
+			swap(vTopLeft.x, vBottomRight.x);
+		}
+		if (vTopLeft.y < vBottomRight.y) {
+			swap(vTopLeft.y, vBottomRight.y);
+		}
+		if (bottomRight.x < vTopLeft.x || vBottomRight.x < topLeft.x)
+			continue; // no overlap
+		if (topLeft.y < vBottomRight.y || vTopLeft.y < bottomRight.y)
+			continue; // no overlap
+		return true; // overlap
+	}
+	return false;
+
+	for (auto& _item : items) {
+		if (_item->useItem(_p)) {
+			mainFrame->removeSprite(_item->getItemSprite());
+			delete _item;
+			items.erase(find(items.begin(), items.end(), _item));
+		}
+	}
+	return false;
+}
+
+void Lane::addItem(const string& itemName, const Entity& model, const Vector2f& position) {
+	if (itemName == "Slime") {
+		items.push_back(new Slime(itemName, start));
+	}
+	else {
+		items.push_back(new Coin(itemName, position));
+	}
+}
+
+int Lane::getTotalVehicle() {
+	return (int) vehicles.size();
+}
+
+void Lane::printStart() {
+	cerr << "start pos: " << start.x << " " << start.y << '\n';
+}
+void Lane::printEnd() {
+	cerr << "end pos: " << end.x << " " << end.y << '\n';
+}
+//void Lane::draw
+
+```Map.cpp```
+
+#pragma warning(disable:4244)
+#include "Map.h"
+
+Map::Map(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane> &MapLane) {
+	mainFrame = mapFrame;
+	this->hdc = hdc;
+	difficulty = levelDifficulty;
+	//Entity carEntity = Entity("car4_motion");
+	bgTexture = new Texture("image_bin/street.bin");
+    bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
+	for (int i = 0; i < (int)MapLane.size(); i++) {
+		this->mapLane.push_back(&MapLane[i]);
+	}
+	TrafficLight tl1(Vector2f(216, 70.2f), mapLane[0], mapLane[1], 0);
+	TrafficLight tl2(Vector2f(809.6f, 180.4f), mapLane[2], mapLane[3], 0);
+	TrafficLight tl3(Vector2f(635, 284.f), mapLane[4], mapLane[5], 0);
+	TrafficLight tl4(Vector2f(1195.4f, 392.9f), mapLane[6], mapLane[7], 0);
+	TrafficLight tl5(Vector2f(211.1f, 500.8f), mapLane[8], mapLane[9], 0);
+	trafficLight.emplace_back(tl1);
+	trafficLight.emplace_back(tl2);
+	trafficLight.emplace_back(tl3);
+	trafficLight.emplace_back(tl4);
+	trafficLight.emplace_back(tl5);
+	for (int i = 0; i < 5; i++) {
+		Sprite* tmp = trafficLight[i].getSprite();
+		tmp->setPriority(10);
+		mainFrame->addSprite(trafficLight[i].getSprite());
+	}
+	player = Player(*mapFrame);
+}
+
+Map::~Map() {
+	for (auto ptr:mapLane) {
+		delete ptr;
+	}
+	mapLane.clear();
+}
+
+void Map::drawMap() {
+	for (int i = 0; i < (int)mapLane.size(); i++) {
+		mapLane[i]->resetLane();
+		mapLane[i]->startLane();
+	}
+	//mapLane[0]->resetLane();
+	//mapLane[0]->startLane();
+	clock_t time = clock();
+	thread t = player.launchHandler();
+	//player.playerHandler();
+	while (true) {
+		for (int i = 0; i < (int)mapLane.size(); i++) {
+			mapLane[i]->update();
+		}
+		//mapLane[0]->update();
+		trafficControl(trafficLight);
+		bool collide = 0;
+		int playerCurrentLane = player.convertLane();
+		if (playerCurrentLane < 10) {
+			if (mapLane[playerCurrentLane]->checkCollision(&player))
+				collide = 1;
+		}
+
+        mainFrame->update();
+        mainFrame->draw(hdc);
+		if (collide)
+		{
+			//t.join();
+			/*break;*/
+		}
+    }
+}
+
+```Movable.cpp```
+
+#include "Movable.h"
+#include <math.h>
+#include <iostream>
+
+using namespace std;
+using namespace utility;
+
+Movable::Movable() {
+    position = Vector2f();
+    startingPosition = Vector2f();
+    velocity = Vector2f();
+    acceleration = Vector2f();
+    destination = Vector2f();
+    isMoving = false;
+    speed = 0;
+}
+
+Movable::Movable(Vector2f position, Vector2f velocity, Vector2f acceleration) {
+    this->position = position;
+    this->startingPosition = position;
+    this->velocity = velocity;
+    this->acceleration = acceleration;
+    destination = Vector2f();
+    isMoving = false;
+    speed = 0;
+}
+
+Movable::Movable(const Movable& other) {
+    position = other.position;
+    startingPosition = other.startingPosition;
+    velocity = other.velocity;
+    acceleration = other.acceleration;
+    destination = other.destination;
+    isMoving = other.isMoving;
+    speed = other.speed;
+}
+
+Movable::~Movable() {
+    // Do nothing
+}
+
+Vector2f Movable::getPosition() {
+    return position;
+}
+
+Vector2f Movable::getVelocity() {
+    return velocity;
+}
+
+Vector2f Movable::getAcceleration() {
+    return acceleration;
+}
+
+Vector2f Movable::getDestination() {
+    return destination;
+}
+
+bool Movable::getIsMoving() {
+    return isMoving;
+}
+
+float Movable::getSpeed() {
+    return speed;
+}
+
+void Movable::setPosition(Vector2f position) {
+    this->position = position;
+}
+
+void Movable::setVelocity(Vector2f velocity) {
+    this->velocity = velocity;
+}
+
+void Movable::setAcceleration(Vector2f acceleration) {
+    this->acceleration = acceleration;
+}
+
+void Movable::setDestination(Vector2f destination) {
+    this->destination = destination;
+}
+
+void Movable::setIsMoving(bool isMoving) {
+    this->isMoving = isMoving;
+}
+
+void Movable::setSpeed(float speed) {
+    this->speed = speed;
+}
+
+bool Movable::reachedDestination() {
+    bool isPositiveX = 1;
+    if (startingPosition.x > destination.x)
+        isPositiveX = 0;
+    bool isPositiveY = 1;
+    if (startingPosition.y > destination.y) 
+        isPositiveY = 0;
+    
+    if (isPositiveX) {
+        if (position.x < destination.x)
+            return false;
+    }
+    else {
+        if (position.x > destination.x)
+            return false;
+    }
+
+    if (isPositiveY) {
+        if (position.y < destination.y)
+            return false;
+    }
+    else {
+        if (position.y > destination.y)
+            return false;
+    }
+
+    return true;
+    
+    //if (position.x > destination.x || position.x < destination.x && destination.x < 0)
+    //    return true;
+    //if (position.x == destination.x && position.y == destination.y)
+    //    return true;
+    //return false;
+}
+
+void Movable::update() {
+//    cerr << "isMoving: " << isMoving << endl;
+//    cerr << "velocity: " << velocity.x << ", " << velocity.y << endl;
+//    cerr << "acceleration: " << acceleration.x << ", " << acceleration.y << endl;
+    if (isMoving) {
+        if (reachedDestination()) {
+            isMoving = false;
+            velocity = Vector2f();
+            //acceleration = Vector2f();
+            //system("pause");
+            position = startingPosition;
+            destination = position;
+            // startingPosition = destination;
+        }
+        else {
+            Vector2f firstHalf = position - startingPosition;
+            Vector2f secondHalf = destination - startingPosition;
+            if(firstHalf.modulus() / secondHalf.modulus() < 0.6)
+                velocity += acceleration;
+            else
+                velocity -= acceleration;
+            position += velocity;
+        }
+    }
+}
+
+void Movable::setEndPos(Vector2f endPos, float speed) {
+    destination = endPos;
+    startingPosition = position;
+    isMoving = true;
+    Vector2f distance = destination - position;
+    float distanceModulus = distance.modulus();
+    float time = distanceModulus / speed;
+    velocity = distance / time;
+    acceleration = Vector2f();
+    // acceleration = Vector2f(0,0);
+    // velocity = Vector2f();
+}
+
+
+
+
+
+
+
+```Pixel.cpp```
+
+#include "Pixel.h"
+#include <iostream>
+
+using namespace std;
+
+Pixel::Pixel() {
+    r = 0;
+    g = 0;
+    b = 0;
+    a = 0;
+}
+
+Pixel::Pixel(int r, int g, int b, int a) {
+    this->r = r;
+    this->g = g;
+    this->b = b;
+    this->a = a;
+}
+
+Pixel::Pixel(const Pixel& other) {
+    r = other.r;
+    g = other.g;
+    b = other.b;
+    a = other.a;
+}
+
+Pixel::~Pixel() {
+    // Do nothing
+}
+
+int Pixel::getR() {
+    return r;
+}
+
+int Pixel::getG() {
+    return g;
+}
+
+int Pixel::getB() {
+    return b;
+}
+
+int Pixel::getA() {
+    return a;
+}
+
+void Pixel::drawPixel(int x, int y, HDC hdc) {
+    if (a == 0)
+        return;
+    COLORREF COLOR = RGB(r, g, b);
+    SetPixel(hdc, x, y, COLOR);
+}
+
+void Pixel::print() {
+    cerr << "(" << r << ", " << g << ", " << b << ", " << a << ")";
+}
+
+```Player.cpp```
+
+#pragma warning(disable:4244)
+#include "Player.h"
+float pos[] = { 665, 610, 570, 500, 460, 391, 350, 284, 242, 180, 140 };
+
+Player::Player(Frame& mainFrame) {
+    model.push_back(new Entity("player/left"));
+    model.push_back(new Entity("player/up"));
+    model.push_back(new Entity("player/right"));
+    _player = mainFrame.addSprite(model[state]->getCurrentTexture(), Vector2f(1280 / 2, 655));
+    width = 36;
+    height = 40;
+    cnt = 0;
+}
+
+// Memory leak here: unable to delete vector of Entity
+Player::~Player() {
+    /*for (auto& s : model) {
+        delete s;
+    }
+    model.clear();*/
+    // delete _player; 
+    // _player = nullptr;
+}
+
+Vector2f Player::getCurrentPos() const {
+    return _player->getPosition();
+}
+
+void Player::setPosition(const float& x, const float& y,const char& dir) {
+
+    if (dir == 'w')
+    {
+        state = 1;
+        this->cnt++;
+    }
+    else if (dir == 's')
+    {
+        state = 1;
+        this->cnt--;
+    }
+
+    if (this->cnt == 11 || this->cnt == -1)
+        this->cnt = 0;
+    
+    if (x < 0) {
+        _player->setPosition(Vector2f(0, pos[cnt]));
+        return;
+    }
+    if (x > 1210) {
+        _player->setPosition(Vector2f(1200, pos[cnt]));
+        return;
+    }
+
+    _player->setPosition(Vector2f(x, pos[cnt]));
+}
+
+void Player::animatePlayer() {
+    model[state]->shiftResource();
+    _player->setTexture(model[state]->getCurrentTexture());
+}
+
+//void Player::setModel(const Entity& _model) {
+//    model = _model;
+//}
+
+Vector2f Player::getHitbox() const {
+    return Vector2f(width, height);
+}
+
+void Player::addPoint() {
+    point++;
+}
+
+void Player::addPoint(const int& value) {
+    point += value;
+}
+
+int Player::convertLane() {
+    return 10 - cnt;
+}
+
+void Player::playerHandler()
+{
+    while (true) {
+        int vertical{}, horizon{};
+        animatePlayer();
+        if (_kbhit()) {
+            cout << "running" << endl;
+            this_thread::sleep_for(50ms);
+            int curr = _getch();
+            Vector2f currPos = _player->getPosition();
+            switch (curr) {
+            case KEY_LEFT:
+                state = 0;
+                setPosition(currPos.x - 40, currPos.y, 'a');
+                break;
+            case KEY_RIGHT:
+                state = 2;
+                setPosition(currPos.x + 40, currPos.y, 'd');
+                break;
+            case KEY_DOWN:
+                setPosition(currPos.x, currPos.y, 's');
+                break;
+            case KEY_UP:
+                state = 1;
+                point += 5;
+                setPosition(currPos.x, currPos.y, 'w');
+                break;
+            case 'q':
+                system("pause");
+                break;
+            }
+        }
+    }
+}
+
+thread Player::launchHandler() {
+    return thread([this]() { 
+        this->playerHandler(); 
+    });
+}
+
+```Screen.cpp```
+
+#pragma warning(disable:4244)
+#include "Screen.h"
+#include "Player.h"
+#include "Text.h"
+#include "TrafficLight.h"
+Screen::Screen() {
+	this->mainFrame = nullptr;
+}
+
+Screen::Screen(Frame* curFrame, HDC* hdc) {
+
+	this->isMusicOff = 0;
+	this->hdc = hdc;
+	this->mainFrame = curFrame;
+	this->backGround = new Sprite;
+	 this->music = new Audio;
+	for (int i = 1; i <= 5; i++) { // 0 -> 4
+		resources.push_back(Entity("menu"+to_string(i), true));
+	}
+	for (int i = 1; i <= 6; i++) { // 5 -> 10
+		resources.push_back(Entity("option"+to_string(i), true));
+	}
+	for (int i = 1; i <= 6; i++) { // 11 -> 16
+		resources.push_back(Entity("pause"+to_string(i), true));
+	}
+	for (int i = 1; i <= 3; i++) { // 17 -> 19
+		resources.push_back(Entity("load_game"+to_string(i), true));
+	}
+	resources.push_back(Entity("leader_board", true));
+	resources.push_back(Entity("street", true));
+	for (int i = 0; i < 10; i++) {
+		resources.push_back(Entity("score_" + to_string(i), true));
+	}
+	for (int i = 1; i <= 5; i++) {
+		Sprite* scoreSprite = new Sprite(Vector2f(900 + 60 * i, 40), resources[22].getCurrentTexture());
+		score.push_back(scoreSprite);
+	}
+}
+
+void Screen::startGame() {
+	int vertical = 0, horizon = 0;
+	backGround->setTexture(resources[0].getCurrentTexture());
+	mainFrame->draw(*hdc, backGround);
+	music->Play("gameSound.wav", 1, 1);
+	Entity e1("car1_motion");
+	Lane l1(mainFrame, 1, e1, 20);
+	//thread t1 = l1.spawnThread();
+	while (true) {
+
+		// this_thread::sleep_for(50ms);
+		if (_kbhit()) {
+			int curr = _getch();
+			switch (curr) {
+			case KEY_LEFT:
+				if (vertical < 3)
+					break;
+				if (horizon == 1) {
+					horizon = 0;
+					changeTexture(3);
+				}
+				break;
+			case KEY_RIGHT:
+				if (vertical < 3)
+					break;
+				if (horizon == 0) {
+					horizon = 1;
+					changeTexture(4);
+				}
+				break;
+			case KEY_DOWN:
+				switch (vertical) {
+				case 0:
+					changeTexture(1);
+					vertical++;
+					break;
+				case 1:
+					changeTexture(2);
+					vertical++;
+					break;
+				case 2:
+					changeTexture(3);
+					vertical++;
+					break;
+				default:
+					break;
+				}
+				break;
+			case KEY_UP:
+				switch (vertical) {
+				case 1:
+					changeTexture(0);
+					vertical--;
+					break;
+				case 2:
+					changeTexture(1);
+					vertical--;
+					break;
+				case 3:
+					horizon = 0;
+					changeTexture(2);
+					vertical--;
+				default:
+					break;
+				}
+				break;
+				case '\r':
+					switch (vertical) {
+						case 0:
+							playSound(ON_CLICK);
+							this->screenPlay();
+							changeTexture(0);
+							vertical = 0, horizon = 0;
+							break;
+						case 1:
+							playSound(ON_CLICK);
+							this->screenOption();
+							vertical = 0, horizon = 0;
+							break;
+						case 2:
+							playSound(ON_CLICK);
+							return;
+						//case 3:
+						//	if (horizon == 0)
+						//		this->screenAbout();
+						//	else this->screenHelp();
+						default:
+							break;
+					}
+			default:
+				break;
+			}
+		}
+		mainFrame->draw(*hdc, this->backGround);
+	}
+}
+bool Screen::screenPause() {
+	int vertical = 0;
+	changeTexture(11 + 3*isMusicOff);
+	mainFrame->draw(*this->hdc, this->backGround);
+	while (true) {
+		// this_thread::sleep_for(50ms);
+		if (_kbhit()) {
+			int curr = _getch();
+			switch (curr) {
+			case KEY_DOWN:
+				switch (vertical) {
+				case 0:
+					vertical++;
+					changeTexture(12 + 3 * isMusicOff);
+					break;
+				case 1:
+					vertical++;
+					changeTexture(13 + 3 * isMusicOff);
+					break;
+				default:
+					break;
+				}
+				break;
+			case KEY_UP:
+				switch (vertical) {
+				case 1:
+					vertical--;
+					changeTexture(11 + 3 * isMusicOff);
+					break;
+				case 2:
+					vertical--;
+					changeTexture(12 + 3 * isMusicOff);
+					break;
+				default:
+					break;
+				}
+				break;
+			case '\r':
+				switch (vertical) {
+				case 0:
+					playSound(0);
+					changeTexture(21);
+					return 0;
+				case 1:
+					setMusic();
+					changeTexture(12 + 3 * isMusicOff);
+					break;
+				case 2:
+					playSound(0);
+
+					return 1;
+				default:
+					break;
+				}
+			default:
+				break;
+			}
+		}
+		mainFrame->draw(*hdc, this->backGround);
+	}
+	return 1;
+}
+void Screen::screenOption() {
+	int vertical = 0;
+	changeTexture(5 + 3 * isMusicOff);
+	while (true) {
+		// this_thread::sleep_for(50ms);
+		if (_kbhit()) {
+			int curr = _getch();
+			switch (curr) {
+			case KEY_DOWN:
+				switch (vertical) {
+				case 0:
+					vertical++;
+					changeTexture(6 + 3 * isMusicOff);
+					break;
+				case 1:
+					vertical++;
+					changeTexture(7 + 3 * isMusicOff);
+					break;
+				default:
+					break;
+				}
+				break;
+			case KEY_UP:
+				switch (vertical) {
+				case 1:
+					vertical--;
+					changeTexture(5 + 3 * isMusicOff);
+					break;
+				case 2:
+					vertical--;
+					changeTexture(6 + 3 * isMusicOff);
+					break;
+				default:
+					break;
+				}
+				break;
+			case '\r':
+				switch (vertical) {
+				case 0:
+					playSound(ON_CLICK);
+					changeTexture(20);
+					screenLeaderboard();
+					changeTexture(5 + 3 * isMusicOff);
+					break;
+				case 1:
+					playSound(ON_CLICK);
+					setMusic();
+					changeTexture(6 + 3 * isMusicOff);
+					break;
+				case 2:
+					playSound(ON_CLICK);
+					changeTexture(0);
+					return;
+				default:
+					break;
+				}
+			default:
+				break;
+			}
+		}
+		mainFrame->draw(*hdc, this->backGround);
+	}
+	return;
+}
+void Screen::screenPlay() {
+	int vertical = 0;
+	changeTexture(17);
+	mainFrame->draw(*this->hdc, this->backGround);
+	while (true) {
+		// this_thread::sleep_for(50ms);
+		if (_kbhit()) {
+			int curr = _getch();
+			switch (curr) {
+			case KEY_DOWN:
+				switch (vertical) {
+				case 0:
+					vertical++;
+					changeTexture(18);
+					break;
+				case 1:
+					vertical++;
+					changeTexture(19);
+					break;
+				default:
+					break;
+				}
+				break;
+			case KEY_UP:
+				switch (vertical) {
+				case 1:
+					vertical--;
+					changeTexture(17);
+					break;
+				case 2:
+					vertical--;
+					changeTexture(18);
+					break;
+				default:
+					break;
+				}
+				break;
+			case '\r':
+				switch (vertical) {
+				case 0:
+					playSound(ON_CLICK);
+					crossyRoad();
+					changeTexture(0);
+					return;
+				case 2:
+					playSound(ON_CLICK);
+					changeTexture(0);
+					return;
+				default:
+					break;
+				}
+			default:
+				break;
+			}
+		}
+		mainFrame->draw(*hdc, this->backGround);
+	}
+	return;
+}
+
+void Screen::changeTexture(const int& idx) {
+	backGround->setTexture(resources[idx].getCurrentTexture());
+}
+ void Screen::setMusic() {
+ 	if (!isMusicOff) {
+ 		isMusicOff = 1;
+ 		music->Stop();
+ 	}
+ 	else {
+ 		isMusicOff = 0;
+ 		music->Play("gameSound.wav", 1 ,1);
+ 	}
+ 	return;
+ }
+
+ void Screen::playSound(const int& type) {
+ 	PlaySound(0, 0, 0);
+ 	PlaySound(TEXT("on_click.wav"), nullptr, SND_FILENAME | SND_ASYNC);
+ 	return;
+ }
+
+string updateScore(int& score, int bonus) {
+	score += bonus;
+	if (score > 99999)
+		score = 99999;
+	string res = to_string(score);
+	while (res.length() < 5) {
+		res = "0" + res;
+	}
+	return res;
+ }
+
+ void Screen::updateScoreSprite(int& score, int bonus) {
+	 string Score = updateScore(score, bonus);
+	 for (int i = 4; i > -1; i--) {
+		 int idx = Score[i] - '0' + 22;
+		 this->score[i]->setTexture(resources[idx].getCurrentTexture());
+	 }
+	 return;
+ }
+
+ void Screen::crossyRoad() {
+	 int score = 0;
+	 Entity _char("up");
+	 //TrafficLight tl1(Vector2f(216, 70.2));
+	 //TrafficLight tl2(Vector2f(809.6, 180.4));
+	 //TrafficLight tl3(Vector2f(635, 284));
+	 //TrafficLight tl4(Vector2f(1195.4, 392.9));
+	 //TrafficLight tl5(Vector2f(211.1, 500.8));
+
+	 //
+	 //vector<TrafficLight>traff;
+	 //traff.emplace_back(tl1);
+	 //traff.emplace_back(tl2);
+	 //traff.emplace_back(tl3);
+	 //traff.emplace_back(tl4);
+	 //traff.emplace_back(tl5);
+
+
+	 changeTexture(21);
+	 mainFrame->addSprite(this->backGround);
+	 for (int i = 0; i < 5; i++) {
+		 mainFrame->addSprite(this->score[i]);
+	 }
+
+
+
+	 //mainFrame->update();
+	 //mainFrame->draw(*this->hdc);
+	 // Lane l1(1, e1, 1);
+
+	 Player _p(*mainFrame);
+	 while (true) {
+		 //this_thread::sleep_for(100ms);
+		 _p.animatePlayer();
+		 if (_kbhit()) {
+			 int curr = _getch();
+			 int step{ 2 };
+			 Vector2f currPos = _p.getCurrentPos();
+			 switch (curr) {
+			 case KEY_LEFT:
+				 _p.setPosition(currPos.x - 40, currPos.y, 'a');
+				 break;
+			 case KEY_RIGHT:
+				 _p.setPosition(currPos.x + 40, currPos.y, 'd');
+				 break;
+			 case KEY_DOWN:
+				 _p.setPosition(currPos.x, currPos.y, 's');
+				 break;
+			 case KEY_UP:
+				 this->updateScoreSprite(score, 5);
+				 _p.setPosition(currPos.x, currPos.y, 'w');
+				 break;
+			 case 'q':
+				 playSound(ON_CLICK);
+				 if (screenPause()) {
+					 //mainFrame->removeAllSprite();
+					 return;
+				 }
+				 break;
+			 default:
+				 //cout << "Invalid key pressed" << endl;
+				 //system("pause");
+				 break;
+			 }
+		 }
+		 //trafficControl(traff);
+		 mainFrame->update();
+		 mainFrame->draw(*hdc);
+	 }
+ }
+
+
+ void Screen::screenLeaderboard() {
+	 //vector<leaderBoardInfo> info = readLeaderBoardFromFile("leaderBoardInfo.bin");
+	 
+	 leaderBoardInfo A("ngobang", "99999", "27/11/2023");
+	 mainFrame->addSprite(this->backGround);
+	 Text a(A.getName());
+	 Text b(A.getScore());
+	 Text c(A.getDate());
+	 a.writeText(getScoreBoardCoord(a.getLength(), NAME_COL), ROW2_OFFSET, mainFrame);
+	 b.writeText(getScoreBoardCoord(b.getLength(), SCORE_COL), ROW2_OFFSET, mainFrame);
+	 c.writeText(getScoreBoardCoord(c.getLength(), DATE_COL), ROW2_OFFSET, mainFrame);
+	 
+	 while (true) {
+		 //this_thread::sleep_for(100ms);
+		 if (_kbhit()) {
+			 int curr = _getch();
+			 int step{ 2 };
+			 switch (curr) {
+			 case 'q':
+				 playSound(ON_CLICK);
+				 mainFrame->removeAllSprite();
+				 return;
+				 break;
+			 default:
+				 //cout << "Invalid key pressed" << endl;
+				 //system("pause");
+				 break;
+			 }
+		 }
+		 mainFrame->draw(*hdc);
+	 }
+
+	 return;
+
+ }
+
+```Sprite.cpp```
+
+#pragma warning(disable:4244)
+#include "Sprite.h"
+#include <iostream>
+using namespace std;
+using namespace utility;
+
+Sprite::Sprite() : Movable()
+{
+    next = nullptr;
+    prev = nullptr;    priority = 0;
+    //this->texture = Texture();
+    this->textureRect = Rect2D();
+}
+
+Sprite::Sprite(Vector2f position, Texture* texture, int priority) : Movable(position, Vector2f(), Vector2f())
+{
+    next = nullptr;
+    prev = nullptr;
+    this->priority = priority;
+    this->texture = texture;
+    this->textureRect = Rect2D(0, 0, texture->getWidth(), texture->getHeight());
+}
+Sprite::~Sprite()
+{
+    next = nullptr;
+    prev = nullptr;
+}
+void Sprite::setTexture(Texture* texture)
+{
+    this->texture = texture;
+    this->textureRect = Rect2D(0, 0, texture->getWidth(), texture->getHeight());
+}
+Texture* Sprite::getTexture()
+{
+    return this->texture;
+}
+Vector2f Sprite::getHitbox() const {
+    return Vector2f(textureRect.width, textureRect.height);
+}
+void Sprite::printPosition() {
+    cerr << "position: " << position.x << " " << position.y << '\n';
+}
+void Sprite::setTextureRect(int top, int left, int width, int height)
+{
+    this->textureRect.top = top;
+    this->textureRect.left = left;
+    this->textureRect.width = width;
+    this->textureRect.height = height;
+}
+int Sprite::getPriority() {
+    return priority;
+}
+void Sprite::setPriority(int priority) {
+    this->priority = priority;
+}
+void Sprite::update() {
+    Movable::update();
+}
+
+void Sprite::draw(void* bits, Vector2i frameSize)
+{
+    texture->drawTexture((int)position.y, (int)position.x, textureRect, bits, frameSize);
+}
+
+```Supportive.cpp```
+
+#pragma warning(disable:4996)
+#define _CRT_SECURE_NO_DEPRECATE
+#include "Supportive.h"
+
+
+string return_current_time_and_date()
+{
+	auto now = chrono::system_clock::now();
+	auto in_time_t = chrono::system_clock::to_time_t(now);
+
+	std::stringstream ss;
+	ss << put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
+	return ss.str();
+}
+
+string getExePath(string x) // removes fileName from path i.e "D:\path\to\exe\sample.exe" changes it into "D:\path\to\exe"
+{
+	std::string f = x;
+	return f.substr(0, f.find_last_of("\\/"));
+}
+
+vector<leaderBoardInfo> readLeaderBoardFromFile(const string& filename) {
+	vector<leaderBoardInfo> leaderboard;
+
+	ifstream fin(filename, ios::in | ios::binary);
+	if (!fin) {
+		cerr << "Error opening file for reading: " << filename << endl;
+		return leaderboard;
+	}
+
+	// Read the vector size
+	size_t size;
+	fin.read(reinterpret_cast<char*>(&size), sizeof(size));
+
+	// Read each leaderBoardInfo object
+	for (size_t i = 0; i < size; ++i) {
+		char name[100], score[100], date[100];
+		fin.read(name, sizeof(name));
+		fin.read(score, sizeof(score));
+		fin.read(date, sizeof(date));
+		leaderboard.emplace_back(name, score, date);
+	}
+
+	fin.close();
+	return leaderboard;
+}
+
+void writeLeaderboardToFile(const vector<leaderBoardInfo>& leaderboard, const string& filename) {
+	ofstream fout(filename, ios::out | ios::binary);
+	if (!fout) {
+		cerr << "Error opening file for writing: " << filename << endl;
+		return;
+	}
+
+	// Write the vector size (number of objects) first
+	size_t size = leaderboard.size();
+	fout.write(reinterpret_cast<char*>(&size), sizeof(size));
+
+	// Write each leaderBoardInfo object
+	for (const auto& entry : leaderboard) {
+		fout.write(entry.getName().c_str(), entry.getName().size() + 1); // Include null terminator
+		fout.write(entry.getScore().c_str(), entry.getScore().size() + 1);
+		fout.write(entry.getDate().c_str(), entry.getDate().size() + 1);
+	}
+
+	fout.close();
+}
+
+int getScoreBoardCoord(const int& len, const int& col) {
+	switch (col) {
+	case 1 :
+		return (NAME_COLUMN_WIDTH - len) / 2 + NAME_COLUMN_OFFSET;
+		break;
+	case 2 :
+		return (SCORE_COLUMN_WIDTH - len) / 2 + SCORE_COLUMN_OFFSET;
+		break;
+	case 3 : 
+		return (DATE_COLUMN_WIDTH - len) / 2 + DATE_COLUMN_OFFSET;
+		break;
+	default :
+		return 0;
+		break;
+	}
+
+	return 0;
+}
+
+int getRandomInRange(int a, int b) {
+	// Seed the random number generator with the current time
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+	// Calculate the range span
+	int rangeSpan = b - a + 1;
+
+	// Generate a random number within the range
+	int randomNum = std::rand() % rangeSpan + a;
+
+	return randomNum;
+}
+
+```Text.cpp```
+
+#pragma warning(disable:4244)
+#include "Text.h"
+int spaceChar[] = { 21, 21, 21, 21, 21, 21, 21, 21, 6, 10, 21, 10, 29, 21, 21, 21, 21, 18, 19, 16, 21, 21, 34, 21, 21, 21 };
+// i was so dumb...
+Text::Text() {
+
+}
+
+Text::Text(const string& text) {
+	t = text;
+	length = 0;
+	for (int i = 0; i < text.length(); i++) {
+		this->text.push_back(new Sprite);
+	}
+
+	for (int i = 0; i < text.length(); i++) {
+		if (text[i] >= 'a' && text[i] <= 'z') {
+			this->text[i]->setTexture(alphabet[text[i] - 'a'].getCurrentTexture());
+			if (i != text.length() - 2)
+				length += spaceChar[t[i] - 'a'];
+		}
+		else if (t[i] >= '0' && t[i] <= '9') {
+			this->text[i]->setTexture(numeric[text[i] - '0'].getCurrentTexture());
+			if (t[i] == '1')
+				length += 14;
+			else length += 21;
+		}
+		else {
+			length += 19;
+			this->text[i]->setTexture(numeric[10].getCurrentTexture());
+			
+		}
+
+	}
+}
+
+void Text::writeText(const int& x, const int& y, Frame* frame) {
+	int offset = 0;
+	for (int i = 0; i < this->text.size(); i++) {
+		this->text[i]->setPosition(Vector2f(x + offset, y));
+		if (t[i] >= 'a' && t[i] <= 'z')
+			offset += spaceChar[t[i] - 'a'];
+		else if (t[i] >= '0' && t[i] <= '9') {
+			if (t[i] == '1')
+				offset += 14;
+			else offset += 21;
+		}
+		else offset += 19;
+		frame->addSprite(text[i]);
+	}
+	return;
+}
+
+void Text::INIT() {
+	for (int i = 0; i < 26; i++) {
+		char c = 'a' + i;
+		alphabet.push_back(Entity("alphabet/alpha_" + string(1, c), true));
+	}
+	for (int i = 0; i < 11; i++) {
+		numeric.push_back(Entity("numeric/num_" + to_string(i), true));
+	}
+	return;
+}
+
+int Text::getLength() const {
+	return this->length;
+}
+Text::~Text() {
+	for (int i = 0; i < this->text.size(); i++) {
+		delete this->text[i];
+		this->text[i] = nullptr;
+	}
+}
+
+```Texture.cpp```
+
+#include "Texture.h"
+#include <fstream>
+#include <iostream>
+#include <thread>
+
+using namespace std;
+
+Texture::Texture() {
+    width = 0;
+    height = 0;
+    pixels = vector<vector<Pixel>>();
+}
+
+Texture::Texture(int width, int height) {
+    this->width = width;
+    this->height = height;
+    pixels = vector<vector<Pixel>>(height, vector<Pixel>(width));
+}
+
+Texture::Texture(const Texture& other) {
+    width = other.width;
+    height = other.height;
+    pixels = other.pixels;
+}
+
+Texture::Texture(const string& filename) {
+    width = 0;
+    height = 0;
+    pixels = vector<vector<Pixel>>();
+    readTexture(filename);
+}
+
+Texture::Texture(Texture* other) {
+    width = other->width;
+    height = other->height;
+    pixels = other->pixels;
+}
+
+Texture::~Texture() {
+    // Do nothing
+}
+
+void Texture::flipHorizontal() {
+    for (int row = 0; row < height; row++) {
+        for (int col = 0; col < width / 2; col++) {
+            Pixel temp = pixels[row][col];
+            pixels[row][col] = pixels[row][width - col - 1];
+            pixels[row][width - col - 1] = temp;
+        }
+    }
+}
+
+
+void Texture::setPixel(int x, int y, Pixel pixel) {
+    pixels[y][x] = pixel;
+}
+
+Pixel Texture::getPixel(int x, int y) {
+    return pixels[y][x];
+}
+
+int Texture::getWidth() {
+    return width;
+}
+
+int Texture::getHeight() {
+    return height;
+}
+
+void Texture::readTexture(string filename) {
+    ifstream file(filename, ios::binary);
+    if (!file.is_open()) {
+        cerr << "Cannot open file " << filename << "\n";
+        return;
+    }
+    file.read(reinterpret_cast<char*>(&width), sizeof(int));
+    file.read(reinterpret_cast<char*>(&height), sizeof(int));
+    pixels = vector<vector<Pixel>>(height, vector<Pixel>(width));
+//    cerr << "Height: " << pixels.size() << "\n";
+//    if(pixels.size() > 0)
+//        cerr << "Width: " << pixels[0].size() << "\n";
+//    else
+//        cerr << "Width: 0\n";
+//    cerr << "\n";
+
+    for (int row = 0; row < height; row++) {
+        for (int col = 0; col < width; col++)
+        {
+            int a, r, g ,b;
+            int color;
+            file.read(reinterpret_cast<char*>(&color), sizeof(int));
+            a = (color >> 24) & 0xFF;
+            b = (color >> 16) & 0xFF;
+            g = (color >> 8) & 0xFF;
+            r = color & 0xFF;
+            pixels[row][col] = Pixel(r, g, b, a);
+        }
+    }
+
+    file.close();
+}
+
+void Texture::print() {
+    cerr << "Width: " << width << "\n";
+    cerr << "Height: " << height << "\n";
+    cerr << "Height: " << pixels.size() << "\n";
+    if(pixels.size() > 0)
+        cerr << "Width: " << pixels[0].size() << "\n";
+    else
+        cerr << "Width: 0\n";
+    for (int row = 0; row < height; row++) {
+        for (int col = 0; col < width; col++)
+        {
+            cout << "(" << row << ", " << col << "): ";
+            pixels[row][col].print();
+            cout << "\n";
+        }
+    }
+}
+
+//void Texture::drawTexture(int top, int left, Rect2D textureRect, HDC hdc)
+//{
+//}
+
+void Texture::drawTexture(int top, int left, Rect2D textureRect, void *bits, Vector2i frameSize) {
+    for (int y = 0; y < textureRect.height; y++) {
+        for (int x = 0; x < textureRect.width; x++) {
+            if (textureRect.top + y < 0 || textureRect.top + y >= frameSize.y || textureRect.left + x < 0 || textureRect.left + x >= frameSize.x)
+                continue;
+            if (textureRect.top + y >= (int) pixels.size() || textureRect.left + x >= (int) pixels[textureRect.top + y].size())
+                continue;
+            if(pixels[textureRect.top + y][textureRect.left + x].getA() == 0)
+                continue;
+            if(top + y < 0 || top + y >= frameSize.y || left + x < 0 || left + x >= frameSize.x)
+                continue;
+            // Get a pointer to the pixel at (top, left)
+            BYTE* pPixel = (BYTE*)bits + ((top + y) * frameSize.x + (left + x)) * 4;
+
+            // Set the pixel (R, G, B, A)
+            pPixel[0] = pixels[textureRect.top + y][textureRect.left + x].getB();
+            pPixel[1] = pixels[textureRect.top + y][textureRect.left + x].getG();
+            pPixel[2] = pixels[textureRect.top + y][textureRect.left + x].getR();
+            pPixel[3] = pixels[textureRect.top + y][textureRect.left + x].getA();
+        }
+    }
+}
+
+```TrafficLight.cpp```
+
+#include "TrafficLight.h"
+
+void TrafficLight::INIT() {
+	for (int i = 0; i < 3; i++) {
+		lightTexture.push_back(Entity("trafficLight/light" + to_string(i + 1)));
+	}
+	return;
+}
+
+TrafficLight::TrafficLight(Vector2f pos, Lane* lane1, Lane* lane2, const int& status) {
+	sprite = new Sprite(pos, lightTexture[0].getCurrentTexture());
+	lane.push_back(lane1);
+	lane.push_back(lane2);
+}
+
+TrafficLight::~TrafficLight() {
+	
+}
+
+void TrafficLight::green() {
+	lane[0]->startLane();
+	lane[1]->startLane();
+	status = 0;
+}
+
+void TrafficLight::yellow() {
+	status = 1;
+}
+
+void TrafficLight::red() {
+	lane[0]->stopLane();
+	lane[1]->stopLane();
+	status = 2;
+	//sprite->setTexture(lightTexture[0].getCurrentTexture());
+}
+
+void TrafficLight::setStatus(const int& Status) {
+	sprite->setTexture(lightTexture[Status].getCurrentTexture());
+	switch (Status) {
+	case 0:
+		green();
+		break;
+	case 1:
+		yellow();
+		break;
+	case 2:
+		red();
+		break;
+	}
+
+	return;
+}
+
+Sprite* TrafficLight::getSprite() const {
+	return sprite;
+}
+
+void trafficControl(vector<TrafficLight> trafficLight) {
+	int random1 = getRandomInRange(0, 4);
+	int random2 = getRandomInRange(0, 4);
+	int light = getRandomInRange(0, 2);
+	trafficLight[random1].setStatus(light);
+	return;
+}
+
+```Utilities.cpp```
+
+#pragma warning(disable:4244)
+#include "Utilities.h"
+#include <math.h>
+
+using namespace std;
+using namespace utility;
+
+//extern void setSpeedMultiplier(float speedMultiplier) {
+//    SPEED_MULTIPLIER = speedMultiplier;
+//}
+
+Vector2i::Vector2i() {
+    x = 0;
+    y = 0;
+}
+
+Vector2i::Vector2i(int x, int y) {
+    this->x = x;
+    this->y = y;
+}
+
+Vector2i::Vector2i(const Vector2i& other) {
+    x = other.x;
+    y = other.y;
+}
+
+Vector2i::~Vector2i() {
+    // Do nothing
+}
+
+Vector2i Vector2i::operator+(const Vector2i& other) {
+    return Vector2i(x + other.x, y + other.y);
+}
+
+Vector2i Vector2i::operator-(const Vector2i& other) {
+    return Vector2i(x - other.x, y - other.y);
+}
+
+Vector2i Vector2i::operator*(const int& other) {
+    return Vector2i(x * other, y * other);
+}
+
+Vector2i Vector2i::operator/(const int& other) {
+    return Vector2i(x / other, y / other);
+}
+
+Vector2i Vector2i::operator+=(const Vector2i& other) {
+    x += other.x;
+    y += other.y;
+    return *this;
+}
+
+Vector2i Vector2i::operator-=(const Vector2i& other) {
+    x -= other.x;
+    y -= other.y;
+    return *this;
+}
+
+Vector2i Vector2i::operator*=(const int& other) {
+    x *= other;
+    y *= other;
+    return *this;
+}
+
+Vector2i Vector2i::operator/=(const int& other) {
+    x /= other;
+    y /= other;
+    return *this;
+}
+
+bool Vector2i::operator==(const Vector2i& other) {
+    return x == other.x && y == other.y;
+}
+
+bool Vector2i::operator!=(const Vector2i& other) {
+    return x != other.x || y != other.y;
+}
+
+float Vector2i::modulus() {
+    return sqrt(x * x + y * y);
+}
+
+Vector2f::Vector2f() {
+    x = 0;
+    y = 0;
+}
+
+Vector2f::Vector2f(float x, float y) {
+    this->x = x;
+    this->y = y;
+}
+
+Vector2f::Vector2f(const Vector2f& other) {
+    x = other.x;
+    y = other.y;
+}
+
+Vector2f::~Vector2f() {
+    // Do nothing
+}
+
+Vector2f Vector2f::operator+(const Vector2f& other) {
+    return Vector2f(x + other.x, y + other.y);
+}
+
+Vector2f Vector2f::operator-(const Vector2f& other) {
+    return Vector2f(x - other.x, y - other.y);
+}
+
+Vector2f Vector2f::operator*(const float& other) {
+    return Vector2f(x * other, y * other);
+}
+
+Vector2f Vector2f::operator/(const float& other) {
+    return Vector2f(x / other, y / other);
+}
+
+Vector2f Vector2f::operator+=(const Vector2f& other) {
+    x += other.x;
+    y += other.y;
+    return *this;
+}
+
+Vector2f Vector2f::operator-=(const Vector2f& other) {
+    x -= other.x;
+    y -= other.y;
+    return *this;
+}
+
+Vector2f Vector2f::operator*=(const float& other) {
+    x *= other;
+    y *= other;
+    return *this;
+}
+
+Vector2f Vector2f::operator/=(const float& other) {
+    x /= other;
+    y /= other;
+    return *this;
+}
+
+bool Vector2f::operator==(const Vector2f& other) {
+    return x == other.x && y == other.y;
+}
+
+bool Vector2f::operator!=(const Vector2f& other) {
+    return x != other.x || y != other.y;
+}
+
+float Vector2f::modulus() {
+    return sqrt(x * x + y * y);
+}
+
+Rect2D::Rect2D() {
+    this->top = 0;
+    this->left = 0;
+    this->width = 0;
+    this->height = 0;
+}
+
+Rect2D::Rect2D(int top, int left, int width, int height) {
+    this->top = top;
+    this->left = left;
+    this->width = width;
+    this->height = height;
+}
+
+Rect2D::Rect2D(Vector2i topLeft, Vector2i bottomRight) {
+    this->top = topLeft.y;
+    this->left = topLeft.x;
+    this->width = bottomRight.x - topLeft.x;
+    this->height = bottomRight.y - topLeft.y;
+}
+
+Rect2D::Rect2D(Vector2i topLeft, int width, int height) {
+    this->top = topLeft.y;
+    this->left = topLeft.x;
+    this->width = width;
+    this->height = height;
+}
+
+Rect2D::Rect2D(const Rect2D& other) {
+    this->top = other.top;
+    this->left = other.left;
+    this->width = other.width;
+    this->height = other.height;
+}
+
+Rect2D::~Rect2D() {
+    // Do nothing
+}
+
+
+
+
+
+
+
+#pragma comment(lib, "winmm.lib")
+
+#include <iostream>
+#include <Windows.h>
+#include <winuser.h>
+#include <sstream>
+#include <iomanip>
+#include <cmath>
+#include <chrono>
+#include <thread>
+#include <time.h>
+#include <conio.h>
+#include "Texture.h"
+#include "Sprite.h"
+#include "Frame.h"
+#include "Entity.h"
+#include "Supportive.h"
+#include "Lane.h"
+#include "Player.h"
+#include "Screen.h"
+#include "Audio.h"
+#include "Text.h"
+#include "TrafficLight.h"
+#include "Map.h"
+
+// #define _WIN32_WINNT 0x0500
+
+
+#define KEY_UP 119
+#define KEY_DOWN 115
+#define KEY_LEFT 97
+#define KEY_RIGHT 100
+
+using namespace std;
+
+Frame mainFrame(Vector2i(1280, 760), Vector2i(0,0));
+
+
+void ShowConsoleCursor(bool showFlag)
+{
+	HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	CONSOLE_CURSOR_INFO     cursorInfo;
+
+	GetConsoleCursorInfo(out, &cursorInfo);
+	cursorInfo.bVisible = showFlag; // set the cursor visibility
+	SetConsoleCursorInfo(out, &cursorInfo);
+}
+
+Screen* Screen::instancePtr = nullptr;
+vector<Entity> Text::numeric;
+vector<Entity> Text::alphabet;
+vector<Entity> TrafficLight::lightTexture;
+int main(int argc, char* argv[]) {
+	HWND console = GetConsoleWindow();
+	RECT r;
+	GetWindowRect(console, &r); 
+	
+	// Size 1280 - 760
+	MoveWindow(console, 0, 0, 1280, 760, TRUE);
+
+	HWND consoleWindow = GetConsoleWindow();
+	SetWindowLong(consoleWindow, GWL_STYLE, GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
+	ShowScrollBar(GetConsoleWindow(), SB_VERT, 0);
+	ShowConsoleCursor(false);
+
+
+	HDC hdc = GetDC(console);
+	Text::INIT();
+	TrafficLight::INIT();
+
+	int diff = 50;
+	Entity carEntity("car4_motion");
+	Entity revCarEntity("car4_motion");
+	revCarEntity.flipHorizontal();
+	Entity coin("blueSlime_run");
+	vector<Lane> mapLane;
+	for (int i = 0; i < 10; i++) {
+		if (i % 2 == 1) {
+			Lane cur1 = Lane(&mainFrame, i, carEntity, diff);
+			cur1.addItem("Slime", coin, cur1.getStart());
+			mapLane.push_back(cur1);
+		}
+		else {
+			Lane cur2 = Lane(&mainFrame, i, revCarEntity, diff);
+			cur2.addItem("Slime", coin, cur2.getStart());
+			mapLane.push_back(cur2);
+		}
+	}
+	Map playMap(hdc, &mainFrame, diff, mapLane);
+	playMap.drawMap();
+
+	ReleaseDC(console, hdc);
+	system("cls");
+
+	cin.ignore();
+	return 0;
+}

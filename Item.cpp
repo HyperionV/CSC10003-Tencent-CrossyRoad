@@ -64,19 +64,30 @@ void Item::animateItem() {
 	itemSprite->setTexture(model->getCurrentTexture());
 }
 
-bool Item::checkCollision(Player* _player) {
-	Vector2f topLeft = _player->getCurrentPos();
-	Vector2f bottomRight = topLeft + _player->getHitbox();
-	//to be implemented
-	return true;
-}
-
-bool Item::useItem(Player* _player) {
-	if (_player->getCurrentPos() == position) {
-		_player->addPoint(value);
-		return true;
+bool Item::checkCollision(Player* _p) {
+	/*Vector2f hitbox(30, 30);
+	Vector2f topLeft = _p->getCurrentPos();
+	Vector2f bottomRight = topLeft + _p->getHitbox();
+	if (topLeft.x > bottomRight.x) {
+		swap(topLeft.x, bottomRight.x);
 	}
-	return false;
+	if (topLeft.y < bottomRight.y) {
+		swap(topLeft.y, bottomRight.y);
+	}
+	
+	Vector2f vTopLeft = itemSprite->getPosition();
+	Vector2f vBottomRight = vTopLeft + hitbox;
+	if (vTopLeft.x > vBottomRight.x) {
+		swap(vTopLeft.x, vBottomRight.x);
+	}
+	if (vTopLeft.y < vBottomRight.y) {
+		swap(vTopLeft.y, vBottomRight.y);
+	}
+	if (bottomRight.x < vTopLeft.x || vBottomRight.x < topLeft.x) return true;
+	if (topLeft.y < vBottomRight.y || vTopLeft.y < bottomRight.y) return true;
+	return false;*/
+
+	// to be implemented
 }
 
 Slime::Slime(const string& _itemName, const Vector2f& _position)

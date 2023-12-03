@@ -20,6 +20,7 @@ private:
     Sprite* _player;
     size_t point = 0;
     int state = 1; // left - 0; up - 1; right - 2;
+    bool isRunning;
 public:
     Player() {};
     Player(Frame&);
@@ -35,4 +36,6 @@ public:
 
     void playerHandler();
     thread launchHandler();
+    void stopPlayerHandler();
+    int let_Megumin_cook();
 };

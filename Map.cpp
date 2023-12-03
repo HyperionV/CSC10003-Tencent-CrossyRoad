@@ -61,7 +61,21 @@ void Map::drawMap() {
 
         mainFrame->update();
         mainFrame->draw(hdc);
-		if (collide)
+		if (collide) {
+			player.stopPlayerHandler();
+			t.join();
+			for (auto& s : mapLane) {
+				s->stopLane();
+			}
+			int sz = player.let_Megumin_cook();
+			while (sz--) {
+				this_thread::sleep_for(200ms);
+				player.animatePlayer();
+				mainFrame->update();
+				mainFrame->draw(hdc);
+			}
 			break;
+			// do something
+		}
     }
 }

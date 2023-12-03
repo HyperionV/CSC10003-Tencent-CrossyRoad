@@ -6,6 +6,7 @@ Player::Player(Frame& mainFrame) {
     model.push_back(new Entity("player/left"));
     model.push_back(new Entity("player/up"));
     model.push_back(new Entity("player/right"));
+    model.push_back(new Entity("redSlime/redSlime_jumpattack"));
     _player = mainFrame.addSprite(model[state]->getCurrentTexture(), Vector2f(1280 / 2, 655));
     width = 36;
     height = 40;
@@ -59,10 +60,6 @@ void Player::animatePlayer() {
     _player->setTexture(model[state]->getCurrentTexture());
 }
 
-//void Player::setModel(const Entity& _model) {
-//    model = _model;
-//}
-
 Vector2f Player::getHitbox() const {
     return Vector2f(width, height);
 }
@@ -81,7 +78,7 @@ int Player::convertLane() {
 
 void Player::playerHandler()
 {
-    while (true) {
+    while (true && isRunning) {
         int vertical{}, horizon{};
         animatePlayer();
         if (_kbhit()) {
@@ -114,7 +111,17 @@ void Player::playerHandler()
 }
 
 thread Player::launchHandler() {
+    isRunning = true;
     return thread([this]() { 
         this->playerHandler(); 
     });
+}
+
+void Player::stopPlayerHandler() {
+    isRunning = false;
+}
+
+int Player::let_Megumin_cook() {
+    state = 3;
+    return model[state]->getMotionSize();
 }

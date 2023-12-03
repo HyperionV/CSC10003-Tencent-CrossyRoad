@@ -89,6 +89,9 @@ void Lane::stopLane() {
 	for (int i = 0; i<vehicles.size();i++) {
 		vehicles[i]->setIsMoving(false);
 	}
+	for (auto& _item : items) {
+		_item->getItemSprite()->setEndPos(_item->getItemSprite()->getPosition(), 0);
+	}
 }
 
 //void Lane::slowdownLane() {
@@ -151,10 +154,12 @@ bool Lane::checkCollision(Player* _p) {
 			continue; // no overlap
 		return true; // overlap
 	}
-	return false;
+	//return false;
 
 	for (auto& _item : items) {
-		if (_item->useItem(_p)) {
+		if (_item->checkCollision(_p)) {
+			_p->addPoint(_item->getValue());
+			cout << "Item used" << endl;
 			mainFrame->removeSprite(_item->getItemSprite());
 			delete _item;
 			items.erase(find(items.begin(), items.end(), _item));
