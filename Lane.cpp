@@ -1,8 +1,8 @@
 #pragma warning(disable:4244)
 #include "Lane.h"
 
-int laneStreetPos[] {130, 170, 240, 276, 344, 384, 450, 490, 559, 602};
-int laneChessPos[] { 130, 170, 240, 276, 344 };
+//int laneStreetPos[] {130, 170, 240, 276, 344, 384, 450, 490, 559, 602};
+//int laneChessPos[] { 130, 170, 240, 276, 344 };
 
 
 pair<int, int> path = pair<int, int>(-150, 1280);
@@ -43,7 +43,7 @@ void Lane::setVehicleCounter(const int& counter) {
 	return;
 }
 
-Lane::Lane(Frame* mainFrame, const int& laneCounter, vector<Entity>& _entity, const int& _difficulty, const int& mapType) 
+Lane::Lane(Frame* mainFrame, const int& laneCounter, vector<Entity>& _entity, const int& _difficulty, const int& mapType, const int& priority) 
 	: rand(time(NULL) + laneCounter)
 {
 	for (int i = 0; i < _entity.size(); i++) {
@@ -60,6 +60,7 @@ Lane::Lane(Frame* mainFrame, const int& laneCounter, vector<Entity>& _entity, co
 		start = Vector2f(path.second, lanePos[mapType][laneCounter]);
 		end = Vector2f(path.first, lanePos[mapType][laneCounter]);
 	}
+	this->priority = priority;
 	difficulty = _difficulty;
 	timeBetweenSpawn = 2000 - (150 * (difficulty % 5)) * (1 + (difficulty % 5) / 4);
 	vehicleCounter = floor(12000/timeBetweenSpawn);
@@ -72,7 +73,7 @@ Lane::~Lane() {}
 
 void Lane::resetLane() {
 	timeBetweenSpawn = 2000 - (150 * (difficulty % 5)) * (1 + (difficulty % 5) / 4);
-	vehicleCounter = floor(12000 / timeBetweenSpawn);
+	vehicleCounter = model.size();
 	nextSpawn.clear();
 
 	for (int i = 0; i < vehicleCounter; i++) {
@@ -82,9 +83,10 @@ void Lane::resetLane() {
 	while (vehicles.size() < vehicleCounter) {
 		int idx = vehicles.size() % model.size();
 		vehicles.push_back(mainFrame->addSprite(model[idx]->getCurrentTexture(), start));
+		vehicles[idx]->setPriority(priority);
 	}
 	for (auto& _item : items) {
-		cout << _item->getItemName() << endl;
+		//cout << _item->getItemName() << endl;
 		if (_item->getItemSprite() == nullptr) {
 			_item->setSprite(mainFrame->addSprite(_item->getTexture(), _item->getPosition()));
 			if (_item->getItemName() == "Slime") {
@@ -138,7 +140,7 @@ void Lane::stopLane() {
 
 void Lane::animateLane() {
 	for(int i= 0; i< vehicles.size(); i++) {
-		vehicles[i]->setTexture(model[i % model.size()]->getCurrentTexture());
+		vehicles[i]->setTexture(model[i]->getCurrentTexture());
 	}
 
 }
@@ -167,13 +169,34 @@ Vector2f Lane::getStart() const {
 bool Lane::checkCollision(Player* _p) {
 	Vector2f topLeft = _p->getCurrentPos();
 	Vector2f bottomRight = topLeft + _p->getHitbox();
+	if (topLeft.x > bottomRight.x) {
+		swap(topLeft.x, bottomRight.x);
+	}
+	if (topLeft.y < bottomRight.y) {
+		swap(topLeft.y, bottomRight.y);
+	}
 	for (auto _sprite: vehicles) {
 		Vector2f vTopLeft = _sprite->getPosition();
 		Vector2f vBottomRight = vTopLeft + _sprite->getHitbox();
-		if (bottomRight.x > bottomRight.x && vBottomRight.y > vBottomRight.y) 
-			if (topLeft.x < vTopLeft.x && topLeft.y < topLeft.y) return true;
-		return false;
+		if (vTopLeft.x > vBottomRight.x) {
+			swap(vTopLeft.x, vBottomRight.x);
+		}
+		if (vTopLeft.y < vBottomRight.y) {
+			swap(vTopLeft.y, vBottomRight.y);
+		}
+
+		if (bottomRight.x < vTopLeft.x || vBottomRight.x < topLeft.x)
+			continue; // no overlap
+		if (vBottomRight.y < ((bottomRight.y - topLeft.y) / 2 + bottomRight.y))
+			continue;
+		if (vTopLeft.y > (topLeft.y - (bottomRight.y - topLeft.y) / 2 ))
+			continue;
+		if (topLeft.y < vBottomRight.y || vTopLeft.y < bottomRight.y)
+			continue; // no overlap
+		return true; // overlap
 	}
+	return false;
+
 	for (auto& _item : items) {
 		if (_item->useItem(_p)) {
 			mainFrame->removeSprite(_item->getItemSprite());

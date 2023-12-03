@@ -19,6 +19,7 @@ private:
 
     int difficulty;
     int timeBetweenSpawn;
+    int priority;
     vector<Entity*> model;
     vector<Sprite*> vehicles;
     static vector<vector<int>>lanePos;
@@ -39,7 +40,7 @@ private:
 
 public:
     Lane();
-    Lane(Frame*, const int&, vector<Entity>& _entity, const int&, const int&);
+    Lane(Frame*, const int&, vector<Entity>& _entity, const int&, const int&,const int&);
     ~Lane();
     void resetLane(); 
     void startLane();

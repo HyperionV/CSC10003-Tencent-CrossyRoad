@@ -52,6 +52,7 @@ vector<Entity> Text::numeric;
 vector<Entity> Text::alphabet;
 vector<Entity> TrafficLight::lightTexture;
 vector<vector<int>> Lane::lanePos;
+vector<vector<int>> Player::lanePos;
 int main(int argc, char* argv[]) {
 	HWND console = GetConsoleWindow();
 	RECT r;
@@ -70,26 +71,12 @@ int main(int argc, char* argv[]) {
 	Text::INIT();
 	TrafficLight::INIT();
 	Lane::INIT();
+	Player::INIT();
 
-//    Texture *test = new Texture("image_bin/street.bin");
-
-//	Entity bg1("street");
-//	Entity _char("up");
-//
-//	Sprite* bg = mainFrame.addSprite(*(bg1.getCurrentTexture()), Vector2f(0, 0));
-//	bg->setEndPos(Vector2f(1480, 960), 0);
-
-	//Screen* game = Screen::getInstance(&mainFrame, &hdc);
-	//game->startGame();
-	int diff =90;
-	//Entity carEntity("car4_motion");
-	//Entity revCarEntity("car4_motion");
-	//revCarEntity.flipHorizontal();
-	//Entity coin("blueSlime_run");
-
-
-	StreetMap playMap(hdc, &mainFrame, diff);
+	int diff = 90;
+	ChessMap playMap(hdc, &mainFrame, diff);
 	playMap.drawMap();
+
 	ReleaseDC(console, hdc);
 	system("cls");
 

@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "TrafficLight.h"
 #include "Lane.h"
+#include <thread>
 
 class Map {
 protected:
@@ -52,7 +53,7 @@ private:
 public:
 	TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane>& maplane);
 	~TrainMap();
-	void drawMap();
+	void drawMap() {};
 	void loadResource();
 	void shiftResource() {};
 };
