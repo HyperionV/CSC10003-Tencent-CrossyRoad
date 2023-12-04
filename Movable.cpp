@@ -130,11 +130,8 @@ void Movable::update() {
         if (reachedDestination()) {
             isMoving = false;
             velocity = Vector2f();
-            //acceleration = Vector2f();
-            //system("pause");
             position = startingPosition;
             destination = position;
-            // startingPosition = destination;
         }
         else {
             Vector2f firstHalf = position - startingPosition;

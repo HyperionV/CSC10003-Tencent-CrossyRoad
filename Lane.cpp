@@ -61,18 +61,10 @@ void Lane::resetLane() {
 		nextSpawn.push_back(i);
 	}
 	onTrack.resize(vehicleCounter, false);
-	while (vehicles.size() < vehicleCounter) { 
+	while (vehicles.size() < vehicleCounter) {
 		int idx = vehicles.size() % model.size();
 		vehicles.push_back(mainFrame->addSprite(model[idx]->getCurrentTexture(), start));
 		vehicles[idx]->setPriority(priority);
-	}
-	for (auto& _item : items) {
-		if (_item->getItemSprite() == nullptr) {
-			_item->setSprite(mainFrame->addSprite(_item->getTexture(), _item->getPosition()));
-			if (_item->getItemName() == "Slime") {
-				_item->getItemSprite()->setEndPos(_item->getDestination(), speed);
-			}
-		}
 	}
 	speed += floor((difficulty % 5) / 4);
 	for (auto& _sprite: vehicles) {
@@ -81,7 +73,6 @@ void Lane::resetLane() {
 	lastSpawn = clock();
 	timeTilNextSpawn = rand() % RANDOM_INTERVAL / 1000.0;
 	isRunning = false;
-	//clearItems();
 }
 
 void Lane::clearItems() {
@@ -107,6 +98,15 @@ void Lane::startLane() {
 	for (int i = 0; i < vehicles.size(); i++) {
 		vehicles[i]->setIsMoving(true);
 	}
+
+	for (auto& _item : items) {
+		if (_item->getItemSprite() == nullptr) {
+			items.erase(find(items.begin(), items.end(), _item));
+			continue;
+		}
+		if (_item->getItemName() == "Slime")
+			_item->getItemSprite()->setEndPos(end, speed);
+	}
 }
 
 void Lane::stopLane() {
@@ -115,7 +115,11 @@ void Lane::stopLane() {
 		vehicles[i]->setIsMoving(false);
 	}
 	for (auto& _item : items) {
-		_item->getItemSprite()->setEndPos(_item->getItemSprite()->getPosition(), 0);
+		if (_item->getItemSprite() == nullptr) {
+			items.erase(find(items.begin(), items.end(), _item));
+			continue;
+		}
+		_item->getItemSprite()->setEndPos(Vector2f(), 0);
 	}
 }
 
@@ -128,12 +132,43 @@ void Lane::animateLane() {
 
 void Lane::animateItem() {
 	for (auto& _item : items) {
-		cout << _item->getItemName() << endl;
+		if (_item->getItemSprite() == nullptr) {
+			items.erase(find(items.begin(), items.end(), _item));
+			continue;
+		}
 		_item->animateItem();
 	}
 }
 
+void Lane::updateItem() {
+	_mutex.lock();
+	for (auto& _item : items) {
+		Sprite* _s = _item->getItemSprite();
+		if (_s == nullptr) {
+			_item->setSprite(mainFrame->addSprite(_item->getTexture(), _item->getPosition()));
+			if (_item->getItemName() == "Slime") {
+				if (isRunning)
+					_item->getItemSprite()->setEndPos(end, speed);
+			}
+			continue;
+		}
+		if (_item->getItemName() == "Coin") {
+			if (time(NULL) - _item->getCreateTime() > 5) {
+				mainFrame->removeSprite(_s);
+				items.erase(find(items.begin(), items.end(), _item));
+			}
+			continue;
+		}
+		if (_s->reachedDestination()) {
+			mainFrame->removeSprite(_s);
+			items.erase(find(items.begin(), items.end(), _item));
+		}
+	}
+	_mutex.unlock();
+}
+
 void Lane::update() {
+	updateItem();
 	animateItem();
 	animateLane();
 	if (!isRunning) {
@@ -178,27 +213,26 @@ bool Lane::checkCollision(Player* _p) {
 	}
 	//return false;
 
-	/*for (auto& _item : items) {
+	for (auto& _item : items) {
 		if (_item->checkCollision(_p)) {
 			_p->addPoint(_item->getValue());
-			cout << "Item used" << endl;
 			mainFrame->removeSprite(_item->getItemSprite());
 			delete _item;
 			items.erase(find(items.begin(), items.end(), _item));
 		}
-	}*/
+	}
 	return false;
 }
 
 void Lane::addItem(const string& itemName, const Vector2f& position) {
-	cout << "Item added" << endl;
+	_mutex.lock();
 	if (itemName == "Slime") {
-		items.push_back(new Slime(itemName, start));
+		items.push_back(new Slime(start));
 	}
 	else {
-		items.push_back(new Coin(itemName, position));
+		items.push_back(new Coin(position));
 	}
-	cout << "Seriously, item added" << endl;
+	_mutex.unlock();
 }
 
 int Lane::getTotalVehicle() {

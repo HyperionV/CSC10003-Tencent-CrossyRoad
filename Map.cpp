@@ -39,14 +39,16 @@ void StreetMap::drawMap() {
 		mapLane[i]->startLane();
 	}
 	thread t = player.launchHandler();
+	thread spawner([this]() {
+		return this->randomItemSpawner();
+	});
+	bool collide = 0;
 	while (gameRunning) {
-		randomItemSpawner();
 		shiftResource();
 		trafficControl(trafficLight);
 		for (int i = 0; i < (int)mapLane.size(); i++) {
 			mapLane[i]->update();
 		}
-		bool collide = 0;
 		int playerCurrentLane = player.convertLane();
 		if (playerCurrentLane < 10) {
 			if (mapLane[playerCurrentLane]->checkCollision(&player))
@@ -58,11 +60,11 @@ void StreetMap::drawMap() {
 			gameRunning = 0;
 			player.stopPlayerHandler();
 			t.join();
-			t.~thread();
+			spawner.join();
 			for (auto& s : mapLane) {
 				s->stopLane();
 			}
-			int sz = player.let_Megumin_cook();
+			int sz = player.summon_Megumin();
 			player.setSpritePriotity(INT_MAX);
 			while (sz--) {
 				this_thread::sleep_for(200ms);
@@ -126,7 +128,7 @@ void ChessMap::drawMap() {
 		return this->randomItemSpawner();
 		});*/
 	while (true) {
-		randomItemSpawner();
+		//randomItemSpawner();
 		for (int i = 0; i < (int)mapLane.size(); i++) {
 			mapLane[i]->update();
 		}
@@ -147,7 +149,7 @@ void ChessMap::drawMap() {
 			for (auto& s : mapLane) {
 				s->stopLane();
 			}
-			int sz = player.let_Megumin_cook();
+			int sz = player.summon_Megumin();
 			player.setSpritePriotity(1);
 			while (sz--) {
 				this_thread::sleep_for(200ms);
@@ -205,17 +207,17 @@ void TrainMap::loadResource() {
 }
 
 void Map::randomItemSpawner() {
-//	srand(time(NULL));
-//	long long seed = ((rand() + 139) * 491);
-//	//this_thread::sleep_for(1s);
-//	if (seed % 5 == 2) {
-//		if (seed % 2) {
-//			mapLane[seed % 10]->addItem("Slime", Vector2f());
-//		}
-//		else {
-//			mapLane[seed % 10]->addItem("Coin", Vector2f(seed % 1280, seed % 760));
-//		}
-//	}
+	while (gameRunning) {
+		srand(time(NULL));
+		int seed = ((rand() + 139) * 491);
+		this_thread::sleep_for(3s);
+		if (seed % 2) {
+			mapLane[seed % 10]->addItem("Slime", Vector2f());
+		}
+		else {
+			mapLane[seed % 10]->addItem("Coin", Vector2f(seed % 1280, seed % 760));
+		}
+	}
 }
 
 int Map::getDiff() const {

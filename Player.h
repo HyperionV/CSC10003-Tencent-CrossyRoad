@@ -42,5 +42,5 @@ public:
     void playerHandler();
     thread launchHandler();
     void stopPlayerHandler();
-    int let_Megumin_cook();
+    int summon_Megumin();
 };

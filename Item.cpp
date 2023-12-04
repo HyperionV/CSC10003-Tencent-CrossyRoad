@@ -89,8 +89,8 @@ bool Item::checkCollision(Player* _p) {
 	return true;
 }
 
-Slime::Slime(const string& _itemName, const Vector2f& _position)
-	:Item(_itemName, _position)
+Slime::Slime(const Vector2f& _position)
+	:Item("Slime", _position)
 {
 	value = -2;
 	model = new Entity("blueSlime", 'a');
@@ -106,9 +106,10 @@ Vector2f Item::getDestination() const {
 	return destination;
 }
 
-Coin::Coin(const string& _itemName, const Vector2f& _position)
-	:Item(_itemName, _position)
+Coin::Coin(const Vector2f& _position)
+	:Item("Coin", _position)
 {
+	created = time(NULL);
 	model = new Entity("yc", 1);
 	value = 5;
 	destination = position;
@@ -116,4 +117,12 @@ Coin::Coin(const string& _itemName, const Vector2f& _position)
 
 Coin::~Coin() {
 	delete model;
+}
+
+long long Coin::getCreateTime() const {
+	return created;
+}
+
+long long Slime::getCreateTime() const {
+	return 0;
 }
