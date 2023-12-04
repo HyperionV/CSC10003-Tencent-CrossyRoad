@@ -34,11 +34,12 @@ public:
     Vector2f getHitbox() const;
     void addPoint();
     void addPoint(const int& value);
-    int convertLane();
 
     static void INIT();
     void playerHandler();
     thread launchHandler();
     void stopPlayerHandler();
     int let_Megumin_cook();
+    int getPoint() const;
+    int convertLane(const int& mapType);
 };

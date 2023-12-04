@@ -41,13 +41,14 @@ public:
 	void screenAbout();
 	void screenHelp();
 	void startGame();
-	void screenGame();
+	void screenChooseMap();
 	bool screenPause();
 	void screenOption();
 	void screenPlay();
 	void screenLeaderboard();
-	void updateScoreSprite(int& score, int bonus);
+	void updateScoreSprite(const int& score);
 	void changeTexture(const int& idx);
+	void addScore();
 	Screen(const Screen& screen) = delete;
 
 	static Screen* getInstance(Frame* curFrame, HDC* hdc) {

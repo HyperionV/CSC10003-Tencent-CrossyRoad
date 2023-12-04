@@ -83,7 +83,25 @@ void getTraffic(const int& mapType, vector<Lane*>mapLane, vector<TrafficLight>& 
 		trafficLight.push_back(tl5);
 		return;
 	}
-	else return;
+	else {
+		TrafficLight tl1(Vector2f(216, 70.2f), mapLane[0], mapLane[1], 0);
+		tl1.getSprite()->setPriority(1);
+		TrafficLight tl2(Vector2f(950.6f, 180.4f), mapLane[2], mapLane[3], 0);
+		tl2.getSprite()->setPriority(5);
+		TrafficLight tl3(Vector2f(500, 284.f), mapLane[4], mapLane[5], 0);
+		tl3.getSprite()->setPriority(9);
+		TrafficLight tl4(Vector2f(1050.4f, 392.9f), mapLane[6], mapLane[7], 0);
+		tl4.getSprite()->setPriority(13);
+		TrafficLight tl5(Vector2f(211.1f, 500.8f), mapLane[8], mapLane[9], 0);
+		tl5.getSprite()->setPriority(17);
+
+		trafficLight.push_back(tl1);
+		trafficLight.push_back(tl2);
+		trafficLight.push_back(tl3);
+		trafficLight.push_back(tl4);
+		trafficLight.push_back(tl5);
+		return;
+	}
 }
 
 //TrafficLight& TrafficLight::operator = (const TrafficLight& trafficLight) {

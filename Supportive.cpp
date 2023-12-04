@@ -97,4 +97,3 @@ int getRandomInRange(int a, int b) {
 
 	return randomNum;
 }
-

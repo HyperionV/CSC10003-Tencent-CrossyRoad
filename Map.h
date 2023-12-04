@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "TrafficLight.h"
 #include "Lane.h"
+#include "Supportive.h"
 #include <thread>
 
 class Map {
@@ -15,6 +16,7 @@ protected:
 	vector<Entity>vehicle;
 	vector<Slime>slime;
 	vector<Coin> coin;
+	Screen* screen;
 	Texture* bgTexture;
 	Sprite* bg;
 	Player player;
@@ -29,7 +31,7 @@ class StreetMap : public Map {
 private : 
 	vector<TrafficLight>trafficLight;
 public : 
-	StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty);
+	StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen);
 	~StreetMap();
 	void drawMap();
 	void loadResource();
@@ -39,7 +41,7 @@ public :
 
 class ChessMap : public Map {
 public:
-	ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty);
+	ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen);
 	~ChessMap();
 	void drawMap();
 	void loadResource();
@@ -51,10 +53,10 @@ class TrainMap : public Map {
 private:
 	vector<TrafficLight>trafficLight;
 public:
-	TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane>& maplane);
+	TrainMap::TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen);
 	~TrainMap();
-	void drawMap() {};
+	void drawMap();
 	void loadResource();
-	void shiftResource() {};
+	void shiftResource();
 };
 

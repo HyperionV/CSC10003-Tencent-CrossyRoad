@@ -73,8 +73,10 @@ int main(int argc, char* argv[]) {
 	Lane::INIT();
 	Player::INIT();
 
-	int diff = 90;
-	StreetMap playMap(hdc, &mainFrame, diff);
+	int diff = 50;
+	Screen* screen = Screen::getInstance(&mainFrame, &hdc);
+	//screen->startGame();
+	ChessMap playMap(hdc, &mainFrame, diff, screen);
 	playMap.drawMap();
 
 	ReleaseDC(console, hdc);

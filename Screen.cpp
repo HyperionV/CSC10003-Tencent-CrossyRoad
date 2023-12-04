@@ -13,36 +13,39 @@ Screen::Screen(Frame* curFrame, HDC* hdc) {
 	this->hdc = hdc;
 	this->mainFrame = curFrame;
 	this->backGround = new Sprite;
-	 this->music = new Audio;
+	this->music = new Audio;
+	string folder = "UI/";
 	for (int i = 1; i <= 5; i++) { // 0 -> 4
-		resources.push_back(Entity("menu"+to_string(i), true));
+		resources.push_back(Entity(folder + "menu"+to_string(i), true));
 	}
 	for (int i = 1; i <= 6; i++) { // 5 -> 10
-		resources.push_back(Entity("option"+to_string(i), true));
+		resources.push_back(Entity(folder + "option"+to_string(i), true));
 	}
 	for (int i = 1; i <= 6; i++) { // 11 -> 16
-		resources.push_back(Entity("pause"+to_string(i), true));
+		resources.push_back(Entity(folder + "pause"+to_string(i), true));
 	}
 	for (int i = 1; i <= 3; i++) { // 17 -> 19
-		resources.push_back(Entity("load_game"+to_string(i), true));
+		resources.push_back(Entity(folder + "load_game"+to_string(i), true));
 	}
-	resources.push_back(Entity("leader_board", true));
-	resources.push_back(Entity("street", true));
-	for (int i = 0; i < 10; i++) {
-		resources.push_back(Entity("score_" + to_string(i), true));
+	for (int i = 0; i < 10; i++) { //20 -> 29
+		resources.push_back(Entity(folder + "score_" + to_string(i), true));
 	}
-	for (int i = 1; i <= 5; i++) {
+	for (int i = 1; i <= 3; i++) { //30 -> 32
+		resources.push_back(Entity(folder + "choose_map" + to_string(i), true));
+	}
+	resources.push_back(Entity(folder + "leader_board", true)); // 33
+	for (int i = 1; i <= 5; i++) { // 34 -> 38
 		Sprite* scoreSprite = new Sprite(Vector2f(900 + 60 * i, 40), resources[22].getCurrentTexture());
 		score.push_back(scoreSprite);
 	}
 }
 
 void Screen::startGame() {
+	changeTexture(0);
 	int vertical = 0, horizon = 0;
 	backGround->setTexture(resources[0].getCurrentTexture());
 	mainFrame->draw(*hdc, backGround);
 	music->Play("gameSound.wav", 1, 1);
-	Entity e1("car1_motion");
 	//Lane l1(mainFrame, 1, e1, 20);
 	//thread t1 = l1.spawnThread();
 	while (true) {
@@ -174,7 +177,6 @@ bool Screen::screenPause() {
 				switch (vertical) {
 				case 0:
 					playSound(0);
-					changeTexture(21);
 					return 0;
 				case 1:
 					setMusic();
@@ -182,7 +184,6 @@ bool Screen::screenPause() {
 					break;
 				case 2:
 					playSound(0);
-
 					return 1;
 				default:
 					break;
@@ -235,7 +236,6 @@ void Screen::screenOption() {
 				switch (vertical) {
 				case 0:
 					playSound(ON_CLICK);
-					changeTexture(20);
 					screenLeaderboard();
 					changeTexture(5 + 3 * isMusicOff);
 					break;
@@ -246,7 +246,6 @@ void Screen::screenOption() {
 					break;
 				case 2:
 					playSound(ON_CLICK);
-					changeTexture(0);
 					return;
 				default:
 					break;
@@ -300,12 +299,15 @@ void Screen::screenPlay() {
 				switch (vertical) {
 				case 0:
 					playSound(ON_CLICK);
-					crossyRoad();
-					changeTexture(0);
+					screenChooseMap();
+					changeTexture(17);
+					break;
+				case 1 : 
+					playSound(ON_CLICK);
+					screenPause();
 					return;
 				case 2:
 					playSound(ON_CLICK);
-					changeTexture(0);
 					return;
 				default:
 					break;
@@ -351,10 +353,11 @@ string updateScore(int& score, int bonus) {
 	return res;
  }
 
- void Screen::updateScoreSprite(int& score, int bonus) {
-	 string Score = updateScore(score, bonus);
+ void Screen::updateScoreSprite(const int& score) {
+	 string Score = to_string(score);
+	 while (Score.length() < 5) Score = "0" + Score;
 	 for (int i = 4; i > -1; i--) {
-		 int idx = Score[i] - '0' + 22;
+		 int idx = Score[i] - '0' + 20;
 		 this->score[i]->setTexture(resources[idx].getCurrentTexture());
 	 }
 	 return;
@@ -396,7 +399,7 @@ string updateScore(int& score, int bonus) {
 				 _p.setPosition(currPos.x, currPos.y, 's');
 				 break;
 			 case KEY_UP:
-				 this->updateScoreSprite(score, 5);
+				 this->updateScoreSprite(score);
 				 _p.setPosition(currPos.x, currPos.y, 'w');
 				 break;
 			 case 'q':
@@ -421,7 +424,7 @@ string updateScore(int& score, int bonus) {
 
  void Screen::screenLeaderboard() {
 	 //vector<leaderBoardInfo> info = readLeaderBoardFromFile("leaderBoardInfo.bin");
-	 
+	 changeTexture(33);
 	 leaderBoardInfo A("ngobang", "99999", "27/11/2023");
 	 mainFrame->addSprite(this->backGround);
 	 Text a(A.getName());
@@ -453,4 +456,73 @@ string updateScore(int& score, int bonus) {
 
 	 return;
 
+ }
+
+ void Screen::screenChooseMap() {
+	 int horizon = 0;
+	 changeTexture(30);
+	 mainFrame->draw(*this->hdc, this->backGround);
+	 while (true) {
+		 // this_thread::sleep_for(50ms);
+		 if (_kbhit()) {
+			 int curr = _getch();
+			 switch (curr) {
+			 case KEY_RIGHT:
+				 switch (horizon) {
+				 case 0:
+					 horizon++;
+					 changeTexture(31);
+					 break;
+				 case 1:
+					 horizon++;
+					 changeTexture(32);
+					 break;
+				 default : 
+					 break;
+				 }
+				 break;
+			 case KEY_LEFT:
+				 switch (horizon) {
+				 case 1:
+					 horizon--;
+					 changeTexture(30);
+					 break;
+				 case 2:
+					 horizon--;
+					 changeTexture(31);
+					 break;
+				 default:
+					 break;
+				 }
+				 break;
+			 case '\r':
+				 switch (horizon) {
+				 case 0:
+					 playSound(ON_CLICK);
+					 return;
+				 case 1:
+					 playSound(ON_CLICK);
+					 return;
+				 case 2:
+					 playSound(ON_CLICK);
+					 return;
+				 default:
+					 break;
+				 }
+			 default:
+				 break;
+			 }
+		 }
+		 mainFrame->draw(*hdc, this->backGround);
+	 }
+	 return;
+
+ }
+ 
+
+ void Screen::addScore() {
+	 for (int i = 0; i < 5; i++) {
+		 mainFrame->addSprite(this->score[i]);
+	 }
+	 return;
  }

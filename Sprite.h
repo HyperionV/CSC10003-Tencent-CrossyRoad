@@ -23,6 +23,7 @@ public:
     Sprite* prev;
     int getPriority();
     void setPriority(int priority);
+    void setHeight(const int& height);
 
     void printPosition();
     void setTextureRect(int top, int left, int width, int height);

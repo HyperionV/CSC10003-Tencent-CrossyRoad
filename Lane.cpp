@@ -5,7 +5,7 @@
 //int laneChessPos[] { 130, 170, 240, 276, 344 };
 
 
-pair<int, int> path = pair<int, int>(-150, 1280);
+pair<int, int> path = pair<int, int>(-420, 1280);
 
 void Lane::INIT() {
 	vector<int>street;
@@ -31,8 +31,21 @@ void Lane::INIT() {
 	chess.push_back(400);
 	chess.push_back(510);
 
+
+	train.push_back(80);
+	train.push_back(122);
+	train.push_back(185);
+	train.push_back(226);
+	train.push_back(287);
+	train.push_back(334);
+	train.push_back(398);
+	train.push_back(443);
+	train.push_back(511);
+	train.push_back(561);
+
 	lanePos.push_back(street);
 	lanePos.push_back(chess);
+	lanePos.push_back(train);
 	return;
 
 }
@@ -53,7 +66,7 @@ Lane::Lane(Frame* mainFrame, const int& laneCounter, vector<Entity>& _entity, co
 		}
 	}
 	if (laneCounter % 2) {
-		start = Vector2f(path.first, lanePos[mapType][laneCounter]*1.0);
+		start = Vector2f(path.first, lanePos[mapType][laneCounter]*1.0 );
 		end = Vector2f(path.second, lanePos[mapType][laneCounter]);
 	}
 	else {
@@ -143,7 +156,7 @@ void Lane::stopLane() {
 
 void Lane::animateLane() {
 	for(int i= 0; i< vehicles.size(); i++) {
-		vehicles[i]->setTexture(model[i]->getCurrentTexture());
+		vehicles[i]->setTexture(model[i % model.size()]->getCurrentTexture());
 	}
 
 }
@@ -189,10 +202,10 @@ bool Lane::checkCollision(Player* _p) {
 		}
 		if (bottomRight.x < vTopLeft.x || vBottomRight.x < topLeft.x)
 			continue; // no overlap
-		if (vBottomRight.y < ((bottomRight.y - topLeft.y) / 2 + bottomRight.y))
-			continue;
-		if (vTopLeft.y > (topLeft.y - (bottomRight.y - topLeft.y) / 2 ))
-			continue;
+		//if (vBottomRight.y < ((bottomRight.y - topLeft.y) / 2 + bottomRight.y))
+		//	continue;
+		//if (vTopLeft.y > (topLeft.y - (bottomRight.y - topLeft.y) / 2 ))
+		//	continue;
 		if (topLeft.y < vBottomRight.y || vTopLeft.y < bottomRight.y)
 			continue; // no overlap
 		return true; // overlap

@@ -60,3 +60,6 @@ void Sprite::draw(void* bits, Vector2i frameSize)
 {
     texture->drawTexture((int)position.y, (int)position.x, textureRect, bits, frameSize);
 }
+void Sprite::setHeight(const int& height) {
+    this->textureRect.height;
+}
