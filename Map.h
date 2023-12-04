@@ -5,6 +5,7 @@
 #include "TrafficLight.h"
 #include "Lane.h"
 #include <thread>
+#include <mutex>
 
 class Map {
 protected:
@@ -18,11 +19,16 @@ protected:
 	Texture* bgTexture;
 	Sprite* bg;
 	Player player;
+
+	bool gameRunning;
 public:
 	virtual void shiftResource() = 0;
 	virtual ~Map() {};
 	virtual void drawMap() = 0;
 	virtual void loadResource() = 0;
+
+	int getDiff() const;
+	void randomItemSpawner();
 };
 
 class StreetMap : public Map {

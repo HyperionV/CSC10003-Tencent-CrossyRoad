@@ -8,31 +8,13 @@
 pair<int, int> path = pair<int, int>(-150, 1280);
 
 void Lane::INIT() {
-	vector<int>street;
-	vector<int>chess;
+	vector<int>street = {130, 170, 240, 276, 344, 384, 450, 490, 559, 602};
+	vector<int>chess = {90, 200, 300, 400, 510};
 	vector<int>train;
-
-
-	street.push_back(130);
-	street.push_back(170);
-	street.push_back(240);
-	street.push_back(276);
-	street.push_back(344);
-	street.push_back(384);
-	street.push_back(450);
-	street.push_back(490);
-	street.push_back(559);
-	street.push_back(602);
-
-
-	chess.push_back(90);
-	chess.push_back(200);
-	chess.push_back(300);
-	chess.push_back(400);
-	chess.push_back(510);
 
 	lanePos.push_back(street);
 	lanePos.push_back(chess);
+
 	return;
 
 }
@@ -53,7 +35,7 @@ Lane::Lane(Frame* mainFrame, const int& laneCounter, vector<Entity>& _entity, co
 		}
 	}
 	if (laneCounter % 2) {
-		start = Vector2f(path.first, lanePos[mapType][laneCounter]*1.0);
+		start = Vector2f(path.first, lanePos[mapType][laneCounter]);
 		end = Vector2f(path.second, lanePos[mapType][laneCounter]);
 	}
 	else {
@@ -66,7 +48,6 @@ Lane::Lane(Frame* mainFrame, const int& laneCounter, vector<Entity>& _entity, co
 	vehicleCounter = floor(12000/timeBetweenSpawn);
 	speed += floor((float) difficulty/5);
 	this->mainFrame = mainFrame;
-
 }
 
 Lane::~Lane() {}
@@ -80,13 +61,12 @@ void Lane::resetLane() {
 		nextSpawn.push_back(i);
 	}
 	onTrack.resize(vehicleCounter, false);
-	while (vehicles.size() < vehicleCounter) {
+	while (vehicles.size() < vehicleCounter) { 
 		int idx = vehicles.size() % model.size();
 		vehicles.push_back(mainFrame->addSprite(model[idx]->getCurrentTexture(), start));
 		vehicles[idx]->setPriority(priority);
 	}
 	for (auto& _item : items) {
-		//cout << _item->getItemName() << endl;
 		if (_item->getItemSprite() == nullptr) {
 			_item->setSprite(mainFrame->addSprite(_item->getTexture(), _item->getPosition()));
 			if (_item->getItemName() == "Slime") {
@@ -97,7 +77,6 @@ void Lane::resetLane() {
 	speed += floor((difficulty % 5) / 4);
 	for (auto& _sprite: vehicles) {
 		_sprite->setPosition(start);
-		//_sprite->setEndPos(start, 0);
 	}
 	lastSpawn = clock();
 	timeTilNextSpawn = rand() % RANDOM_INTERVAL / 1000.0;
@@ -118,7 +97,6 @@ void Lane::spawnCar() {
 	nextSpawn.push_back(spawnNow);
 
 	vehicles[spawnNow]->setEndPos(end, speed);
-
 	
 	lastSpawn = clock();
 	timeTilNextSpawn = 1.f * timeBetweenSpawn / 1000 + rand() % RANDOM_INTERVAL / (float) 1000;
@@ -150,6 +128,7 @@ void Lane::animateLane() {
 
 void Lane::animateItem() {
 	for (auto& _item : items) {
+		cout << _item->getItemName() << endl;
 		_item->animateItem();
 	}
 }
@@ -178,7 +157,7 @@ bool Lane::checkCollision(Player* _p) {
 	if (topLeft.y < bottomRight.y) {
 		swap(topLeft.y, bottomRight.y);
 	}
-	for (auto _sprite: vehicles) {
+	for (auto _sprite : vehicles) {
 		Vector2f vTopLeft = _sprite->getPosition();
 		Vector2f vBottomRight = vTopLeft + _sprite->getHitbox();
 		if (vTopLeft.x > vBottomRight.x) {
@@ -189,17 +168,17 @@ bool Lane::checkCollision(Player* _p) {
 		}
 		if (bottomRight.x < vTopLeft.x || vBottomRight.x < topLeft.x)
 			continue; // no overlap
-		if (vBottomRight.y < ((bottomRight.y - topLeft.y) / 2 + bottomRight.y))
+		/*if (vBottomRight.y < ((bottomRight.y - topLeft.y) / 2 + bottomRight.y))
 			continue;
-		if (vTopLeft.y > (topLeft.y - (bottomRight.y - topLeft.y) / 2 ))
-			continue;
+		if (vTopLeft.y > (topLeft.y - (bottomRight.y - topLeft.y) / 2))
+			continue;*/
 		if (topLeft.y < vBottomRight.y || vTopLeft.y < bottomRight.y)
 			continue; // no overlap
 		return true; // overlap
 	}
 	//return false;
 
-	for (auto& _item : items) {
+	/*for (auto& _item : items) {
 		if (_item->checkCollision(_p)) {
 			_p->addPoint(_item->getValue());
 			cout << "Item used" << endl;
@@ -207,17 +186,19 @@ bool Lane::checkCollision(Player* _p) {
 			delete _item;
 			items.erase(find(items.begin(), items.end(), _item));
 		}
-	}
+	}*/
 	return false;
 }
 
-void Lane::addItem(const string& itemName, const Entity& model, const Vector2f& position) {
+void Lane::addItem(const string& itemName, const Vector2f& position) {
+	cout << "Item added" << endl;
 	if (itemName == "Slime") {
 		items.push_back(new Slime(itemName, start));
 	}
 	else {
 		items.push_back(new Coin(itemName, position));
 	}
+	cout << "Seriously, item added" << endl;
 }
 
 int Lane::getTotalVehicle() {

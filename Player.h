@@ -34,7 +34,9 @@ public:
     Vector2f getHitbox() const;
     void addPoint();
     void addPoint(const int& value);
+    size_t getPoint() const;
     int convertLane();
+    void setSpritePriotity(const int&);
 
     static void INIT();
     void playerHandler();

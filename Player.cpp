@@ -1,32 +1,13 @@
 #pragma warning(disable:4244)
 #include "Player.h"
-//float pos[] = { 650, 595, 555, 485, 450, 376, 332, 269, 227, 165, 125 };
+#include <fstream>
+
 int Priority[]{21, 11};
 int mapLim[]{ 11, 6 };
 
 void Player::INIT() {
-    vector<int>street;
-    vector<int>chess;
-
-    street.push_back(650);
-    street.push_back(595);
-    street.push_back(555);
-    street.push_back(485);
-    street.push_back(450);
-    street.push_back(376);
-    street.push_back(332);
-    street.push_back(269);
-    street.push_back(227);
-    street.push_back(165);
-    street.push_back(125);
-
-
-    chess.push_back(650);
-    chess.push_back(580);
-    chess.push_back(470);
-    chess.push_back(370);
-    chess.push_back(270);
-    chess.push_back(170);
+    vector<int>street = { 650, 595, 555, 485, 450, 376, 332, 269, 227, 165, 125 };
+    vector<int>chess = {650, 580, 470, 370, 270, 170};
 
     lanePos.push_back(street);
     lanePos.push_back(chess);
@@ -37,7 +18,8 @@ Player::Player(Frame& mainFrame, const int& mapType) {
     model.push_back(new Entity("character/left"));
     model.push_back(new Entity("character/up"));
     model.push_back(new Entity("character/right"));
-    _player = mainFrame.addSprite(model[state]->getCurrentTexture(), Vector2f(1280 / 2, 650));
+    model.push_back(new Entity("redSlime/redSlime"));
+    _player = mainFrame.addSprite(model[state]->getCurrentTexture(), Vector2f(1280 / 2, 655));    
     _player->setPriority(Priority[mapType]);
     width = 36;
     height = 55;
@@ -111,7 +93,7 @@ int Player::convertLane() {
 
 void Player::playerHandler()
 {
-    while (true && isRunning) {
+    while (isRunning) {
         int vertical{}, horizon{};
         animatePlayer();
         if (_kbhit()) {
@@ -157,4 +139,12 @@ void Player::stopPlayerHandler() {
 int Player::let_Megumin_cook() {
     state = 3;
     return model[state]->getMotionSize();
+}
+
+void Player::setSpritePriotity(const int& i) {
+    _player->setPriority(i);
+}
+
+size_t Player::getPoint() const {
+    return point;
 }

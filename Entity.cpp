@@ -4,14 +4,30 @@
 Entity::Entity() {}
 
 Entity::Entity(const string& entityName) {
-    this->entityName = entityName;
-    int cnt{1};
+    int cnt{ 1 };
     if (ifstream(("image_bin/" + entityName + ".bin").c_str(), ios::binary).good()) {
         motion.push_back(new Texture("image_bin/" + entityName + ".bin"));
         //cerr << "image_bin/" + entityName + ".bin";
     }
     while (true) {
-        string path = "image_bin/"+entityName+ "_motion(" + to_string(cnt++) + ")" + ".bin";
+        string path = "image_bin/" + entityName + "_motion(" + to_string(cnt++) + ")" + ".bin";
+        if (!ifstream(path.c_str(), ios::binary).good()) {
+            break;
+        }
+        motion.push_back(new Texture(path));
+        //cerr << "added " << path << '\n';
+
+    }
+}
+
+Entity::Entity(const string & entityName, char ) {
+    int cnt{ 1 };
+    if (ifstream(("image_bin/" + entityName + ".bin").c_str(), ios::binary).good()) {
+        motion.push_back(new Texture("image_bin/" + entityName + ".bin"));
+        //cerr << "image_bin/" + entityName + ".bin";
+    }
+    while (true) {
+        string path = "image_bin/" + entityName + "_motion (" + to_string(cnt++) + ")" + ".bin";
         if (!ifstream(path.c_str(), ios::binary).good()) {
             break;
         }
@@ -20,15 +36,30 @@ Entity::Entity(const string& entityName) {
     }
 }
 
+Entity::Entity(const string& entityName, int) {
+    int cnt{ 1 };
+    if (ifstream(("image_bin/" + entityName + ".bin").c_str(), ios::binary).good()) {
+        motion.push_back(new Texture("image_bin/" + entityName + ".bin"));
+        //cerr << "image_bin/" + entityName + ".bin";
+    }
+    while (true) {
+        string path = "image_bin/" + entityName + to_string(cnt++) + ".bin";
+        if (!ifstream(path.c_str(), ios::binary).good()) {
+            break;
+        }
+        motion.push_back(new Texture(path));
+        //cerr << "added " << path << '\n';
+    }
+}
+
+
 Entity::Entity(const string& entityName, bool) {
-    this->entityName = entityName;
     if (ifstream(("image_bin/" + entityName + ".bin").c_str(), ios::binary).good()) {
         motion.push_back(new Texture("image_bin/" + entityName + ".bin"));
     }
 }
 
 Entity::Entity(const Entity& other) {
-    entityName = other.entityName;
     for (auto& i : other.motion) {
         motion.push_back(new Texture(*i));
     }
@@ -51,10 +82,6 @@ void Entity::flipHorizontal() {
     for (auto& i : motion) {
         i->flipHorizontal();
     }
-}
-
-void Entity::setName(const string& _name) {
-    entityName = _name;
 }
 
 int Entity::getMotionSize() {
