@@ -7,15 +7,20 @@
 #include <chrono>
 #include <thread>
 #include "Player.h"
+#include "Screen.h"
+#include "TrafficLight.h"
+#include "Map.h"
+
 
 class Game {
 private:
-	Player* _player;
+	Frame mainFrame;
+	HDC hdc;
+	int diff;
+	Map* playMap;
 public:
-	Game();
+	Game(Frame& mainFrame, HDC& hdc, int& diff, const int& map);
 	~Game();
 
-	Game(int width, int height, int fpsCap);
-
-	
+	int startGame();
 };

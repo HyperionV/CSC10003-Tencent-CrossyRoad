@@ -1,7 +1,6 @@
 #pragma warning(disable:4244)
 #include "Map.h"
 
-
 StreetMap::StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen) {
 	this->screen = screen;
 	mainFrame = mapFrame;
@@ -21,7 +20,9 @@ StreetMap::StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* scre
 		mainFrame->addSprite(tmp);
 	}
 	player = Player(*mapFrame, STREET_MAP);
+	player.addPoint(difficulty);
 }
+
 StreetMap::~StreetMap() {
 	for (auto ptr:mapLane) {
 		delete ptr;
@@ -33,14 +34,15 @@ StreetMap::~StreetMap() {
 
 void StreetMap::drawMap() {
 	screen->addScore();
+	gameRunning = true;
 	for (int i = 0; i < (int)mapLane.size(); i++) {
 		mapLane[i]->resetLane();
 		mapLane[i]->startLane();
 	}
-	clock_t time = clock();
 	thread t = player.launchHandler();
-	while (true) {
+	while (gameRunning) {
 		screen->updateScoreSprite(player.getPoint());
+		randomItemSpawner();
 		shiftResource();
 		trafficControl(trafficLight);
 		for (int i = 0; i < (int)mapLane.size(); i++) {
@@ -55,20 +57,22 @@ void StreetMap::drawMap() {
 		mainFrame->update();
 		mainFrame->draw(hdc);
 		if (collide) {
+			gameRunning = 0;
 			player.stopPlayerHandler();
 			t.join();
+			t.~thread();
 			for (auto& s : mapLane) {
 				s->stopLane();
 			}
 			int sz = player.let_Megumin_cook();
+			player.setSpritePriotity(INT_MAX);
 			while (sz--) {
 				this_thread::sleep_for(200ms);
 				player.animatePlayer();
 				mainFrame->update();
 				mainFrame->draw(hdc);
 			}
-			break;
-			// do something
+			return;
 		}
 	}
 }
@@ -116,14 +120,18 @@ ChessMap::~ChessMap() {
 
 void ChessMap::drawMap() {
 	screen->addScore();
+	gameRunning = true;
 	for (int i = 0; i < (int)mapLane.size(); i++) {
 		mapLane[i]->resetLane();
 		mapLane[i]->startLane();
 	}
-	clock_t time = clock();
 	thread t = player.launchHandler();
-	while (true) {
+	/*thread spawner([this]() {
+		return this->randomItemSpawner();
+		});*/
+	while (gameRunning) {
 		screen->updateScoreSprite(player.getPoint());
+		randomItemSpawner();
 		for (int i = 0; i < (int)mapLane.size(); i++) {
 			mapLane[i]->update();
 		}
@@ -137,20 +145,21 @@ void ChessMap::drawMap() {
 		mainFrame->update();
 		mainFrame->draw(hdc);
 		if (collide) {
+			gameRunning = 0;
 			player.stopPlayerHandler();
 			t.join();
 			for (auto& s : mapLane) {
 				s->stopLane();
 			}
 			int sz = player.let_Megumin_cook();
+			player.setSpritePriotity(1);
 			while (sz--) {
 				this_thread::sleep_for(200ms);
 				player.animatePlayer();
 				mainFrame->update();
 				mainFrame->draw(hdc);
 			}
-			break;
-			// do something
+			return;
 		}
 	}
 }
@@ -192,16 +201,18 @@ TrainMap::TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen
 
 void TrainMap::drawMap() {
 	screen->addScore();
+	gameRunning = true;
 	for (int i = 0; i < (int)mapLane.size(); i++) {
 		mapLane[i]->resetLane();
 		mapLane[i]->startLane();
 	}
-	clock_t time = clock();
+
 	thread t = player.launchHandler();
-	while (true) {
+	while (gameRunning) {
+		screen->updateScoreSprite(player.getPoint());
+		randomItemSpawner();
 		shiftResource();
 		trafficControl(trafficLight);
-		screen->updateScoreSprite(player.getPoint());
 		for (int i = 0; i < (int)mapLane.size(); i++) {
 			mapLane[i]->update();
 		}
@@ -214,20 +225,22 @@ void TrainMap::drawMap() {
 		mainFrame->update();
 		mainFrame->draw(hdc);
 		if (collide) {
+			gameRunning = 0;
 			player.stopPlayerHandler();
 			t.join();
+			t.~thread();
 			for (auto& s : mapLane) {
 				s->stopLane();
 			}
 			int sz = player.let_Megumin_cook();
+			player.setSpritePriotity(25);
 			while (sz--) {
-				this_thread::sleep_for(200ms);
+				this_thread::sleep_for(100ms);
 				player.animatePlayer();
 				mainFrame->update();
 				mainFrame->draw(hdc);
 			}
-			break;
-			// do something
+			return;
 		}
 	}
 }
@@ -256,4 +269,23 @@ TrainMap::~TrainMap() {
 	}
 	mapLane.clear();
 	trafficLight.clear();
+}
+
+
+void Map::randomItemSpawner() {
+//	srand(time(NULL));
+//	long long seed = ((rand() + 139) * 491);
+//	//this_thread::sleep_for(1s);
+//	if (seed % 5 == 2) {
+//		if (seed % 2) {
+//			mapLane[seed % 10]->addItem("Slime", Vector2f());
+//		}
+//		else {
+//			mapLane[seed % 10]->addItem("Coin", Vector2f(seed % 1280, seed % 760));
+//		}
+//	}
+}
+
+int Map::getDiff() const {
+	return player.getPoint();
 }

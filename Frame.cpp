@@ -150,6 +150,7 @@ void Frame::draw(HDC hdc) {
     stable_sort(sprites.begin(), sprites.end(), [](Sprite* a, Sprite* b) {
         return a->getPriority() < b->getPriority();
     });
+
     for (Sprite* sprite : sprites) {
         sprite->draw(bits, size);
     }

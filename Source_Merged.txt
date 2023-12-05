@@ -6,6 +6,7 @@
 #include <xaudio2.h>
 #include <iostream>
 #include <string>
+#include <deque>
 using namespace std;
 #ifdef _XBOX 
 #define fourccRIFF 'RIFF'
@@ -46,6 +47,7 @@ string getCurrentDirectoryOnWindows();
 ```Entity.h```
 
 #pragma once
+
 #include "Texture.h"
 #include "Sprite.h"
 #include "Frame.h"
@@ -55,11 +57,12 @@ string getCurrentDirectoryOnWindows();
 class Entity : public Rect2D {
 private:
     deque<Texture*> motion;
-    string entityName{};    
 public:
     Entity();
     //~Entity();
     Entity(const string&);
+    Entity(const string&, char);
+    Entity(const string&, int);
     Entity(const string&, bool);
     Entity(const Entity&);
     void shiftResource();
@@ -67,8 +70,6 @@ public:
     Texture* getPreviousTexture();
     int getMotionSize();
     void flipHorizontal();
-
-    void setName(const string&);
 };
 
 
@@ -150,17 +151,22 @@ public:
 #include <chrono>
 #include <thread>
 #include "Player.h"
+#include "Screen.h"
+#include "TrafficLight.h"
+#include "Map.h"
+
 
 class Game {
 private:
-	Player* _player;
+	Frame mainFrame;
+	HDC hdc;
+	int diff;
+	Map* playMap;
 public:
-	Game();
+	Game(Frame& mainFrame, HDC& hdc, int& diff, const int& map);
 	~Game();
 
-	Game(int width, int height, int fpsCap);
-
-	
+	int startGame();
 };
 
 ```Item.h```
@@ -200,31 +206,38 @@ public:
 
 	void removeItem(Frame& mainFrame);
 	void animateItem();
-	bool checkCollision(Player* _player);
-	bool useItem(Player* _player);
+	bool checkCollision(Player* _p);
 };
 
 class Slime : public Item {
 public:
 	Slime(const string& itemName, const Vector2f& position);
+	~Slime();
 };
 
 class Coin : public Item {
 public:
 	Coin(const string& itemName, const Vector2f& position);
+	~Coin();
 };
 
 ```Lane.h```
 
 #pragma once
-#include "Entity.h"
 #include <cmath>
 #include <thread>
 #include <chrono>
 #include <time.h>
 #include <random>
+#include "Entity.h"
 #include "Player.h"
+#include "Supportive.h"
 #include "Item.h"
+#include <mutex>
+
+#define STREET_MAP 0
+#define CHESS_MAP 1
+#define TRAIN_MAP 2
 
 class Lane {
 private:
@@ -232,36 +245,39 @@ private:
 
     int difficulty;
     int timeBetweenSpawn;
+    int priority;
+    vector<Entity*> model;
+    vector<Sprite*> vehicles;
+    static vector<vector<int>>lanePos;
 
     Vector2f start;
     Vector2f end;
     float speed{5};
     Frame* mainFrame;
     int vehicleCounter;
-    Entity model;
-    vector<Sprite*> vehicles;
     clock_t lastSpawn;
     deque<int> nextSpawn;
     bool isRunning;
     vector<bool> onTrack;
     vector<Item*> items;
 
+
     float timeTilNextSpawn;
     mt19937 rand;
 
 public:
     Lane();
-    Lane(Frame*, const int&, const Entity&, const int&);
+    Lane(Frame*, const int&, vector<Entity>& _entity, const int&, const int&,const int&);
     ~Lane();
     void resetLane(); 
     void startLane();
     void stopLane();
-    void slowdownLane();
+    static void INIT();
 
     void spawnCar();
 
     bool checkCollision(Player*);
-    void addItem(const string& itemName, const Entity& model, const Vector2f& postion);
+    void addItem(const string& itemName, const Vector2f& postion);
 
     void animateLane();
     void animateItem();
@@ -272,34 +288,119 @@ public:
     int getTotalVehicle();
     void printStart();
     void printEnd();
+    void setVehicleCounter(const int&);
 };
+
+```library.h```
+
+#pragma once
+
+#include <iostream>
+#include <xaudio2.h>
+#include <string>
+#include <algorithm>
+#include <Windows.h>
+#include <winuser.h>
+#include <cmath>
+#include <chrono>
+#include <thread>
+#include <map>
+#include <time.h>
+#include <random>
+#include <fstream>
+#include <conio.h>
+#include <vector>
+#include <sstream>
+#include <iomanip>
+#include <cstdlib> 
+#include <ctime>
+
+#include "Audio.h"
+#include "Entity.h"
+#include "Frame.h"
+#include "Item.h"
+#include "Lane.h"
+#include "Map.h"
+#include "Pixel.h"
+#include "Movable.h"
+#include "Player.h"
+#include "resource.h"
+#include "Screen.h"
+#include "Sprite.h"
+#include "Supportive.h"
+#include "Text.h"
+#include "Texture.h"
+#include "TrafficLight.h"
+#include "Utilities.h"
 
 ```Map.h```
 
 #pragma once
 
-#include "Utilities.h"
 #include "Sprite.h"
 #include "Entity.h"
 #include "TrafficLight.h"
 #include "Lane.h"
 #include <thread>
+#include <mutex>
 
 class Map {
+protected:
 	int difficulty;
 	HDC hdc;
-	Frame *mainFrame;
+	Frame* mainFrame;
 	vector<Lane*> mapLane;
-    Texture* bgTexture;
-    Sprite* bg;
-	vector<TrafficLight> trafficLight;
+	vector<Entity>vehicle;
+	vector<Slime>slime;
+	vector<Coin> coin;
+	Texture* bgTexture;
+	Sprite* bg;
 	Player player;
-public:
-	Map(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane> &mapLane);
-	~Map();
 
-	void drawMap();
+	bool gameRunning;
+public:
+	virtual void shiftResource() = 0;
+	virtual ~Map() {};
+	virtual void drawMap() = 0;
+	virtual void loadResource() = 0;
+
+	int getDiff() const;
+	void randomItemSpawner();
 };
+
+class StreetMap : public Map {
+private : 
+	vector<TrafficLight>trafficLight;
+public : 
+	StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty);
+	~StreetMap();
+	void drawMap();
+	void loadResource();
+	void shiftResource();
+};
+
+
+class ChessMap : public Map {
+public:
+	ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty);
+	~ChessMap();
+	void drawMap();
+	void loadResource();
+	void shiftResource() {};
+};
+
+
+class TrainMap : public Map {
+private:
+	vector<TrafficLight>trafficLight;
+public:
+	TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane>& maplane);
+	~TrainMap();
+	void drawMap() {};
+	void loadResource();
+	void shiftResource() {};
+};
+
 
 ```Movable.h```
 
@@ -394,14 +495,17 @@ using namespace std;
 
 class Player: Rect2D {
 private:
+    static vector<vector<int>>lanePos;
+    int mapType;
     int cnt = 0;
     vector<Entity*> model;
     Sprite* _player;
     size_t point = 0;
     int state = 1; // left - 0; up - 1; right - 2;
+    bool isRunning;
 public:
     Player() {};
-    Player(Frame&);
+    Player(Frame&, const int&);
     ~Player();
 
     Vector2f getCurrentPos() const;
@@ -410,10 +514,15 @@ public:
     Vector2f getHitbox() const;
     void addPoint();
     void addPoint(const int& value);
+    size_t getPoint() const;
     int convertLane();
+    void setSpritePriotity(const int&);
 
+    static void INIT();
     void playerHandler();
     thread launchHandler();
+    void stopPlayerHandler();
+    int let_Megumin_cook();
 };
 
 ```resource.h```
@@ -559,6 +668,8 @@ public:
 #include "Text.h"
 #include "Screen.h"
 
+using namespace std;
+
 class leaderBoardInfo {
 private:
 	string name;
@@ -580,22 +691,20 @@ public:
 	string getDate() const {
 		return date;
 	}
-
 };
-
-using namespace std;
 
 string return_current_time_and_date();
 
 string getExePath(string x);
 
-vector<leaderBoardInfo> readLeaderBoardFromFile(const string& filename);
+vector<leaderBoardInfo>readLeaderBoardFromFile(const string& filename);
 
 int getScoreBoardCoord(const int& len, const int& col);
 
 void writeLeaderboardToFile(const vector<leaderBoardInfo>& leaderboard, const string& filename);
 
 int getRandomInRange(int a, int b);
+
 
 ```Text.h```
 
@@ -662,12 +771,10 @@ public:
 	Pixel getPixel(int x, int y);
 	int getWidth();
 	int getHeight();
-	//Vector2i getSize();
 
 	void readTexture(string filename);
 	void print();
 	void flipHorizontal();
-	//void drawTexture(int top, int left, Rect2D textureRect, HDC hdc);
 	void drawTexture(int top, int left, Rect2D textureRect, void* bits, Vector2i frameSize);
 };
 
@@ -677,22 +784,21 @@ public:
 
 #include <cstdlib> 
 #include <ctime>
-#include "Entity.h"
-#include "Sprite.h"
 #include "Supportive.h"
+#include "Lane.h"
+
 
 //#define TRAFFIC_LIGHT_POS_1 Vector2f()
 
 class TrafficLight {
 private :
 	int status; //0 is green, 1 is yellow, 2 is red
-	int preStatus;
 	Sprite* sprite;
 	static vector<Entity> lightTexture;
-	vector<Lane*> lane;
+	vector<Lane*>lane;
 public : 
 	static void INIT();
-	TrafficLight() {};
+	TrafficLight(){}
 	TrafficLight(Vector2f pos, Lane* lane1, Lane* lane2, const int& status = 0);
 	~TrafficLight();
 	Sprite* getSprite() const;
@@ -702,6 +808,8 @@ public :
 	void red();
 };
 void trafficControl(vector<TrafficLight> trafficLight);
+
+void getTraffic(const int& mapType, vector<Lane*>mapLane, vector<TrafficLight>& trafficLight);
 
 
 
@@ -975,14 +1083,30 @@ void Audio::Stop() {
 Entity::Entity() {}
 
 Entity::Entity(const string& entityName) {
-    this->entityName = entityName;
-    int cnt{1};
+    int cnt{ 1 };
     if (ifstream(("image_bin/" + entityName + ".bin").c_str(), ios::binary).good()) {
         motion.push_back(new Texture("image_bin/" + entityName + ".bin"));
-        //cerr << "added\n";
+        //cerr << "image_bin/" + entityName + ".bin";
     }
     while (true) {
-        string path = "image_bin/"+entityName+to_string(cnt++)+".bin";
+        string path = "image_bin/" + entityName + "_motion(" + to_string(cnt++) + ")" + ".bin";
+        if (!ifstream(path.c_str(), ios::binary).good()) {
+            break;
+        }
+        motion.push_back(new Texture(path));
+        //cerr << "added " << path << '\n';
+
+    }
+}
+
+Entity::Entity(const string & entityName, char ) {
+    int cnt{ 1 };
+    if (ifstream(("image_bin/" + entityName + ".bin").c_str(), ios::binary).good()) {
+        motion.push_back(new Texture("image_bin/" + entityName + ".bin"));
+        //cerr << "image_bin/" + entityName + ".bin";
+    }
+    while (true) {
+        string path = "image_bin/" + entityName + "_motion (" + to_string(cnt++) + ")" + ".bin";
         if (!ifstream(path.c_str(), ios::binary).good()) {
             break;
         }
@@ -991,15 +1115,30 @@ Entity::Entity(const string& entityName) {
     }
 }
 
+Entity::Entity(const string& entityName, int) {
+    int cnt{ 1 };
+    if (ifstream(("image_bin/" + entityName + ".bin").c_str(), ios::binary).good()) {
+        motion.push_back(new Texture("image_bin/" + entityName + ".bin"));
+        //cerr << "image_bin/" + entityName + ".bin";
+    }
+    while (true) {
+        string path = "image_bin/" + entityName + to_string(cnt++) + ".bin";
+        if (!ifstream(path.c_str(), ios::binary).good()) {
+            break;
+        }
+        motion.push_back(new Texture(path));
+        //cerr << "added " << path << '\n';
+    }
+}
+
+
 Entity::Entity(const string& entityName, bool) {
-    this->entityName = entityName;
     if (ifstream(("image_bin/" + entityName + ".bin").c_str(), ios::binary).good()) {
         motion.push_back(new Texture("image_bin/" + entityName + ".bin"));
     }
 }
 
 Entity::Entity(const Entity& other) {
-    entityName = other.entityName;
     for (auto& i : other.motion) {
         motion.push_back(new Texture(*i));
     }
@@ -1022,10 +1161,6 @@ void Entity::flipHorizontal() {
     for (auto& i : motion) {
         i->flipHorizontal();
     }
-}
-
-void Entity::setName(const string& _name) {
-    entityName = _name;
 }
 
 int Entity::getMotionSize() {
@@ -1238,6 +1373,7 @@ void Frame::draw(HDC hdc) {
     stable_sort(sprites.begin(), sprites.end(), [](Sprite* a, Sprite* b) {
         return a->getPriority() < b->getPriority();
     });
+
     for (Sprite* sprite : sprites) {
         sprite->draw(bits, size);
     }
@@ -1305,6 +1441,25 @@ void Frame::removeAllSprite()
 
 # include "Game.h"
 
+Game::Game(Frame& mainFrame, HDC& hdc, int& diff, const int& map)
+	:mainFrame{ mainFrame }, hdc{ hdc }, diff{ diff }
+{
+	if (map == 0) {
+		playMap = new StreetMap(hdc, &mainFrame, diff);
+	}
+	else {
+		playMap = new ChessMap(hdc, &mainFrame, diff);
+	}
+}
+
+Game::~Game() {
+	delete playMap;
+}
+
+int Game::startGame() {
+	playMap->drawMap();
+	return playMap->getDiff();
+}
 
 ```Item.cpp```
 
@@ -1374,28 +1529,42 @@ void Item::animateItem() {
 	itemSprite->setTexture(model->getCurrentTexture());
 }
 
-bool Item::checkCollision(Player* _player) {
-	Vector2f topLeft = _player->getCurrentPos();
-	Vector2f bottomRight = topLeft + _player->getHitbox();
-	//to be implemented
-	return true;
-}
-
-bool Item::useItem(Player* _player) {
-	if (_player->getCurrentPos() == position) {
-		_player->addPoint(value);
-		return true;
+bool Item::checkCollision(Player* _p) {
+	Vector2f hitbox(25, 25);
+	float dis = (sqrt(_p->getHitbox().x * _p->getHitbox().x + _p->getHitbox().y * _p->getHitbox().y) - 25 * sqrt(2)) / 2;
+	Vector2f topLeft = _p->getCurrentPos() + Vector2f(dis, dis);
+	Vector2f bottomRight = topLeft + hitbox;
+	if (topLeft.x > bottomRight.x) {
+		swap(topLeft.x, bottomRight.x);
 	}
-	return false;
+	if (topLeft.y < bottomRight.y) {
+		swap(topLeft.y, bottomRight.y);
+	}
+	dis = (sqrt(itemSprite->getHitbox().x * itemSprite->getHitbox().x + itemSprite->getHitbox().y * itemSprite->getHitbox().y) - 25 * sqrt(2)) / 2;
+	Vector2f vTopLeft = itemSprite->getPosition() + Vector2f(dis, dis);
+	Vector2f vBottomRight = vTopLeft + hitbox;
+	if (vTopLeft.x > vBottomRight.x) {
+		swap(vTopLeft.x, vBottomRight.x);
+	}
+	if (vTopLeft.y < vBottomRight.y) {
+		swap(vTopLeft.y, vBottomRight.y);
+	}
+	if (bottomRight.x < vTopLeft.x || vBottomRight.x < topLeft.x) return false;
+	if (topLeft.y < vBottomRight.y || vTopLeft.y < bottomRight.y) return false;
+	return true;
 }
 
 Slime::Slime(const string& _itemName, const Vector2f& _position)
 	:Item(_itemName, _position)
 {
 	value = -2;
-	model = new Entity("blueSlime_jumpattack");
+	model = new Entity("blueSlime", 'a');
 	this->position.y -= 15;
 	this->destination = Vector2f((this->position.x == -132) ? 1280 : -132, this->position.y);
+}
+
+Slime::~Slime() {
+	delete model;
 }
 
 Vector2f Item::getDestination() const {
@@ -1405,9 +1574,13 @@ Vector2f Item::getDestination() const {
 Coin::Coin(const string& _itemName, const Vector2f& _position)
 	:Item(_itemName, _position)
 {
-	model = new Entity("yc");
+	model = new Entity("yc", 1);
 	value = 5;
 	destination = position;
+}
+
+Coin::~Coin() {
+	delete model;
 }
 
 ```Lane.cpp```
@@ -1415,45 +1588,72 @@ Coin::Coin(const string& _itemName, const Vector2f& _position)
 #pragma warning(disable:4244)
 #include "Lane.h"
 
-int lanePos[] {143, 183, 252, 292, 355, 395, 465, 505, 575, 615};
-pair<int, int> path = pair<int, int>(-132, 1280);
+//int laneStreetPos[] {130, 170, 240, 276, 344, 384, 450, 490, 559, 602};
+//int laneChessPos[] { 130, 170, 240, 276, 344 };
+
+
+pair<int, int> path = pair<int, int>(-150, 1280);
+
+void Lane::INIT() {
+	vector<int>street = {130, 170, 240, 276, 344, 384, 450, 490, 559, 602};
+	vector<int>chess = {90, 200, 300, 400, 510};
+	vector<int>train;
+
+	lanePos.push_back(street);
+	lanePos.push_back(chess);
+
+	return;
+
+}
 
 Lane::Lane() {}
+void Lane::setVehicleCounter(const int& counter) {
+	this->vehicleCounter = counter;
+	return;
+}
 
-Lane::Lane(Frame* mainFrame, const int& laneCounter, const Entity& _entity, const int& _difficulty) 
+Lane::Lane(Frame* mainFrame, const int& laneCounter, vector<Entity>& _entity, const int& _difficulty, const int& mapType, const int& priority) 
 	: rand(time(NULL) + laneCounter)
 {
+	for (int i = 0; i < _entity.size(); i++) {
+		if (laneCounter % 2 != i % 2) {
+			Entity* temp = &_entity[i];
+			model.push_back(temp);
+		}
+	}
 	if (laneCounter % 2) {
-		start = Vector2f(path.first, lanePos[laneCounter]*1.0);
-		end = Vector2f(path.second, lanePos[laneCounter]);
+		start = Vector2f(path.first, lanePos[mapType][laneCounter]);
+		end = Vector2f(path.second, lanePos[mapType][laneCounter]);
 	}
 	else {
-		start = Vector2f(path.second, lanePos[laneCounter]);
-		end = Vector2f(path.first, lanePos[laneCounter]);
+		start = Vector2f(path.second, lanePos[mapType][laneCounter]);
+		end = Vector2f(path.first, lanePos[mapType][laneCounter]);
 	}
+	this->priority = priority;
 	difficulty = _difficulty;
 	timeBetweenSpawn = 2000 - (150 * (difficulty % 5)) * (1 + (difficulty % 5) / 4);
 	vehicleCounter = floor(12000/timeBetweenSpawn);
 	speed += floor((float) difficulty/5);
 	this->mainFrame = mainFrame;
-	model = _entity;
 }
 
 Lane::~Lane() {}
 
 void Lane::resetLane() {
 	timeBetweenSpawn = 2000 - (150 * (difficulty % 5)) * (1 + (difficulty % 5) / 4);
-	vehicleCounter = floor(12000/timeBetweenSpawn);
+	vehicleCounter = model.size();
 	nextSpawn.clear();
+
 	for (int i = 0; i < vehicleCounter; i++) {
 		nextSpawn.push_back(i);
 	}
 	onTrack.resize(vehicleCounter, false);
-	while (vehicles.size() < vehicleCounter) {
-		vehicles.push_back(mainFrame->addSprite(*model.getCurrentTexture(), start));
+	while (vehicles.size() < vehicleCounter) { 
+		int idx = vehicles.size() % model.size();
+		vehicles.push_back(mainFrame->addSprite(model[idx]->getCurrentTexture(), start));
+		vehicles[idx]->setPriority(priority);
 	}
 	for (auto& _item : items) {
-		//cout << _item->getItemName() << endl;
 		if (_item->getItemSprite() == nullptr) {
 			_item->setSprite(mainFrame->addSprite(_item->getTexture(), _item->getPosition()));
 			if (_item->getItemName() == "Slime") {
@@ -1464,7 +1664,6 @@ void Lane::resetLane() {
 	speed += floor((difficulty % 5) / 4);
 	for (auto& _sprite: vehicles) {
 		_sprite->setPosition(start);
-		//_sprite->setEndPos(start, 0);
 	}
 	lastSpawn = clock();
 	timeTilNextSpawn = rand() % RANDOM_INTERVAL / 1000.0;
@@ -1485,7 +1684,6 @@ void Lane::spawnCar() {
 	nextSpawn.push_back(spawnNow);
 
 	vehicles[spawnNow]->setEndPos(end, speed);
-
 	
 	lastSpawn = clock();
 	timeTilNextSpawn = 1.f * timeBetweenSpawn / 1000 + rand() % RANDOM_INTERVAL / (float) 1000;
@@ -1503,25 +1701,21 @@ void Lane::stopLane() {
 	for (int i = 0; i<vehicles.size();i++) {
 		vehicles[i]->setIsMoving(false);
 	}
+	for (auto& _item : items) {
+		_item->getItemSprite()->setEndPos(_item->getItemSprite()->getPosition(), 0);
+	}
 }
 
-//void Lane::slowdownLane() {
-//	isRunning = true;
-//	for (int i = 0; i < vehicles.size(); i++) {
-//		vehicles[i]->setSpeed(speed - 50);
-//	}
-//}
-
-
 void Lane::animateLane() {
-	model.shiftResource();
-	for (auto _sprite: vehicles) {
-		_sprite->setTexture(model.getCurrentTexture());
+	for(int i= 0; i< vehicles.size(); i++) {
+		vehicles[i]->setTexture(model[i]->getCurrentTexture());
 	}
+
 }
 
 void Lane::animateItem() {
 	for (auto& _item : items) {
+		cout << _item->getItemName() << endl;
 		_item->animateItem();
 	}
 }
@@ -1550,7 +1744,7 @@ bool Lane::checkCollision(Player* _p) {
 	if (topLeft.y < bottomRight.y) {
 		swap(topLeft.y, bottomRight.y);
 	}
-	for (auto _sprite: vehicles) {
+	for (auto _sprite : vehicles) {
 		Vector2f vTopLeft = _sprite->getPosition();
 		Vector2f vBottomRight = vTopLeft + _sprite->getHitbox();
 		if (vTopLeft.x > vBottomRight.x) {
@@ -1561,29 +1755,37 @@ bool Lane::checkCollision(Player* _p) {
 		}
 		if (bottomRight.x < vTopLeft.x || vBottomRight.x < topLeft.x)
 			continue; // no overlap
+		/*if (vBottomRight.y < ((bottomRight.y - topLeft.y) / 2 + bottomRight.y))
+			continue;
+		if (vTopLeft.y > (topLeft.y - (bottomRight.y - topLeft.y) / 2))
+			continue;*/
 		if (topLeft.y < vBottomRight.y || vTopLeft.y < bottomRight.y)
 			continue; // no overlap
 		return true; // overlap
 	}
-	return false;
+	//return false;
 
-	for (auto& _item : items) {
-		if (_item->useItem(_p)) {
+	/*for (auto& _item : items) {
+		if (_item->checkCollision(_p)) {
+			_p->addPoint(_item->getValue());
+			cout << "Item used" << endl;
 			mainFrame->removeSprite(_item->getItemSprite());
 			delete _item;
 			items.erase(find(items.begin(), items.end(), _item));
 		}
-	}
+	}*/
 	return false;
 }
 
-void Lane::addItem(const string& itemName, const Entity& model, const Vector2f& position) {
+void Lane::addItem(const string& itemName, const Vector2f& position) {
+	cout << "Item added" << endl;
 	if (itemName == "Slime") {
 		items.push_back(new Slime(itemName, start));
 	}
 	else {
 		items.push_back(new Coin(itemName, position));
 	}
+	cout << "Seriously, item added" << endl;
 }
 
 int Lane::getTotalVehicle() {
@@ -1596,79 +1798,230 @@ void Lane::printStart() {
 void Lane::printEnd() {
 	cerr << "end pos: " << end.x << " " << end.y << '\n';
 }
-//void Lane::draw
 
 ```Map.cpp```
 
 #pragma warning(disable:4244)
 #include "Map.h"
 
-Map::Map(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane> &MapLane) {
+StreetMap::StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty) {
+
 	mainFrame = mapFrame;
 	this->hdc = hdc;
 	difficulty = levelDifficulty;
-	//Entity carEntity = Entity("car4_motion");
+	loadResource();
+	for (int i = 0, prio = 2; i < 10; i++, prio+=2) {
+		Lane* cur = new Lane(mainFrame, i, vehicle, levelDifficulty, STREET_MAP, prio);
+		this->mapLane.push_back(cur);
+	}
+
 	bgTexture = new Texture("image_bin/street.bin");
     bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
-	for (int i = 0; i < (int)MapLane.size(); i++) {
-		this->mapLane.push_back(&MapLane[i]);
-	}
-	TrafficLight tl1(Vector2f(216, 70.2f), mapLane[0], mapLane[1], 0);
-	TrafficLight tl2(Vector2f(809.6f, 180.4f), mapLane[2], mapLane[3], 0);
-	TrafficLight tl3(Vector2f(635, 284.f), mapLane[4], mapLane[5], 0);
-	TrafficLight tl4(Vector2f(1195.4f, 392.9f), mapLane[6], mapLane[7], 0);
-	TrafficLight tl5(Vector2f(211.1f, 500.8f), mapLane[8], mapLane[9], 0);
-	trafficLight.emplace_back(tl1);
-	trafficLight.emplace_back(tl2);
-	trafficLight.emplace_back(tl3);
-	trafficLight.emplace_back(tl4);
-	trafficLight.emplace_back(tl5);
+	getTraffic(STREET_MAP, mapLane, trafficLight);
 	for (int i = 0; i < 5; i++) {
 		Sprite* tmp = trafficLight[i].getSprite();
-		tmp->setPriority(10);
-		mainFrame->addSprite(trafficLight[i].getSprite());
+		mainFrame->addSprite(tmp);
 	}
-	player = Player(*mapFrame);
+	player = Player(*mapFrame, STREET_MAP);
+	player.addPoint(difficulty);
 }
 
-Map::~Map() {
+StreetMap::~StreetMap() {
 	for (auto ptr:mapLane) {
 		delete ptr;
 	}
 	mapLane.clear();
+	trafficLight.clear();
 }
 
-void Map::drawMap() {
+
+void StreetMap::drawMap() {
+	gameRunning = true;
 	for (int i = 0; i < (int)mapLane.size(); i++) {
 		mapLane[i]->resetLane();
 		mapLane[i]->startLane();
 	}
-	//mapLane[0]->resetLane();
-	//mapLane[0]->startLane();
-	clock_t time = clock();
 	thread t = player.launchHandler();
-	//player.playerHandler();
 	while (true) {
+		randomItemSpawner();
+		shiftResource();
+		trafficControl(trafficLight);
 		for (int i = 0; i < (int)mapLane.size(); i++) {
 			mapLane[i]->update();
 		}
-		//mapLane[0]->update();
-		trafficControl(trafficLight);
 		bool collide = 0;
 		int playerCurrentLane = player.convertLane();
 		if (playerCurrentLane < 10) {
 			if (mapLane[playerCurrentLane]->checkCollision(&player))
 				collide = 1;
 		}
+		mainFrame->update();
+		mainFrame->draw(hdc);
+		if (collide) {
+			gameRunning = 0;
+			player.stopPlayerHandler();
+			t.join();
+			for (auto& s : mapLane) {
+				s->stopLane();
+			}
+			int sz = player.let_Megumin_cook();
+			player.setSpritePriotity(INT_MAX);
+			while (sz--) {
+				this_thread::sleep_for(200ms);
+				player.animatePlayer();
+				mainFrame->update();
+				mainFrame->draw(hdc);
+			}
+			break;
+		}
+	}
+}
 
-        mainFrame->update();
-        mainFrame->draw(hdc);
+
+void StreetMap::loadResource() {
+	for (int i = 0; i < 7; i++) {
+		Entity car("street/car" + to_string(i + 1));
+		vehicle.push_back(car);
+		car.flipHorizontal();
+		vehicle.push_back(car);
+	}
+	return;
+}
+
+void StreetMap::shiftResource() {
+	for (int i = 0; i < vehicle.size(); i++) {
+		vehicle[i].shiftResource();
+	}
+	return;
+}
+
+
+ChessMap::ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty)  {
+	mainFrame = mapFrame;
+	this->hdc = hdc;
+	difficulty = levelDifficulty;
+	loadResource();
+	for (int i = 0, prio = 2; i < 5; i++, prio += 2) {
+		Lane* cur = new Lane(mainFrame, i, vehicle, levelDifficulty, CHESS_MAP, prio);
+		this->mapLane.push_back(cur);
+	}
+
+	bgTexture = new Texture("image_bin/chess/chess.bin");
+	bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
+	player = Player(*mapFrame, CHESS_MAP);
+}
+ChessMap::~ChessMap() {
+	for (auto ptr : mapLane) {
+		delete ptr;
+	}
+	mapLane.clear();
+}
+
+void ChessMap::drawMap() {
+	gameRunning = true;
+	for (int i = 0; i < (int)mapLane.size(); i++) {
+		mapLane[i]->resetLane();
+		mapLane[i]->startLane();
+	}
+	thread t = player.launchHandler();
+	/*thread spawner([this]() {
+		return this->randomItemSpawner();
+		});*/
+	while (true) {
+		randomItemSpawner();
+		for (int i = 0; i < (int)mapLane.size(); i++) {
+			mapLane[i]->update();
+		}
+		bool collide = 0;
+		for (int i = 0; i < (int)mapLane.size(); i++) {
+			if (mapLane[i]->checkCollision(&player)) {
+				collide = 1;
+				break;
+			}
+		}
+		mainFrame->update();
+		mainFrame->draw(hdc);
 		if (collide)
 		{
-			//t.join();
-			/*break;*/
+			gameRunning = 0;
+			player.stopPlayerHandler();
+			t.join();
+			for (auto& s : mapLane) {
+				s->stopLane();
+			}
+			int sz = player.let_Megumin_cook();
+			player.setSpritePriotity(1);
+			while (sz--) {
+				this_thread::sleep_for(200ms);
+				player.animatePlayer();
+				mainFrame->update();
+				mainFrame->draw(hdc);
+			}
+			break;
 		}
-    }
+	}
+}
+
+
+void ChessMap::loadResource() {
+	for (int i = 0; i < 15; i++) {
+		Entity chess = ("chess/chess" + to_string(i + 1));
+		chess.flipHorizontal();
+		vehicle.push_back(chess);
+		chess.flipHorizontal();
+		vehicle.push_back(chess);
+	}
+	return;
+}
+
+TrainMap::TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, vector<Lane>& maplane)  {
+	mainFrame = mapFrame;
+	this->hdc = hdc;
+	difficulty = levelDifficulty;
+	bgTexture = new Texture("image_bin/train.bin");
+	bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
+	for (int i = 0; i < (int)maplane.size(); i++) {
+		this->mapLane.push_back(&maplane[i]);
+	}
+	Entity playerEntity("up");
+
+	getTraffic(TRAIN_MAP, mapLane, trafficLight);
+
+	for (int i = 0; i < 5; i++) {
+		Sprite* tmp = trafficLight[i].getSprite();
+		tmp->setPriority(10);
+		mainFrame->addSprite(trafficLight[i].getSprite());
+	}
+
+}
+TrainMap::~TrainMap() {
+	for (auto ptr : mapLane) {
+		delete ptr;
+	}
+	mapLane.clear();
+}
+
+
+void TrainMap::loadResource() {
+	;
+}
+
+void Map::randomItemSpawner() {
+//	srand(time(NULL));
+//	long long seed = ((rand() + 139) * 491);
+//	//this_thread::sleep_for(1s);
+//	if (seed % 5 == 2) {
+//		if (seed % 2) {
+//			mapLane[seed % 10]->addItem("Slime", Vector2f());
+//		}
+//		else {
+//			mapLane[seed % 10]->addItem("Coin", Vector2f(seed % 1280, seed % 760));
+//		}
+//	}
+}
+
+int Map::getDiff() const {
+	return player.getPoint();
 }
 
 ```Movable.cpp```
@@ -1905,16 +2258,31 @@ void Pixel::print() {
 
 #pragma warning(disable:4244)
 #include "Player.h"
-float pos[] = { 665, 610, 570, 500, 460, 391, 350, 284, 242, 180, 140 };
+#include <fstream>
 
-Player::Player(Frame& mainFrame) {
-    model.push_back(new Entity("player/left"));
-    model.push_back(new Entity("player/up"));
-    model.push_back(new Entity("player/right"));
-    _player = mainFrame.addSprite(model[state]->getCurrentTexture(), Vector2f(1280 / 2, 655));
+int Priority[]{21, 11};
+int mapLim[]{ 11, 6 };
+
+void Player::INIT() {
+    vector<int>street = { 650, 595, 555, 485, 450, 376, 332, 269, 227, 165, 125 };
+    vector<int>chess = {650, 580, 470, 370, 270, 170};
+
+    lanePos.push_back(street);
+    lanePos.push_back(chess);
+}
+
+
+Player::Player(Frame& mainFrame, const int& mapType) {
+    model.push_back(new Entity("character/left"));
+    model.push_back(new Entity("character/up"));
+    model.push_back(new Entity("character/right"));
+    model.push_back(new Entity("redSlime/redSlime"));
+    _player = mainFrame.addSprite(model[state]->getCurrentTexture(), Vector2f(1280 / 2, 655));    
+    _player->setPriority(Priority[mapType]);
     width = 36;
-    height = 40;
+    height = 55;
     cnt = 0;
+    this->mapType = mapType;
 }
 
 // Memory leak here: unable to delete vector of Entity
@@ -1944,29 +2312,26 @@ void Player::setPosition(const float& x, const float& y,const char& dir) {
         this->cnt--;
     }
 
-    if (this->cnt == 11 || this->cnt == -1)
+    if (this->cnt == mapLim[mapType] || this->cnt == -1)
         this->cnt = 0;
     
     if (x < 0) {
-        _player->setPosition(Vector2f(0, pos[cnt]));
+        _player->setPosition(Vector2f(0, lanePos[mapType][cnt]));
         return;
     }
     if (x > 1210) {
-        _player->setPosition(Vector2f(1200, pos[cnt]));
+        _player->setPosition(Vector2f(1200, lanePos[mapType][cnt]));
         return;
     }
 
-    _player->setPosition(Vector2f(x, pos[cnt]));
+    _player->setPriority(Priority[mapType] - cnt * 2);
+    _player->setPosition(Vector2f(x, lanePos[mapType][cnt]));
 }
 
 void Player::animatePlayer() {
     model[state]->shiftResource();
     _player->setTexture(model[state]->getCurrentTexture());
 }
-
-//void Player::setModel(const Entity& _model) {
-//    model = _model;
-//}
 
 Vector2f Player::getHitbox() const {
     return Vector2f(width, height);
@@ -1986,12 +2351,12 @@ int Player::convertLane() {
 
 void Player::playerHandler()
 {
-    while (true) {
+    while (isRunning) {
         int vertical{}, horizon{};
         animatePlayer();
         if (_kbhit()) {
             cout << "running" << endl;
-            this_thread::sleep_for(50ms);
+            //this_thread::sleep_for(50ms);
             int curr = _getch();
             Vector2f currPos = _player->getPosition();
             switch (curr) {
@@ -2020,9 +2385,27 @@ void Player::playerHandler()
 }
 
 thread Player::launchHandler() {
+    isRunning = true;
     return thread([this]() { 
         this->playerHandler(); 
     });
+}
+
+void Player::stopPlayerHandler() {
+    isRunning = false;
+}
+
+int Player::let_Megumin_cook() {
+    state = 3;
+    return model[state]->getMotionSize();
+}
+
+void Player::setSpritePriotity(const int& i) {
+    _player->setPriority(i);
+}
+
+size_t Player::getPoint() const {
+    return point;
 }
 
 ```Screen.cpp```
@@ -2072,7 +2455,7 @@ void Screen::startGame() {
 	mainFrame->draw(*hdc, backGround);
 	music->Play("gameSound.wav", 1, 1);
 	Entity e1("car1_motion");
-	Lane l1(mainFrame, 1, e1, 20);
+	//Lane l1(mainFrame, 1, e1, 20);
 	//thread t1 = l1.spawnThread();
 	while (true) {
 
@@ -2392,19 +2775,6 @@ string updateScore(int& score, int bonus) {
  void Screen::crossyRoad() {
 	 int score = 0;
 	 Entity _char("up");
-	 //TrafficLight tl1(Vector2f(216, 70.2));
-	 //TrafficLight tl2(Vector2f(809.6, 180.4));
-	 //TrafficLight tl3(Vector2f(635, 284));
-	 //TrafficLight tl4(Vector2f(1195.4, 392.9));
-	 //TrafficLight tl5(Vector2f(211.1, 500.8));
-
-	 //
-	 //vector<TrafficLight>traff;
-	 //traff.emplace_back(tl1);
-	 //traff.emplace_back(tl2);
-	 //traff.emplace_back(tl3);
-	 //traff.emplace_back(tl4);
-	 //traff.emplace_back(tl5);
 
 
 	 changeTexture(21);
@@ -2419,7 +2789,7 @@ string updateScore(int& score, int bonus) {
 	 //mainFrame->draw(*this->hdc);
 	 // Lane l1(1, e1, 1);
 
-	 Player _p(*mainFrame);
+	 Player _p(*mainFrame, STREET_MAP);
 	 while (true) {
 		 //this_thread::sleep_for(100ms);
 		 _p.animatePlayer();
@@ -2508,7 +2878,8 @@ using namespace utility;
 Sprite::Sprite() : Movable()
 {
     next = nullptr;
-    prev = nullptr;    priority = 0;
+    prev = nullptr;    
+    priority = 0;
     //this->texture = Texture();
     this->textureRect = Rect2D();
 }
@@ -2531,6 +2902,7 @@ void Sprite::setTexture(Texture* texture)
     this->texture = texture;
     this->textureRect = Rect2D(0, 0, texture->getWidth(), texture->getHeight());
 }
+
 Texture* Sprite::getTexture()
 {
     return this->texture;
@@ -2541,6 +2913,7 @@ Vector2f Sprite::getHitbox() const {
 void Sprite::printPosition() {
     cerr << "position: " << position.x << " " << position.y << '\n';
 }
+
 void Sprite::setTextureRect(int top, int left, int width, int height)
 {
     this->textureRect.top = top;
@@ -2557,7 +2930,6 @@ void Sprite::setPriority(int priority) {
 void Sprite::update() {
     Movable::update();
 }
-
 void Sprite::draw(void* bits, Vector2i frameSize)
 {
     texture->drawTexture((int)position.y, (int)position.x, textureRect, bits, frameSize);
@@ -2664,6 +3036,7 @@ int getRandomInRange(int a, int b) {
 
 	return randomNum;
 }
+
 
 ```Text.cpp```
 
@@ -2957,6 +3330,37 @@ void trafficControl(vector<TrafficLight> trafficLight) {
 	return;
 }
 
+void getTraffic(const int& mapType, vector<Lane*>mapLane, vector<TrafficLight>& trafficLight) {
+	if (mapType == STREET_MAP) {
+		TrafficLight tl1(Vector2f(216, 70.2f), mapLane[0], mapLane[1], 0);
+		tl1.getSprite()->setPriority(1);
+		TrafficLight tl2(Vector2f(809.6f, 180.4f), mapLane[2], mapLane[3], 0);
+		tl2.getSprite()->setPriority(5);
+		TrafficLight tl3(Vector2f(635, 284.f), mapLane[4], mapLane[5], 0);
+		tl3.getSprite()->setPriority(9);
+		TrafficLight tl4(Vector2f(1195.4f, 392.9f), mapLane[6], mapLane[7], 0);
+		tl4.getSprite()->setPriority(13);
+		TrafficLight tl5(Vector2f(211.1f, 500.8f), mapLane[8], mapLane[9], 0);
+		tl5.getSprite()->setPriority(17);
+
+		trafficLight.push_back(tl1);
+		trafficLight.push_back(tl2);
+		trafficLight.push_back(tl3);
+		trafficLight.push_back(tl4);
+		trafficLight.push_back(tl5);
+		return;
+	}
+	else return;
+}
+
+//TrafficLight& TrafficLight::operator = (const TrafficLight& trafficLight) {
+//	this->status = trafficLight.status;
+//	this->sprite = trafficLight.sprite;
+//	for (int i = 0; i < trafficLight.lane.size(); i++) {
+//		this->lane.push_back(trafficLight.lane[i]);
+//	}
+//}
+
 ```Utilities.cpp```
 
 #pragma warning(disable:4244)
@@ -3169,18 +3573,9 @@ Rect2D::~Rect2D() {
 #include <thread>
 #include <time.h>
 #include <conio.h>
-#include "Texture.h"
-#include "Sprite.h"
-#include "Frame.h"
-#include "Entity.h"
-#include "Supportive.h"
-#include "Lane.h"
-#include "Player.h"
-#include "Screen.h"
-#include "Audio.h"
-#include "Text.h"
-#include "TrafficLight.h"
+
 #include "Map.h"
+#include "Game.h"
 
 // #define _WIN32_WINNT 0x0500
 
@@ -3210,7 +3605,15 @@ Screen* Screen::instancePtr = nullptr;
 vector<Entity> Text::numeric;
 vector<Entity> Text::alphabet;
 vector<Entity> TrafficLight::lightTexture;
+vector<vector<int>> Lane::lanePos;
+vector<vector<int>> Player::lanePos;
+
+
 int main(int argc, char* argv[]) {
+	Text::INIT();
+	TrafficLight::INIT();
+	Lane::INIT();
+	Player::INIT();
 	HWND console = GetConsoleWindow();
 	RECT r;
 	GetWindowRect(console, &r); 
@@ -3225,29 +3628,10 @@ int main(int argc, char* argv[]) {
 
 
 	HDC hdc = GetDC(console);
-	Text::INIT();
-	TrafficLight::INIT();
 
-	int diff = 50;
-	Entity carEntity("car4_motion");
-	Entity revCarEntity("car4_motion");
-	revCarEntity.flipHorizontal();
-	Entity coin("blueSlime_run");
-	vector<Lane> mapLane;
-	for (int i = 0; i < 10; i++) {
-		if (i % 2 == 1) {
-			Lane cur1 = Lane(&mainFrame, i, carEntity, diff);
-			cur1.addItem("Slime", coin, cur1.getStart());
-			mapLane.push_back(cur1);
-		}
-		else {
-			Lane cur2 = Lane(&mainFrame, i, revCarEntity, diff);
-			cur2.addItem("Slime", coin, cur2.getStart());
-			mapLane.push_back(cur2);
-		}
-	}
-	Map playMap(hdc, &mainFrame, diff, mapLane);
-	playMap.drawMap();
+	int diff = 90;
+	Game g(mainFrame, hdc, diff, 0);
+	cout << g.startGame() << endl;
 
 	ReleaseDC(console, hdc);
 	system("cls");

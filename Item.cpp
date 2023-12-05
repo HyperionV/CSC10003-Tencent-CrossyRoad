@@ -65,17 +65,18 @@ void Item::animateItem() {
 }
 
 bool Item::checkCollision(Player* _p) {
-	Vector2f hitbox(30, 30);
-	Vector2f topLeft = _p->getCurrentPos();
-	Vector2f bottomRight = topLeft + _p->getHitbox();
+	Vector2f hitbox(25, 25);
+	float dis = (sqrt(_p->getHitbox().x * _p->getHitbox().x + _p->getHitbox().y * _p->getHitbox().y) - 25 * sqrt(2)) / 2;
+	Vector2f topLeft = _p->getCurrentPos() + Vector2f(dis, dis);
+	Vector2f bottomRight = topLeft + hitbox;
 	if (topLeft.x > bottomRight.x) {
 		swap(topLeft.x, bottomRight.x);
 	}
 	if (topLeft.y < bottomRight.y) {
 		swap(topLeft.y, bottomRight.y);
 	}
-	
-	Vector2f vTopLeft = itemSprite->getPosition();
+	dis = (sqrt(itemSprite->getHitbox().x * itemSprite->getHitbox().x + itemSprite->getHitbox().y * itemSprite->getHitbox().y) - 25 * sqrt(2)) / 2;
+	Vector2f vTopLeft = itemSprite->getPosition() + Vector2f(dis, dis);
 	Vector2f vBottomRight = vTopLeft + hitbox;
 	if (vTopLeft.x > vBottomRight.x) {
 		swap(vTopLeft.x, vBottomRight.x);
@@ -83,19 +84,22 @@ bool Item::checkCollision(Player* _p) {
 	if (vTopLeft.y < vBottomRight.y) {
 		swap(vTopLeft.y, vBottomRight.y);
 	}
-	if (bottomRight.x < vTopLeft.x || vBottomRight.x < topLeft.x) return true;
-	if (topLeft.y < vBottomRight.y || vTopLeft.y < bottomRight.y) return true;
-	return false;
-
+	if (bottomRight.x < vTopLeft.x || vBottomRight.x < topLeft.x) return false;
+	if (topLeft.y < vBottomRight.y || vTopLeft.y < bottomRight.y) return false;
+	return true;
 }
 
 Slime::Slime(const string& _itemName, const Vector2f& _position)
 	:Item(_itemName, _position)
 {
 	value = -2;
-	model = new Entity("blueSlime_jumpattack");
+	model = new Entity("blueSlime", 'a');
 	this->position.y -= 15;
 	this->destination = Vector2f((this->position.x == -132) ? 1280 : -132, this->position.y);
+}
+
+Slime::~Slime() {
+	delete model;
 }
 
 Vector2f Item::getDestination() const {
@@ -105,7 +109,11 @@ Vector2f Item::getDestination() const {
 Coin::Coin(const string& _itemName, const Vector2f& _position)
 	:Item(_itemName, _position)
 {
-	model = new Entity("yc");
+	model = new Entity("yc", 1);
 	value = 5;
 	destination = position;
+}
+
+Coin::~Coin() {
+	delete model;
 }

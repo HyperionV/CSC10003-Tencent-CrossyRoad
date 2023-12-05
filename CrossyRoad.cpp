@@ -10,18 +10,9 @@
 #include <thread>
 #include <time.h>
 #include <conio.h>
-//#include "Item.h"
-//#include "Texture.h"
-//#include "Sprite.h"
-//#include "Frame.h"
-//#include "Entity.h"
-//#include "Supportive.h"
-//#include "Lane.h"
-//#include "Player.h"
-//#include "Screen.h"
-//#include "Audio.h"
-//#include "Text.h"
+
 #include "Map.h"
+#include "Game.h"
 
 // #define _WIN32_WINNT 0x0500
 
@@ -53,7 +44,13 @@ vector<Entity> Text::alphabet;
 vector<Entity> TrafficLight::lightTexture;
 vector<vector<int>> Lane::lanePos;
 vector<vector<int>> Player::lanePos;
+
+
 int main(int argc, char* argv[]) {
+	Text::INIT();
+	TrafficLight::INIT();
+	Lane::INIT();
+	Player::INIT();
 	HWND console = GetConsoleWindow();
 	RECT r;
 	GetWindowRect(console, &r); 
@@ -68,20 +65,18 @@ int main(int argc, char* argv[]) {
 
 
 	HDC hdc = GetDC(console);
-	Text::INIT();
-	TrafficLight::INIT();
-	Lane::INIT();
-	Player::INIT();
+	//int diff = 50;
+	//Screen* screen = Screen::getInstance(&mainFrame, &hdc);
+	////screen->startGame();
+	//ChessMap playMap(hdc, &mainFrame, diff, screen);
+	//playMap.drawMap();
 
-	int diff = 50;
-	Screen* screen = Screen::getInstance(&mainFrame, &hdc);
-	//screen->startGame();
-	ChessMap playMap(hdc, &mainFrame, diff, screen);
-	playMap.drawMap();
-
+	int diff = 90;
+	Game g(mainFrame, hdc, diff, TRAIN_MAP);
+	cout << g.startGame() << endl;
+	system("pause");
 	ReleaseDC(console, hdc);
 	system("cls");
 
-	cin.ignore();
 	return 0;
 }

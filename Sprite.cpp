@@ -7,7 +7,8 @@ using namespace utility;
 Sprite::Sprite() : Movable()
 {
     next = nullptr;
-    prev = nullptr;    priority = 0;
+    prev = nullptr;    
+    priority = 0;
     //this->texture = Texture();
     this->textureRect = Rect2D();
 }
@@ -30,6 +31,7 @@ void Sprite::setTexture(Texture* texture)
     this->texture = texture;
     this->textureRect = Rect2D(0, 0, texture->getWidth(), texture->getHeight());
 }
+
 Texture* Sprite::getTexture()
 {
     return this->texture;
@@ -40,6 +42,7 @@ Vector2f Sprite::getHitbox() const {
 void Sprite::printPosition() {
     cerr << "position: " << position.x << " " << position.y << '\n';
 }
+
 void Sprite::setTextureRect(int top, int left, int width, int height)
 {
     this->textureRect.top = top;

@@ -28,17 +28,18 @@ public:
     Player(Frame&, const int&);
     ~Player();
 
-    Vector2f getCurrentPos() const;
+
     void setPosition(const float& x, const float& y, const char& dir);
     void animatePlayer();
-    Vector2f getHitbox() const;
     void addPoint();
     void addPoint(const int& value);
-
-    static void INIT();
-    void playerHandler();
-    thread launchHandler();
+    void setSpritePriotity(const int&);
     void stopPlayerHandler();
+    void playerHandler();
+    static void INIT();
+    Vector2f getHitbox() const;
+    Vector2f getCurrentPos() const;
+    thread launchHandler();
     int let_Megumin_cook();
     int getPoint() const;
     int convertLane(const int& mapType);

@@ -9,47 +9,13 @@ int mapLim[]{ 11, 6, 11};
 #define TRAIN_MAP 2
 
 void Player::INIT() {
-    vector<int>street;
-    vector<int>chess;
-    vector<int>train;
-
-    street.push_back(650);
-    street.push_back(595);
-    street.push_back(555);
-    street.push_back(485);
-    street.push_back(450);
-    street.push_back(376);
-    street.push_back(332);
-    street.push_back(269);
-    street.push_back(227);
-    street.push_back(165);
-    street.push_back(125);
-
-
-    chess.push_back(650);
-    chess.push_back(580);
-    chess.push_back(470);
-    chess.push_back(370);
-    chess.push_back(270);
-    chess.push_back(170);
-
-
-    train.push_back(650);
-    train.push_back(595);
-    train.push_back(555);
-    train.push_back(485);
-    train.push_back(450);
-    train.push_back(376);
-    train.push_back(332);
-    train.push_back(269);
-    train.push_back(227);
-    train.push_back(165);
-    train.push_back(125);
+    vector<int>street = { 650, 595, 555, 485, 450, 376, 332, 269, 227, 165, 125 };
+    vector<int>chess = {650, 580, 470, 370, 270, 170};
+    vector<int>train = { 650, 595, 555, 485, 450, 376, 332, 269, 227, 165, 125};
 
     lanePos.push_back(street);
     lanePos.push_back(chess);
     lanePos.push_back(train);
-
 }
 
 
@@ -57,7 +23,8 @@ Player::Player(Frame& mainFrame, const int& mapType) {
     model.push_back(new Entity("character/left"));
     model.push_back(new Entity("character/up"));
     model.push_back(new Entity("character/right"));
-    _player = mainFrame.addSprite(model[state]->getCurrentTexture(), Vector2f(1280 / 2, 650));
+    model.push_back(new Entity("effect/explode"));
+    _player = mainFrame.addSprite(model[state]->getCurrentTexture(), Vector2f(1280 / 2, 655));    
     _player->setPriority(Priority[mapType]);
     width = 36;
     height = 40;
@@ -110,6 +77,8 @@ void Player::setPosition(const float& x, const float& y,const char& dir) {
 }
 
 void Player::animatePlayer() {
+    if (state == 3)
+        _player->setPosition(Vector2f(0, 0));
     model[state]->shiftResource();
     _player->setTexture(model[state]->getCurrentTexture());
 }
@@ -128,7 +97,7 @@ void Player::addPoint(const int& value) {
 
 void Player::playerHandler()
 {
-    while (true && isRunning) {
+    while (isRunning) {
         int vertical{}, horizon{};
         animatePlayer();
         if (_kbhit()) {
@@ -187,6 +156,7 @@ int Player::convertLane(const int& mapType) {
     if (mapType == TRAIN_MAP || mapType == STREET_MAP)
         return 10 - cnt;
     else return 5 - cnt;
-
-    //return 10 - cnt;
+}
+void Player::setSpritePriotity(const int& i) {
+    _player->setPriority(i);
 }

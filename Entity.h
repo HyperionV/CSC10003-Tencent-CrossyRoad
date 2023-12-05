@@ -9,11 +9,12 @@
 class Entity : public Rect2D {
 private:
     deque<Texture*> motion;
-    string entityName{};    
 public:
     Entity();
     //~Entity();
     Entity(const string&);
+    Entity(const string&, char);
+    Entity(const string&, int);
     Entity(const string&, bool);
     Entity(const Entity&);
     void shiftResource();
@@ -21,7 +22,5 @@ public:
     Texture* getPreviousTexture();
     int getMotionSize();
     void flipHorizontal();
-
-    void setName(const string&);
 };
 

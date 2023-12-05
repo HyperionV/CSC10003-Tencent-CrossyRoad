@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Supportive.h"
 #include "Item.h"
+#include <mutex>
 
 #define STREET_MAP 0
 #define CHESS_MAP 1
@@ -35,6 +36,7 @@ private:
     vector<bool> onTrack;
     vector<Item*> items;
 
+
     float timeTilNextSpawn;
     mt19937 rand;
 
@@ -50,7 +52,7 @@ public:
     void spawnCar();
 
     bool checkCollision(Player*);
-    void addItem(const string& itemName, const Entity& model, const Vector2f& postion);
+    void addItem(const string& itemName, const Vector2f& postion);
 
     void animateLane();
     void animateItem();

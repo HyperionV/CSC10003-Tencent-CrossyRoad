@@ -39,9 +39,11 @@ public:
 class Slime : public Item {
 public:
 	Slime(const string& itemName, const Vector2f& position);
+	~Slime();
 };
 
 class Coin : public Item {
 public:
 	Coin(const string& itemName, const Vector2f& position);
+	~Coin();
 };
