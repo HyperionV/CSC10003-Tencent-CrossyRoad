@@ -34,16 +34,22 @@ public:
 	void removeItem(Frame& mainFrame);
 	void animateItem();
 	bool checkCollision(Player* _p);
+
+	virtual long long getCreateTime() const = 0;
 };
 
 class Slime : public Item {
 public:
-	Slime(const string& itemName, const Vector2f& position);
+	Slime(const Vector2f& position);
 	~Slime();
+	long long getCreateTime() const;
 };
 
 class Coin : public Item {
+	long long created;
 public:
-	Coin(const string& itemName, const Vector2f& position);
+	Coin(const Vector2f& position);
 	~Coin();
+
+	long long getCreateTime() const;
 };

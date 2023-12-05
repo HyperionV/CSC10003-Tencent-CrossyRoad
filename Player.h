@@ -40,7 +40,7 @@ public:
     Vector2f getHitbox() const;
     Vector2f getCurrentPos() const;
     thread launchHandler();
-    int let_Megumin_cook();
     int getPoint() const;
     int convertLane(const int& mapType);
+    int summon_Megumin();
 };

@@ -36,7 +36,7 @@ private:
     vector<bool> onTrack;
     vector<Item*> items;
 
-
+    mutex _mutex;
     float timeTilNextSpawn;
     mt19937 rand;
 
@@ -57,6 +57,7 @@ public:
     void animateLane();
     void animateItem();
     void clearItems();
+    void updateItem();
     void update();
     Vector2f getStart() const;
 

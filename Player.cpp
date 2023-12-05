@@ -143,7 +143,7 @@ void Player::stopPlayerHandler() {
     isRunning = false;
 }
 
-int Player::let_Megumin_cook() {
+int Player::summon_Megumin() {
     state = 3;
     return model[state]->getMotionSize();
 }

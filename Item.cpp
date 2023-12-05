@@ -65,19 +65,16 @@ void Item::animateItem() {
 }
 
 bool Item::checkCollision(Player* _p) {
-	Vector2f hitbox(25, 25);
-	float dis = (sqrt(_p->getHitbox().x * _p->getHitbox().x + _p->getHitbox().y * _p->getHitbox().y) - 25 * sqrt(2)) / 2;
-	Vector2f topLeft = _p->getCurrentPos() + Vector2f(dis, dis);
-	Vector2f bottomRight = topLeft + hitbox;
+	Vector2f topLeft = _p->getCurrentPos();
+	Vector2f bottomRight = topLeft + _p->getHitbox();
 	if (topLeft.x > bottomRight.x) {
 		swap(topLeft.x, bottomRight.x);
 	}
 	if (topLeft.y < bottomRight.y) {
 		swap(topLeft.y, bottomRight.y);
 	}
-	dis = (sqrt(itemSprite->getHitbox().x * itemSprite->getHitbox().x + itemSprite->getHitbox().y * itemSprite->getHitbox().y) - 25 * sqrt(2)) / 2;
-	Vector2f vTopLeft = itemSprite->getPosition() + Vector2f(dis, dis);
-	Vector2f vBottomRight = vTopLeft + hitbox;
+	Vector2f vTopLeft = itemSprite->getPosition();
+	Vector2f vBottomRight = vTopLeft + itemSprite->getHitbox();
 	if (vTopLeft.x > vBottomRight.x) {
 		swap(vTopLeft.x, vBottomRight.x);
 	}
@@ -89,8 +86,8 @@ bool Item::checkCollision(Player* _p) {
 	return true;
 }
 
-Slime::Slime(const string& _itemName, const Vector2f& _position)
-	:Item(_itemName, _position)
+Slime::Slime(const Vector2f& _position)
+	:Item("Slime", _position)
 {
 	value = -2;
 	model = new Entity("blueSlime", 'a');
@@ -106,14 +103,23 @@ Vector2f Item::getDestination() const {
 	return destination;
 }
 
-Coin::Coin(const string& _itemName, const Vector2f& _position)
-	:Item(_itemName, _position)
+Coin::Coin(const Vector2f& _position)
+	:Item("Coin", _position)
 {
+	created = time(NULL);
 	model = new Entity("yc", 1);
-	value = 5;
+	value = 2;
 	destination = position;
 }
 
 Coin::~Coin() {
 	delete model;
+}
+
+long long Coin::getCreateTime() const {
+	return created;
+}
+
+long long Slime::getCreateTime() const {
+	return 0;
 }

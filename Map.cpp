@@ -40,6 +40,10 @@ void StreetMap::drawMap() {
 		mapLane[i]->startLane();
 	}
 	thread t = player.launchHandler();
+	thread spawner([this]() {
+		return this->randomItemSpawner();
+	});
+	bool collide = 0;
 	while (gameRunning) {
 		screen->updateScoreSprite(player.getPoint());
 		randomItemSpawner();
@@ -60,11 +64,11 @@ void StreetMap::drawMap() {
 			gameRunning = 0;
 			player.stopPlayerHandler();
 			t.join();
-			t.~thread();
+			spawner.join();
 			for (auto& s : mapLane) {
 				s->stopLane();
 			}
-			int sz = player.let_Megumin_cook();
+			int sz = player.summon_Megumin();
 			player.setSpritePriotity(INT_MAX);
 			while (sz--) {
 				this_thread::sleep_for(200ms);
@@ -151,7 +155,7 @@ void ChessMap::drawMap() {
 			for (auto& s : mapLane) {
 				s->stopLane();
 			}
-			int sz = player.let_Megumin_cook();
+			int sz = player.summon_Megumin();
 			player.setSpritePriotity(1);
 			while (sz--) {
 				this_thread::sleep_for(200ms);
@@ -232,7 +236,7 @@ void TrainMap::drawMap() {
 			for (auto& s : mapLane) {
 				s->stopLane();
 			}
-			int sz = player.let_Megumin_cook();
+			int sz = player.summon_Megumin();
 			player.setSpritePriotity(25);
 			while (sz--) {
 				this_thread::sleep_for(100ms);
@@ -273,17 +277,19 @@ TrainMap::~TrainMap() {
 
 
 void Map::randomItemSpawner() {
-//	srand(time(NULL));
-//	long long seed = ((rand() + 139) * 491);
-//	//this_thread::sleep_for(1s);
-//	if (seed % 5 == 2) {
-//		if (seed % 2) {
-//			mapLane[seed % 10]->addItem("Slime", Vector2f());
-//		}
-//		else {
-//			mapLane[seed % 10]->addItem("Coin", Vector2f(seed % 1280, seed % 760));
-//		}
-//	}
+	while (gameRunning) {
+		long long epoch = chrono::system_clock::now().time_since_epoch().count();
+		srand(epoch);
+		int seed = rand() + 1;
+		seed = seed * 2 + seed % 2;
+		this_thread::sleep_for(1s);
+		if (seed % 2) {
+			mapLane[seed % mapLane.size()]->addItem("Slime", Vector2f());
+		}
+		else {
+			mapLane[seed % mapLane.size()]->addItem("Coin", Vector2f(((seed % 30)+1)*40, mapLane[seed%mapLane.size()]->getStart().y));
+		}
+	}
 }
 
 int Map::getDiff() const {
