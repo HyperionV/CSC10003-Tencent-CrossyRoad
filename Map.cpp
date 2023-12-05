@@ -11,7 +11,6 @@ StreetMap::StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* scre
 		Lane* cur = new Lane(mainFrame, i, vehicle, levelDifficulty, STREET_MAP, prio);
 		this->mapLane.push_back(cur);
 	}
-
 	bgTexture = new Texture("image_bin/street/street.bin");
     bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
 	getTraffic(STREET_MAP, mapLane, trafficLight);
@@ -277,19 +276,19 @@ TrainMap::~TrainMap() {
 
 
 void Map::randomItemSpawner() {
-	while (gameRunning) {
-		long long epoch = chrono::system_clock::now().time_since_epoch().count();
-		srand(epoch);
-		int seed = rand() + 1;
-		seed = seed * 2 + seed % 2;
-		this_thread::sleep_for(1s);
-		if (seed % 2) {
-			mapLane[seed % mapLane.size()]->addItem("Slime", Vector2f());
-		}
-		else {
-			mapLane[seed % mapLane.size()]->addItem("Coin", Vector2f(((seed % 30)+1)*40, mapLane[seed%mapLane.size()]->getStart().y));
-		}
-	}
+	//while (gameRunning) {
+	//	long long epoch = chrono::system_clock::now().time_since_epoch().count();
+	//	srand(epoch);
+	//	int seed = rand() + 1;
+	//	seed = seed * 2 + seed % 2;
+	//	this_thread::sleep_for(1s);
+	//	if (seed % 2) {
+	//		mapLane[seed % mapLane.size()]->addItem("Slime", Vector2f());
+	//	}
+	//	else {
+	//		mapLane[seed % mapLane.size()]->addItem("Coin", Vector2f(((seed % 30)+1)*40, mapLane[seed%mapLane.size()]->getStart().y));
+	//	}
+	//}
 }
 
 int Map::getDiff() const {
