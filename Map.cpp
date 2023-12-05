@@ -208,14 +208,16 @@ void TrainMap::loadResource() {
 
 void Map::randomItemSpawner() {
 	while (gameRunning) {
-		srand(time(NULL));
-		int seed = ((rand() + 139) * 491);
-		this_thread::sleep_for(3s);
+		long long epoch = chrono::system_clock::now().time_since_epoch().count();
+		srand(epoch);
+		int seed = rand() + 1;
+		seed = seed * 2 + seed % 2;
+		this_thread::sleep_for(1s);
 		if (seed % 2) {
-			mapLane[seed % 10]->addItem("Slime", Vector2f());
+			mapLane[seed % mapLane.size()]->addItem("Slime", Vector2f());
 		}
 		else {
-			mapLane[seed % 10]->addItem("Coin", Vector2f(seed % 1280, seed % 760));
+			mapLane[seed % mapLane.size()]->addItem("Coin", Vector2f(((seed % 30)+1)*40, mapLane[seed%mapLane.size()]->getStart().y));
 		}
 	}
 }

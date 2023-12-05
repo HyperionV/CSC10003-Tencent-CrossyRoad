@@ -215,10 +215,12 @@ bool Lane::checkCollision(Player* _p) {
 
 	for (auto& _item : items) {
 		if (_item->checkCollision(_p)) {
+			_mutex.lock();
 			_p->addPoint(_item->getValue());
 			mainFrame->removeSprite(_item->getItemSprite());
 			delete _item;
 			items.erase(find(items.begin(), items.end(), _item));
+			_mutex.unlock();
 		}
 	}
 	return false;

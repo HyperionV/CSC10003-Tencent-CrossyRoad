@@ -14,8 +14,6 @@ protected:
 	Frame* mainFrame;
 	vector<Lane*> mapLane;
 	vector<Entity>vehicle;
-	vector<Slime>slime;
-	vector<Coin> coin;
 	Texture* bgTexture;
 	Sprite* bg;
 	Player player;
