@@ -363,63 +363,57 @@ string updateScore(int& score, int bonus) {
 	 return;
  }
 
- void Screen::crossyRoad() {
-	 int score = 0;
-	 Entity _char("up");
+ //void Screen::crossyRoad() {
+	// int score = 0;
+	// Entity _char("up");
 
 
-	 changeTexture(21);
-	 mainFrame->addSprite(this->backGround);
-	 for (int i = 0; i < 5; i++) {
-		 mainFrame->addSprite(this->score[i]);
-	 }
+	// changeTexture(21);
+	// mainFrame->addSprite(this->backGround);
+	// for (int i = 0; i < 5; i++) {
+	//	 mainFrame->addSprite(this->score[i]);
+	// }
 
-
-
-	 //mainFrame->update();
-	 //mainFrame->draw(*this->hdc);
-	 // Lane l1(1, e1, 1);
-
-	 Player _p(*mainFrame, STREET_MAP);
-	 while (true) {
-		 //this_thread::sleep_for(100ms);
-		 _p.animatePlayer();
-		 if (_kbhit()) {
-			 int curr = _getch();
-			 int step{ 2 };
-			 Vector2f currPos = _p.getCurrentPos();
-			 switch (curr) {
-			 case KEY_LEFT:
-				 _p.setPosition(currPos.x - 40, currPos.y, 'a');
-				 break;
-			 case KEY_RIGHT:
-				 _p.setPosition(currPos.x + 40, currPos.y, 'd');
-				 break;
-			 case KEY_DOWN:
-				 _p.setPosition(currPos.x, currPos.y, 's');
-				 break;
-			 case KEY_UP:
-				 this->updateScoreSprite(score);
-				 _p.setPosition(currPos.x, currPos.y, 'w');
-				 break;
-			 case 'q':
-				 playSound(ON_CLICK);
-				 if (screenPause()) {
-					 //mainFrame->removeAllSprite();
-					 return;
-				 }
-				 break;
-			 default:
-				 //cout << "Invalid key pressed" << endl;
-				 //system("pause");
-				 break;
-			 }
-		 }
-		 //trafficControl(traff);
-		 mainFrame->update();
-		 mainFrame->draw(*hdc);
-	 }
- }
+	// Player _p(*mainFrame, STREET_MAP);
+	// while (true) {
+	//	 //this_thread::sleep_for(100ms);
+	//	 _p.animatePlayer();
+	//	 if (_kbhit()) {
+	//		 int curr = _getch();
+	//		 int step{ 2 };
+	//		 Vector2f currPos = _p.getCurrentPos();
+	//		 switch (curr) {
+	//		 case KEY_LEFT:
+	//			 _p.setPosition(currPos.x - 40, currPos.y, 'a');
+	//			 break;
+	//		 case KEY_RIGHT:
+	//			 _p.setPosition(currPos.x + 40, currPos.y, 'd');
+	//			 break;
+	//		 case KEY_DOWN:
+	//			 _p.setPosition(currPos.x, currPos.y, 's');
+	//			 break;
+	//		 case KEY_UP:
+	//			 this->updateScoreSprite(score);
+	//			 _p.setPosition(currPos.x, currPos.y, 'w');
+	//			 break;
+	//		 case 'q':
+	//			 playSound(ON_CLICK);
+	//			 if (screenPause()) {
+	//				 //mainFrame->removeAllSprite();
+	//				 return;
+	//			 }
+	//			 break;
+	//		 default:
+	//			 //cout << "Invalid key pressed" << endl;
+	//			 //system("pause");
+	//			 break;
+	//		 }
+	//	 }
+	//	 //trafficControl(traff);
+	//	 mainFrame->update();
+	//	 mainFrame->draw(*hdc);
+	// }
+ //}
 
 
  void Screen::screenLeaderboard() {
@@ -444,7 +438,6 @@ string updateScore(int& score, int bonus) {
 				 playSound(ON_CLICK);
 				 mainFrame->removeAllSprite();
 				 return;
-				 break;
 			 default:
 				 //cout << "Invalid key pressed" << endl;
 				 //system("pause");
@@ -458,7 +451,7 @@ string updateScore(int& score, int bonus) {
 
  }
 
- void Screen::screenChooseMap() {
+ int Screen::screenChooseMap() {
 	 int horizon = 0;
 	 changeTexture(30);
 	 mainFrame->draw(*this->hdc, this->backGround);
@@ -499,13 +492,13 @@ string updateScore(int& score, int bonus) {
 				 switch (horizon) {
 				 case 0:
 					 playSound(ON_CLICK);
-					 return;
+					 return STREET_MAP;
 				 case 1:
 					 playSound(ON_CLICK);
-					 return;
+					 return CHESS_MAP;
 				 case 2:
 					 playSound(ON_CLICK);
-					 return;
+					 return TRAIN_MAP;
 				 default:
 					 break;
 				 }
@@ -515,7 +508,7 @@ string updateScore(int& score, int bonus) {
 		 }
 		 mainFrame->draw(*hdc, this->backGround);
 	 }
-	 return;
+	 return -1;
 
  }
  

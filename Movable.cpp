@@ -123,7 +123,8 @@ bool Movable::reachedDestination() {
 }
 
 void Movable::update() {
-//    cerr << "isMoving: " << isMoving << endl;
+//    
+//  << "isMoving: " << isMoving << endl;
 //    cerr << "velocity: " << velocity.x << ", " << velocity.y << endl;
 //    cerr << "acceleration: " << acceleration.x << ", " << acceleration.y << endl;
     if (isMoving) {

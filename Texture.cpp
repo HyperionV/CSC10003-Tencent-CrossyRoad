@@ -70,6 +70,7 @@ int Texture::getHeight() {
 void Texture::readTexture(string filename) {
     ifstream file(filename, ios::binary);
     if (!file.is_open()) {
+        
         cerr << "Cannot open file " << filename << "\n";
         return;
     }

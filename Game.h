@@ -18,6 +18,7 @@ private:
 	HDC hdc;
 	int diff;
 	Map* playMap;
+	Screen* screen;
 public:
 	Game(Frame& mainFrame, HDC& hdc, int& diff, const int& map);
 	~Game();

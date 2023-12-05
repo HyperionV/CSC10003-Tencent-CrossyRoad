@@ -41,7 +41,7 @@ public:
 	void screenAbout();
 	void screenHelp();
 	void startGame();
-	void screenChooseMap();
+	int screenChooseMap();
 	bool screenPause();
 	void screenOption();
 	void screenPlay();

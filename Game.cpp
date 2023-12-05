@@ -3,15 +3,16 @@
 Game::Game(Frame& mainFrame, HDC& hdc, int& diff, const int& map)
 	:mainFrame{ mainFrame }, hdc{ hdc }, diff{ diff }
 {
-	if (map == 0) {
-		playMap = new StreetMap(hdc, &mainFrame, diff);
+	screen = Screen::getInstance(&mainFrame, &hdc);
+	if (map == STREET_MAP) {
+		playMap = new StreetMap(hdc, &mainFrame, diff, screen);
 	}
-	else if (map == 1) {
-		playMap = new ChessMap(hdc, &mainFrame, diff);
+	else if (map == CHESS_MAP) {
+		playMap = new ChessMap(hdc, &mainFrame, diff, screen);
 	}
-	/*else {
-		playMap = new TrainMap(hdc, &mainFrame, diff);
-	}*/
+	else {
+		playMap = new TrainMap(hdc, &mainFrame, diff, screen);
+	}
 }
 
 Game::~Game() {
