@@ -11,6 +11,7 @@
 #include <time.h>
 #include <conio.h>
 
+#include"Screen.h"
 #include "Map.h"
 #include "Game.h"
 
@@ -25,6 +26,9 @@
 using namespace std;
 
 Frame mainFrame(Vector2i(1280, 760), Vector2i(0,0));
+HWND console = GetConsoleWindow();
+HDC hdc = GetDC(console);
+
 
 
 void ShowConsoleCursor(bool showFlag)
@@ -45,13 +49,16 @@ vector<Entity> TrafficLight::lightTexture;
 vector<vector<int>> Lane::lanePos;
 vector<vector<int>> Player::lanePos;
 
-
-int main(int argc, char* argv[]) {
+void InitResource() {
 	Text::INIT();
 	TrafficLight::INIT();
 	Lane::INIT();
 	Player::INIT();
-	HWND console = GetConsoleWindow();
+	Screen::getInstance(&mainFrame, &hdc);
+}
+
+
+int main(int argc, char* argv[]) {
 	RECT r;
 	GetWindowRect(console, &r); 
 	
@@ -62,17 +69,15 @@ int main(int argc, char* argv[]) {
 	SetWindowLong(consoleWindow, GWL_STYLE, GetWindowLong(consoleWindow, GWL_STYLE) & ~WS_MAXIMIZEBOX & ~WS_SIZEBOX);
 	ShowScrollBar(GetConsoleWindow(), SB_VERT, 0);
 	ShowConsoleCursor(false);
-
-
-	HDC hdc = GetDC(console);
-	//int diff = 50;
-	//Screen* screen = Screen::getInstance(&mainFrame, &hdc);
-	////screen->startGame();
-	//ChessMap playMap(hdc, &mainFrame, diff, screen);
-	//playMap.drawMap();
+	thread t(InitResource);
+	while (!t.joinable()) {
+		this_thread::sleep_for(100ms);
+		//do smt while waiting for resource
+	}
+	t.join();
 
 	int diff = 90;
-	Game g(mainFrame, hdc, diff, TRAIN_MAP);
+	Game g(mainFrame, hdc, diff, 0);
 	cout << g.startGame() << endl;
 	system("pause");
 	ReleaseDC(console, hdc);

@@ -59,7 +59,7 @@ class TrainMap : public Map {
 private:
 	vector<TrafficLight>trafficLight;
 public:
-	TrainMap::TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen);
+	TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen);
 	~TrainMap();
 	void drawMap();
 	void loadResource();

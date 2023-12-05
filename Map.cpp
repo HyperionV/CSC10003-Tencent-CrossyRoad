@@ -45,7 +45,6 @@ void StreetMap::drawMap() {
 	bool collide = 0;
 	while (gameRunning) {
 		screen->updateScoreSprite(player.getPoint());
-		randomItemSpawner();
 		shiftResource();
 		trafficControl(trafficLight);
 		for (int i = 0; i < (int)mapLane.size(); i++) {
@@ -276,19 +275,19 @@ TrainMap::~TrainMap() {
 
 
 void Map::randomItemSpawner() {
-	//while (gameRunning) {
-	//	long long epoch = chrono::system_clock::now().time_since_epoch().count();
-	//	srand(epoch);
-	//	int seed = rand() + 1;
-	//	seed = seed * 2 + seed % 2;
-	//	this_thread::sleep_for(1s);
-	//	if (seed % 2) {
-	//		mapLane[seed % mapLane.size()]->addItem("Slime", Vector2f());
-	//	}
-	//	else {
-	//		mapLane[seed % mapLane.size()]->addItem("Coin", Vector2f(((seed % 30)+1)*40, mapLane[seed%mapLane.size()]->getStart().y));
-	//	}
-	//}
+	while (gameRunning) {
+		long long epoch = chrono::system_clock::now().time_since_epoch().count();
+		srand(epoch);
+		int seed = rand() + 1;
+		seed = seed * 2 + seed % 2;
+		this_thread::sleep_for(1s);
+		if (seed % 2) {
+			mapLane[seed % mapLane.size()]->addItem("Slime", Vector2f());
+		}
+		else {
+			mapLane[seed % mapLane.size()]->addItem("Coin", Vector2f(((seed % 30)+1)*40, mapLane[seed%mapLane.size()]->getStart().y));
+		}
+	}
 }
 
 int Map::getDiff() const {

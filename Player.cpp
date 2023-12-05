@@ -77,8 +77,6 @@ void Player::setPosition(const float& x, const float& y,const char& dir) {
 }
 
 void Player::animatePlayer() {
-    if (state == 3)
-        _player->setPosition(Vector2f(0, 0));
     model[state]->shiftResource();
     _player->setTexture(model[state]->getCurrentTexture());
 }
@@ -145,6 +143,7 @@ void Player::stopPlayerHandler() {
 
 int Player::summon_Megumin() {
     state = 3;
+    _player->setPosition(Vector2f(0, 0));
     return model[state]->getMotionSize();
 }
 
