@@ -25,7 +25,7 @@ public:
     Sprite* addSprite(Texture& texture, Vector2f position, int priority = 0);
     Sprite* addSprite(Texture* texture, Vector2f position, int priority = 0);
     void removeSprite(Sprite*& sprite);
-    void removeAllSprite(); 
+    void removeAllSprite();
     void removeAllSprites(); 
     void update();
     void draw(HDC hdc);

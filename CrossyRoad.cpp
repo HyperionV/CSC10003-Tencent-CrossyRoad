@@ -11,9 +11,10 @@
 #include <time.h>
 #include <conio.h>
 
-#include"Screen.h"
+#include "Screen.h"
 #include "Map.h"
 #include "Game.h"
+#include "TextBox.h"
 
 // #define _WIN32_WINNT 0x0500
 
@@ -77,8 +78,19 @@ int main(int argc, char* argv[]) {
 	t.join();
 
 	int diff = 90;
-	Game g(mainFrame, hdc, diff, 0);
-	cout << g.startGame() << endl;
+	TextBox myTextBox;
+	myTextBox.addTextBoxSprite(&mainFrame);
+	myTextBox.setCursorSize(2, 35);
+	while (true) {
+		myTextBox.TextBoxControl();
+		myTextBox.drawTextBox(&mainFrame);
+		mainFrame.update();
+		mainFrame.draw(hdc);
+		string cur = myTextBox.getEnteredText();
+	}
+
+	//Game g(mainFrame, hdc, diff, 0);
+	//cout << g.startGame() << endl;
 	system("pause");
 	ReleaseDC(console, hdc);
 	system("cls");

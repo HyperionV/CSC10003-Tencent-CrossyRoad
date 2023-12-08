@@ -13,5 +13,5 @@ public:
     ~Drawable();
     virtual void draw(void* bits, Vector2i frameSize) = 0;
     virtual void update() = 0;
-    virtual void onEvent(Event& event);
+    //virtual void onEvent(Event& event);
 };

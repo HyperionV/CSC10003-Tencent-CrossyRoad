@@ -25,6 +25,7 @@ protected:
 public:
 	Texture();
 	Texture(int width, int height);
+	Texture(int width, int height, int r, int g, int b, int a);
     Texture(const string& filename);
 	Texture(const Texture& other);
 	Texture(Texture* other);

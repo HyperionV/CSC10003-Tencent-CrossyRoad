@@ -1,10 +1,10 @@
 #pragma once
 
-
 #include "Entity.h"
 #include "Sprite.h"
 #include <iostream>
 #include <vector>
+
 
 class Text {
 private : 
@@ -18,7 +18,8 @@ public :
 	int getLength() const;
 	Text();
 	Text(const string& text);
-	void writeText(const int& x, const int& y, Frame* frame);
+	void writeText(const int& x, const int& y, Frame* frame, int priority = 0);
+	void removeText(Frame* frame);
 	~Text();
 
 };
