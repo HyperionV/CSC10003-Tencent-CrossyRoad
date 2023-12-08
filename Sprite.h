@@ -5,13 +5,13 @@
 #include "Pixel.h"
 #include "Movable.h"
 #include "Texture.h"
+#include "Drawable.h"
 
-class Sprite : public Movable
+class Sprite : public Movable, public Drawable
 {
 private:
     Texture* texture;
     Rect2D textureRect;
-    int priority;
 public:
     Sprite();
     Sprite(Vector2f position, Texture* texture, int priority = 0);
@@ -19,10 +19,6 @@ public:
     void setTexture(Texture* texture);
     Texture* getTexture();
     Vector2f getHitbox() const;
-    Sprite* next;
-    Sprite* prev;
-    int getPriority();
-    void setPriority(int priority);
     void setHeight(const int& height);
 
     void printPosition();
