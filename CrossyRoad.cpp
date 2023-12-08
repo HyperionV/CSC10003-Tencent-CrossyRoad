@@ -78,15 +78,15 @@ int main(int argc, char* argv[]) {
 	t.join();
 
 	int diff = 90;
-	TextBox myTextBox;
-	myTextBox.addTextBoxSprite(&mainFrame);
-	myTextBox.setCursorSize(2, 35);
+//	TextBox myTextBox;
+//	myTextBox.addTextBoxSprite(&mainFrame);
+//	myTextBox.setCursorSize(2, 35);
 	while (true) {
-		myTextBox.TextBoxControl();
-		myTextBox.drawTextBox(&mainFrame);
-		mainFrame.update();
-		mainFrame.draw(hdc);
-		string cur = myTextBox.getEnteredText();
+//		myTextBox.TextBoxControl();
+//		myTextBox.drawTextBox(&mainFrame);
+//		mainFrame.update();
+//		mainFrame.draw(hdc);
+//		string cur = myTextBox.getEnteredText();
 	}
 
 	//Game g(mainFrame, hdc, diff, 0);

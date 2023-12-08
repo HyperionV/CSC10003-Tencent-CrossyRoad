@@ -51,8 +51,9 @@ void TextCursor::checkCursor(Frame* mainFrame) {
 		}
 		else {
 			Vector2f tmp = Vector2f(cursorCurrentPosition.x, cursorCurrentPosition.y);
-			if (cursorSprite != nullptr) {
-				delete cursorSprite;
+            if (cursorSprite != nullptr) {
+                mainFrame->removeSprite(cursorSprite);
+//				delete cursorSprite;
 				cursorSprite = nullptr;
 			}
 			cursorSprite = new Sprite(tmp, cursorTexture, 50);

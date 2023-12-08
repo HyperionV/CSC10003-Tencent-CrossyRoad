@@ -61,6 +61,8 @@ void Frame::addSprite(Sprite* _sprite) {
     if (first == nullptr) {
         first = sprite;
         last = sprite;
+        sprite->next = nullptr;
+        sprite->prev = nullptr;
     }
     else {
         last->next = sprite;
@@ -97,7 +99,7 @@ void Frame::removeSprite(Sprite*& _sprite) {
     }
 
     delete sprite;
-    sprite = nullptr;
+    _sprite = nullptr;
 }
 
 void Frame::removeAllSprites() {
