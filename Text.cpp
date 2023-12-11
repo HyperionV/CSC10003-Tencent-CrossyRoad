@@ -1,5 +1,6 @@
 #pragma warning(disable:4244)
 #include "Text.h"
+
 int spaceChar[] = { 21, 21, 21, 21, 21, 21, 21, 21, 6, 10, 21, 10, 29, 21, 21, 21, 21, 18, 19, 16, 21, 21, 34, 21, 21, 21 };
 // i was so dumb...
 Text::Text() {
@@ -28,13 +29,11 @@ Text::Text(const string& text) {
 		else {
 			length += 19;
 			this->text[i]->setTexture(numeric[10].getCurrentTexture());
-			
 		}
-
 	}
 }
 
-void Text::writeText(const int& x, const int& y, Frame* frame) {
+void Text::writeText(const int& x, const int& y, Frame* frame, int priority) {
 	int offset = 0;
 	for (int i = 0; i < this->text.size(); i++) {
 		this->text[i]->setPosition(Vector2f(x + offset, y));
@@ -46,9 +45,16 @@ void Text::writeText(const int& x, const int& y, Frame* frame) {
 			else offset += 21;
 		}
 		else offset += 19;
+		text[i]->setPriority(priority);
 		frame->addSprite(text[i]);
 	}
 	return;
+}
+
+void Text::removeText(Frame* frame) {
+	for (int i = 0; i < (int)text.size(); i++) {
+		frame->removeSprite(text[i]);
+	}
 }
 
 void Text::INIT() {

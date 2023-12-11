@@ -11,8 +11,10 @@
 #include <time.h>
 #include <conio.h>
 
+#include "Screen.h"
 #include "Map.h"
 #include "Game.h"
+#include "TextBox.h"
 
 // #define _WIN32_WINNT 0x0500
 
@@ -25,6 +27,9 @@
 using namespace std;
 
 Frame mainFrame(Vector2i(1280, 760), Vector2i(0,0));
+HWND console = GetConsoleWindow();
+HDC hdc = GetDC(console);
+
 
 
 void ShowConsoleCursor(bool showFlag)
@@ -46,13 +51,16 @@ vector<vector<int>> Lane::lanePos;
 vector<vector<int>> Lane::itemLanePos;
 vector<vector<int>> Player::lanePos;
 
-
-int main(int argc, char* argv[]) {
+void InitResource() {
 	Text::INIT();
 	TrafficLight::INIT();
 	Lane::INIT();
 	Player::INIT();
-	HWND console = GetConsoleWindow();
+	Screen::getInstance(&mainFrame, &hdc);
+}
+
+
+int main(int argc, char* argv[]) {
 	RECT r;
 	GetWindowRect(console, &r); 
 	
@@ -75,6 +83,20 @@ int main(int argc, char* argv[]) {
 	int diff = 1000;
 	Game g(mainFrame, hdc, diff, STREET_MAP);
 	cout << g.startGame() << endl;
+
+//	TextBox myTextBox;
+//	myTextBox.addTextBoxSprite(&mainFrame);
+//	myTextBox.setCursorSize(2, 35);
+	//while (true) {
+//		myTextBox.TextBoxControl();
+//		myTextBox.drawTextBox(&mainFrame);
+//		mainFrame.update();
+//		mainFrame.draw(hdc);
+//		string cur = myTextBox.getEnteredText();
+	//}
+
+	//Game g(mainFrame, hdc, diff, 0);
+	//cout << g.startGame() << endl;
 	system("pause");
 	ReleaseDC(console, hdc);
 	system("cls");

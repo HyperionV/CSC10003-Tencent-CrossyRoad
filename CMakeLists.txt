@@ -29,7 +29,7 @@ add_executable(CSC10003_Tencent_CrossyRoad
         Audio.cpp
         Map.cpp
         Lane.cpp
-        Text.cpp)
+        Text.cpp Font.cpp Item.cpp Supportive.cpp TrafficLight.cpp Drawable.cpp Drawable.h Event.cpp Event.h TextBox.cpp TextCursor.cpp)
 
 # Link to GLFW, GLEW, OpenGL, WinMM, and XAudio2
 target_link_libraries(CSC10003_Tencent_CrossyRoad PUBLIC

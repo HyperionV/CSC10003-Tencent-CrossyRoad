@@ -17,6 +17,12 @@ Texture::Texture(int width, int height) {
     pixels = vector<vector<Pixel>>(height, vector<Pixel>(width));
 }
 
+Texture::Texture(int width, int height, int r, int g, int b, int a) {
+    this->width = width;
+    this->height = height;
+    pixels = vector<vector<Pixel>>(height, vector<Pixel>(width, Pixel(r, g, b, a)));
+}
+
 Texture::Texture(const Texture& other) {
     width = other.width;
     height = other.height;

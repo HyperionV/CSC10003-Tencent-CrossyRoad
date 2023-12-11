@@ -20,16 +20,16 @@ Frame::Frame(Vector2i size, Vector2i position) {
 }
 
 Frame::~Frame() {
-    Sprite* current = first;
+    Drawable* current = first;
     while (current != nullptr) {
-        Sprite* next = current->next;
+        Drawable* next = current->next;
         delete current;
         current = next;
     }
 }
 
 Sprite* Frame::addSprite(Texture& texture, Vector2f position, int priority) {
-    Sprite* sprite = new Sprite(position, &texture, priority);
+    Drawable* sprite = new Sprite(position, &texture, priority);
     if (first == nullptr) {
         first = sprite;
         last = sprite;
@@ -39,11 +39,11 @@ Sprite* Frame::addSprite(Texture& texture, Vector2f position, int priority) {
         sprite->prev = last;
         last = sprite;
     }
-    return sprite;
+    return (Sprite*)sprite;
 }
 
 Sprite* Frame::addSprite(Texture* texture, Vector2f position, int priority) {
-    Sprite* sprite = new Sprite(position, texture, priority);
+    Drawable* sprite = new Sprite(position, texture, priority);
     if (first == nullptr) {
         first = sprite;
         last = sprite;
@@ -53,13 +53,16 @@ Sprite* Frame::addSprite(Texture* texture, Vector2f position, int priority) {
         sprite->prev = last;
         last = sprite;
     }
-    return sprite;
+    return (Sprite*)sprite;
 }
 
-void Frame::addSprite(Sprite* sprite) {
+void Frame::addSprite(Sprite* _sprite) {
+    Drawable* sprite = _sprite;
     if (first == nullptr) {
         first = sprite;
         last = sprite;
+        sprite->next = nullptr;
+        sprite->prev = nullptr;
     }
     else {
         last->next = sprite;
@@ -69,7 +72,8 @@ void Frame::addSprite(Sprite* sprite) {
     return;
 }
 
-void Frame::removeSprite(Sprite*& sprite) {
+void Frame::removeSprite(Sprite*& _sprite) {
+    Drawable* sprite = _sprite;
     if (!sprite) {
             std::cerr << "Error: Attempt to remove a null node." << std::endl;
             return;
@@ -95,13 +99,13 @@ void Frame::removeSprite(Sprite*& sprite) {
     }
 
     delete sprite;
-    sprite = nullptr;
+    _sprite = nullptr;
 }
 
 void Frame::removeAllSprites() {
-    Sprite* current = first;
+    Drawable* current = first;
     while (current != nullptr) {
-        Sprite* next = current->next;
+        Drawable* next = current->next;
         delete current;
         current = next;
     }
@@ -110,13 +114,21 @@ void Frame::removeAllSprites() {
 }
 
 void Frame::update() {
-    Sprite* current = first;
+    Drawable* current = first;
     while (current != nullptr) {
         current->update();
         // if (current->getPosition().x > current->getDestination().x || (current->getPosition().x < current->getDestination().x && current->getDestination().x < 0) ) {
         //     removeSprite(current);
         //     continue;
         // }
+        current = current->next;
+    }
+}
+
+void Frame::onEvent(Event& event) {
+    Drawable* current = first;
+    while (current != nullptr) {
+        current->onEvent(event);
         current = current->next;
     }
 }
@@ -140,18 +152,18 @@ void Frame::draw(HDC hdc) {
     }
 
     // Draw the sprites to the DIB section
-    vector<Sprite*> sprites;
-    Sprite* current = first;
+    vector<Drawable*> sprites;
+    Drawable* current = first;
     while (current != nullptr) {
         sprites.push_back(current);
         current = current->next;
     }
 
-    stable_sort(sprites.begin(), sprites.end(), [](Sprite* a, Sprite* b) {
+    stable_sort(sprites.begin(), sprites.end(), [](Drawable* a, Drawable* b) {
         return a->getPriority() < b->getPriority();
     });
 
-    for (Sprite* sprite : sprites) {
+    for (Drawable* sprite : sprites) {
         sprite->draw(bits, size);
     }
 
@@ -204,9 +216,9 @@ void Frame::draw(HDC hdc, Sprite* curSprite) {
 }
 void Frame::removeAllSprite()
 {
-    Sprite* current = first;
+    Drawable* current = first;
     while (current) {
-        Sprite* temp = current;
+        Drawable* temp = current;
         current = current->next;
         delete temp;
     }

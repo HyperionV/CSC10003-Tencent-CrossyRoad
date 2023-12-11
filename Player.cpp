@@ -48,7 +48,7 @@ Vector2f Player::getCurrentPos() const {
     return _player->getPosition();
 }
 
-void Player::setPosition(const float& x, const float& y,const char& dir) {
+void Player::setPosition(const float& x, const float& y, const char& dir) {
 
     if (dir == 'w')
     {
@@ -143,6 +143,7 @@ void Player::stopPlayerHandler() {
 
 int Player::summon_Megumin() {
     state = 4;
+    _player->setPosition(Vector2f(0, 0));
     return model[state]->getMotionSize();
 }
 
