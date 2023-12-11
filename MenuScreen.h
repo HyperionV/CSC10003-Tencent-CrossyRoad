@@ -8,6 +8,7 @@
 #include "Lane.h"
 #include "Text.h"
 #include "FileDialog.h"
+#include "TextBox.h"
 #include <conio.h>
 #include <thread>
 #include <chrono>
@@ -52,6 +53,7 @@ public:
 	void screenOption();
 	void screenPlay();
 	void screenLeaderboard();
+    string screenPlayerName();
 	void updateScoreSprite(const int& score);
 	void changeTexture(const int& idx);
 	void addScore();

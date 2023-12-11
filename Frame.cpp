@@ -33,10 +33,13 @@ Sprite* Frame::addSprite(Texture& texture, Vector2f position, int priority) {
     if (first == nullptr) {
         first = sprite;
         last = sprite;
+        sprite->next = nullptr;
+        sprite->prev = nullptr;
     }
     else {
         last->next = sprite;
         sprite->prev = last;
+        sprite->next = nullptr;
         last = sprite;
     }
     return (Sprite*)sprite;
@@ -47,10 +50,13 @@ Sprite* Frame::addSprite(Texture* texture, Vector2f position, int priority) {
     if (first == nullptr) {
         first = sprite;
         last = sprite;
+        sprite->next = nullptr;
+        sprite->prev = nullptr;
     }
     else {
         last->next = sprite;
         sprite->prev = last;
+        sprite->next = nullptr;
         last = sprite;
     }
     return (Sprite*)sprite;
@@ -67,6 +73,7 @@ void Frame::addSprite(Sprite* _sprite) {
     else {
         last->next = sprite;
         sprite->prev = last;
+        sprite->next = nullptr;
         last = sprite;
     }
     return;
@@ -75,7 +82,7 @@ void Frame::addSprite(Sprite* _sprite) {
 void Frame::removeSprite(Sprite*& _sprite) {
     Drawable* sprite = _sprite;
     if (!sprite) {
-            std::cerr << "Error: Attempt to remove a null node." << std::endl;
+//            std::cerr << "Error: Attempt to remove a null node." << std::endl;
             return;
         }
     // check if the sprite is in the list of children
@@ -89,8 +96,13 @@ void Frame::removeSprite(Sprite*& _sprite) {
         current = current->next;
     }
     if(!found) {
-        std::cerr << "Error: Attempt to remove a node that is not in the list." << std::endl;
+//        std::cerr << "Error: Attempt to remove a node that is not in the list." << std::endl;
         return;
+    }
+
+    if(sprite == first && sprite == last) {
+        first = nullptr;
+        last = nullptr;
     }
 
     if (sprite == first) {

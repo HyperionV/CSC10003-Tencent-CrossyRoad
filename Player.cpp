@@ -182,3 +182,11 @@ int Player::convertLane(const int& mapType) {
 void Player::setSpritePriotity(const int& i) {
     _player->setPriority(i);
 }
+
+void Player::setPlayerName(string name) {
+    this->playerName = name;
+}
+
+string Player::getPlayerName() {
+    return this->playerName;
+}

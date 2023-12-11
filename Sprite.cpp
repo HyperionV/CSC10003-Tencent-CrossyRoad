@@ -4,7 +4,8 @@
 using namespace std;
 using namespace utility;
 
-Sprite::Sprite() : Movable()
+Sprite::Sprite() : Movable(), Drawable()
+
 {
 //    next = nullptr;
 //    prev = nullptr;
@@ -13,7 +14,9 @@ Sprite::Sprite() : Movable()
     this->textureRect = Rect2D();
 }
 
-Sprite::Sprite(Vector2f position, Texture* texture, int priority) : Movable(position, Vector2f(), Vector2f())
+Sprite::Sprite(Vector2f position, Texture* texture, int priority) :
+    Movable(position, Vector2f(), Vector2f()),
+    Drawable()
 {
 //    next = nullptr;
 //    prev = nullptr;

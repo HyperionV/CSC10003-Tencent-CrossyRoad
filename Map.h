@@ -26,7 +26,7 @@ protected:
 
 	bool gameRunning;
 public:
-    Map(Frame* mapFrame, int levelDifficulty, MenuScreen* screen);
+    Map(Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName);
     virtual ~Map();
     virtual void shiftResource() = 0;
 	virtual void drawMap() = 0;
@@ -42,7 +42,7 @@ class StreetMap : public Map {
 private : 
 	vector<TrafficLight>trafficLight;
 public : 
-	StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen);
+	StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName);
 	~StreetMap();
 	void drawMap();
 	void loadResource();
@@ -54,7 +54,7 @@ public :
 
 class ChessMap : public Map {
 public:
-	ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen);
+	ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName);
 	~ChessMap();
 	void drawMap();
 	void loadResource();
@@ -68,7 +68,7 @@ class TrainMap : public Map {
 private:
 	vector<TrafficLight>trafficLight;
 public:
-	TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen);
+	TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName);
 	~TrainMap();
 	void drawMap();
 	void loadResource();

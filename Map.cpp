@@ -2,36 +2,38 @@
 #include "Map.h"
 #include <sstream>
 
-Map::Map(Frame* mapFrame, int levelDifficulty, MenuScreen* screen) :player(*mapFrame, STREET_MAP)
+Map::Map(Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName) :player(*mapFrame, STREET_MAP)
 {
-
+    this->player.setPlayerName(playerName);
 }
 
 Map::~Map() {
     mainFrame->removeAllSprite();
 }
 
-StreetMap::StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen) :
-    Map(mapFrame, levelDifficulty, screen)
+StreetMap::StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName) :
+    Map(mapFrame, levelDifficulty, screen, playerName)
 {
 	this->screen = screen;
 	mainFrame = mapFrame;
 	this->hdc = hdc;
 	difficulty = levelDifficulty;
 	loadResource();
-	for (int i = 0, prio = 2; i < 10; i++, prio+=2) {
-		Lane* cur = new Lane(mainFrame, i, vehicle, levelDifficulty, STREET_MAP, prio);
-		this->mapLane.push_back(cur);
-	}
-	bgTexture = new Texture("image_bin/street/street.bin");
-    bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
-	getTraffic(STREET_MAP, mapLane, trafficLight);
-	for (int i = 0; i < 5; i++) {
-		Sprite* tmp = trafficLight[i].getSprite();
-		mainFrame->addSprite(tmp);
-	}
-//	player = Player(*mapFrame, STREET_MAP);
-	player.addPoint(difficulty);
+    this->screen->addScore();
+//	for (int i = 0, prio = 2; i < 10; i++, prio+=2) {
+//		Lane* cur = new Lane(mainFrame, i, vehicle, levelDifficulty, STREET_MAP, prio);
+//		this->mapLane.push_back(cur);
+//	}
+//	bgTexture = new Texture("image_bin/street/street.bin");
+//    bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
+//	getTraffic(STREET_MAP, mapLane, trafficLight);
+//	for (int i = 0; i < 5; i++) {
+//		Sprite* tmp = trafficLight[i].getSprite();
+//		mainFrame->addSprite(tmp);
+//	}
+////	player = Player(*mapFrame, STREET_MAP);
+//	player.addPoint(difficulty);
+//    screen->updateScoreSprite(player.getPoint());
 }
 
 StreetMap::~StreetMap() {
@@ -40,81 +42,82 @@ StreetMap::~StreetMap() {
 	}
 	mapLane.clear();
 	trafficLight.clear();
+    mainFrame->removeAllSprite();
 }
 
 void StreetMap::drawMap() {
 	screen->addScore();
-	gameRunning = true;
-	for (int i = 0; i < (int)mapLane.size(); i++) {
-		mapLane[i]->resetLane();
-		mapLane[i]->startLane();
-	}
-//	thread t = player.launchHandler();
-    player.resumePlayerHandler();
-	thread spawner([this]() {
-		return this->randomItemSpawner();
-	});
-	bool collide = 0;
-	while (gameRunning) {
-//        player.stopPlayerHandler();
-        char c = 0;
-        if(_kbhit()){
-            c = _getch();
-            bool continuePlaying = true;
-            if(c == 'q') {
-                continuePlaying = screen->screenPause();
-                if (continuePlaying == true) {
-                    gameRunning = false;
-//                    player.stopPlayerHandler();
-//                    t.join();
-                    spawner.join();
-//                    for (auto& s : mapLane) {
-//                        s->stopLane();
-//                    }
-                    cout << "Save file" << endl;
-                    fileDialog.ShowSaveFileDialog(saveMap());
-                    return;
-                }
-                else{
-//                    screen->screenPlay();
-                }
-            }
-        }
-        player.playerHandler(c);
-//        player.resumePlayerHandler();
-		screen->updateScoreSprite(player.getPoint());
-		shiftResource();
-		trafficControl(trafficLight);
-		for (int i = 0; i < (int)mapLane.size(); i++) {
-			mapLane[i]->update();
-		}
-		bool collide = 0;
-		int playerCurrentLane = player.convertLane(STREET_MAP);
-		if (playerCurrentLane < 10) {
-			if (mapLane[playerCurrentLane]->checkCollision(&player))
-				collide = 1;
-		}
-		mainFrame->update();
-		mainFrame->draw(hdc);
-		if (collide) {
-			gameRunning = 0;
-			player.stopPlayerHandler();
-//			t.join();
-			spawner.join();
-			for (auto& s : mapLane) {
-				s->stopLane();
-			}
-			int sz = player.summon_Megumin();
-			player.setSpritePriotity(INT_MAX);
-			while (sz--) {
-				this_thread::sleep_for(200ms);
-				player.animatePlayer();
-				mainFrame->update();
-				mainFrame->draw(hdc);
-			}
-			return;
-		}
-	}
+    while(true) {
+        mainFrame->draw(hdc);
+    }
+//	gameRunning = true;
+//	for (int i = 0; i < (int)mapLane.size(); i++) {
+//		mapLane[i]->resetLane();
+//		mapLane[i]->startLane();
+//	}
+////	thread t = player.launchHandler();
+//    player.resumePlayerHandler();
+//	thread spawner([this]() {
+//		return this->randomItemSpawner();
+//	});
+//	bool collide = 0;
+//	while (gameRunning) {
+//        char c = 0;
+//        if(_kbhit()){
+//            c = _getch();
+//            bool continuePlaying = true;
+//            if(c == 'q') {
+//                continuePlaying = screen->screenPause();
+//                if (continuePlaying == true) {
+//                    gameRunning = false;
+//                    spawner.join();
+////                    for (auto& s : mapLane) {
+////                        s->stopLane();
+////                    }
+//                    cout << "Save file" << endl;
+//                    fileDialog.ShowSaveFileDialog(saveMap());
+//                    return;
+//                }
+//                else{
+////                    screen->screenPlay();
+//                }
+//            }
+//        }
+//        player.playerHandler(c);
+////        player.resumePlayerHandler();
+//		screen->updateScoreSprite(player.getPoint());
+//		shiftResource();
+//		trafficControl(trafficLight);
+//		for (int i = 0; i < (int)mapLane.size(); i++) {
+//			mapLane[i]->update();
+//		}
+//		bool collide = 0;
+//		int playerCurrentLane = player.convertLane(STREET_MAP);
+//		if (playerCurrentLane < 10) {
+//			if (mapLane[playerCurrentLane]->checkCollision(&player))
+//				collide = 1;
+//		}
+//		mainFrame->update();
+//		mainFrame->draw(hdc);
+//		if (collide) {
+//			gameRunning = 0;
+//			player.stopPlayerHandler();
+////			t.join();
+//			spawner.join();
+//			for (auto& s : mapLane) {
+//				s->stopLane();
+//			}
+//			int sz = player.summon_Megumin();
+//			player.setSpritePriotity(INT_MAX);
+//			while (sz--) {
+//				this_thread::sleep_for(200ms);
+//				player.animatePlayer();
+//				mainFrame->update();
+//				mainFrame->draw(hdc);
+//			}
+//			return;
+//		}
+//	}
 }
 
 void StreetMap::loadResource() {
@@ -139,22 +142,23 @@ string StreetMap::saveMap() {
     ss << "StreetMap" << endl;
     ss << difficulty << endl;
     // Player info
+    ss << player.getPlayerName() << endl;
     ss << player.getCurrentPos().x << " " << player.getCurrentPos().y << endl;
     ss << player.getPoint() << endl;
     ss << player.state << endl;
 
     // Lane info
-    ss << mapLane.size() << endl;
-    for (int i = 0; i < mapLane.size(); i++) {
-        ss << mapLane[i]->saveLane();
-    }
+//    ss << mapLane.size() << endl;
+//    for (int i = 0; i < mapLane.size(); i++) {
+//        ss << mapLane[i]->saveLane();
+//    }
 
     return ss.str();
 
 }
 
-ChessMap::ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen) :
-        Map(mapFrame, levelDifficulty, screen)  {
+ChessMap::ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName) :
+        Map(mapFrame, levelDifficulty, screen, playerName)  {
 	this->screen = screen;
 	mainFrame = mapFrame;
 	this->hdc = hdc;
@@ -175,6 +179,7 @@ ChessMap::~ChessMap() {
 		delete ptr;
 	}
 	mapLane.clear();
+    mainFrame->removeAllSprite();
 }
 
 void ChessMap::drawMap() {
@@ -259,11 +264,20 @@ void ChessMap::loadResource() {
 }
 
 string ChessMap::saveMap() {
+    stringstream ss;
+    ss << "ChessMap" << endl;
+    ss << difficulty << endl;
+    // Player info
+    ss << player.getPlayerName() << endl;
+    ss << player.getCurrentPos().x << " " << player.getCurrentPos().y << endl;
+    ss << player.getPoint() << endl;
+    ss << player.state << endl;
+
 
 }
 
-TrainMap::TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen) :
-        Map(mapFrame, levelDifficulty, screen){
+TrainMap::TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName) :
+        Map(mapFrame, levelDifficulty, screen, playerName){
 
 	this->screen = screen;
 	mainFrame = mapFrame;
@@ -375,7 +389,14 @@ void TrainMap::shiftResource() {
 }
 
 string TrainMap::saveMap() {
-
+    stringstream ss;
+    ss << "TrainMap" << endl;
+    ss << difficulty << endl;
+    // Player info
+    ss << player.getPlayerName() << endl;
+    ss << player.getCurrentPos().x << " " << player.getCurrentPos().y << endl;
+    ss << player.getPoint() << endl;
+    ss << player.state << endl;
 }
 
 TrainMap::~TrainMap() {
@@ -384,6 +405,7 @@ TrainMap::~TrainMap() {
 	}
 	mapLane.clear();
 	trafficLight.clear();
+    mainFrame->removeAllSprite();
 }
 
 

@@ -9,7 +9,7 @@ MenuScreen::MenuScreen() {
 
 MenuScreen::MenuScreen(Frame* curFrame, HDC* hdc) {
 
-	this->isMusicOff = 0;
+	this->isMusicOff = 1;
 	this->hdc = hdc;
 	this->mainFrame = curFrame;
 	this->backGround = new Sprite;
@@ -34,10 +34,10 @@ MenuScreen::MenuScreen(Frame* curFrame, HDC* hdc) {
 		resources.push_back(Entity(folder + "choose_map" + to_string(i), true));
 	}
 	resources.push_back(Entity(folder + "leader_board", true)); // 33
-	for (int i = 1; i <= 5; i++) { // 34 -> 38
-		Sprite* scoreSprite = new Sprite(Vector2f(900 + 60 * i, 40), resources[22].getCurrentTexture());
-		score.push_back(scoreSprite);
-	}
+    for (int i = 1; i <= 5; i++) { // 34 -> 38
+        Sprite* scoreSprite = new Sprite(Vector2f(900 + 60 * i, 40), resources[22].getCurrentTexture());
+        score.push_back(scoreSprite);
+    }
 }
 
 int MenuScreen::startGame() {
@@ -45,11 +45,13 @@ int MenuScreen::startGame() {
 	int vertical = 0, horizon = 0;
 	backGround->setTexture(resources[0].getCurrentTexture());
 	mainFrame->draw(*hdc, backGround);
-	music->Play("gameSound.wav", 1, 1);
+    if(isMusicOff){
+	    music->Play("gameSound.wav", 1, 1);
+        isMusicOff = false;
+    }
 	//Lane l1(mainFrame, 1, e1, 20);
 	//thread t1 = l1.spawnThread();
 	while (true) {
-
 		// this_thread::sleep_for(50ms);
 		if (_kbhit()) {
 			int curr = _getch();
@@ -113,16 +115,20 @@ int MenuScreen::startGame() {
 							this->screenPlay();
 							changeTexture(0);
 							vertical = 0, horizon = 0;
-							break;
+                            if(map != CONTINUE)
+                                return map;
+                            break;
 						case 1:
 							playSound(ON_CLICK);
 							this->screenOption();
 							vertical = 0, horizon = 0;
+                            changeTexture(0);
 							break;
 						case 2:
 							playSound(ON_CLICK);
                             map = QUIT_GAME;
 							return map;
+                            break;
 						//case 3:
 						//	if (horizon == 0)
 						//		this->screenAbout();
@@ -130,7 +136,7 @@ int MenuScreen::startGame() {
 						default:
 							break;
 					}
-                    return map;
+                    break;
 			default:
 				break;
 			}
@@ -309,8 +315,10 @@ void MenuScreen::screenPlay() {
                     map = LOAD_MAP;
 					screenPause();
 					return;
+                    break;
 				case 2:
 					playSound(ON_CLICK);
+                    map = CONTINUE;
 					return;
 				default:
 					break;
@@ -323,6 +331,25 @@ void MenuScreen::screenPlay() {
 		mainFrame->draw(*hdc, this->backGround);
 	}
 	return;
+}
+
+string MenuScreen::screenPlayerName() {
+    TextBox myTextBox(mainFrame, Vector2i(300, 300), Vector2i(500, 300));
+	myTextBox.addTextBoxSprite();
+	myTextBox.setCursorSize(2, 35);
+    string cur = "";
+	while (!myTextBox.TextBoxControl()) {
+		myTextBox.drawTextBox();
+		mainFrame->update();
+		mainFrame->draw(*hdc);
+		cur = myTextBox.getEnteredText();
+	}
+    if(!isMusicOff){
+        music->Stop();
+        isMusicOff = 1;
+    }
+
+    return cur;
 }
 
 void MenuScreen::changeTexture(const int& idx) {
@@ -425,12 +452,12 @@ string updateScore(int& score, int bonus) {
 	 changeTexture(33);
 	 leaderBoardInfo A("ngobang", "99999", "27/11/2023");
 	 mainFrame->addSprite(this->backGround);
-	 Text a(A.getName());
-	 Text b(A.getScore());
-	 Text c(A.getDate());
-	 a.writeText(getScoreBoardCoord(a.getLength(), NAME_COL), ROW2_OFFSET, mainFrame);
-	 b.writeText(getScoreBoardCoord(b.getLength(), SCORE_COL), ROW2_OFFSET, mainFrame);
-	 c.writeText(getScoreBoardCoord(c.getLength(), DATE_COL), ROW2_OFFSET, mainFrame);
+	 Text a(mainFrame, A.getName());
+	 Text b(mainFrame, A.getScore());
+	 Text c(mainFrame, A.getDate());
+	 a.writeText(getScoreBoardCoord(a.getLength(), NAME_COL), ROW2_OFFSET);
+	 b.writeText(getScoreBoardCoord(b.getLength(), SCORE_COL), ROW2_OFFSET);
+	 c.writeText(getScoreBoardCoord(c.getLength(), DATE_COL), ROW2_OFFSET);
 	 
 	 while (true) {
 		 //this_thread::sleep_for(100ms);
@@ -520,8 +547,17 @@ string updateScore(int& score, int bonus) {
  }
 
  void MenuScreen::addScore() {
-	 for (int i = 0; i < 5; i++) {
+//    for(auto i:score) {
+//        mainFrame->removeSprite(i);
+//    }
+//    score.clear();
+//     for (int i = 1; i <= 5; i++) { // 34 -> 38
+//         Sprite* scoreSprite = new Sprite(Vector2f(900 + 60 * i, 40), resources[22].getCurrentTexture());
+//         score.push_back(scoreSprite);
+//     }
+     for (int i = 0; i < 5; i++) {
 		 mainFrame->addSprite(this->score[i]);
+         this->score[i]->setPriority(INT_MAX);
 	 }
 	 return;
  }

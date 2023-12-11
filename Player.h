@@ -20,6 +20,7 @@ class TrainMap;
 
 class Player: Rect2D {
 private:
+    string playerName;
     Frame* mainFrame;
     static vector<vector<int>>lanePos;
     int mapType;
@@ -44,6 +45,10 @@ public:
     void stopPlayerHandler();
     void resumePlayerHandler();
     void playerHandler(char curr);
+
+    void setPlayerName(string name);
+    string getPlayerName();
+
     static void INIT();
     Vector2f getHitbox() const;
     Vector2f getCurrentPos() const;

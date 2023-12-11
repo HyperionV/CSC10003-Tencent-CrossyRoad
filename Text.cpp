@@ -3,11 +3,12 @@
 
 int spaceChar[] = { 21, 21, 21, 21, 21, 21, 21, 21, 6, 10, 21, 10, 29, 21, 21, 21, 21, 18, 19, 16, 21, 21, 34, 21, 21, 21 };
 // i was so dumb...
-Text::Text() {
-
+Text::Text(Frame* mainFrame) {
+    this->mainFrame = mainFrame;
 }
 
-Text::Text(const string& text) {
+Text::Text(Frame* mainFrame, const string& text) {
+    this->mainFrame = mainFrame;
 	t = text;
 	length = 0;
 	for (int i = 0; i < text.length(); i++) {
@@ -33,7 +34,7 @@ Text::Text(const string& text) {
 	}
 }
 
-void Text::writeText(const int& x, const int& y, Frame* frame, int priority) {
+void Text::writeText(const int& x, const int& y, int priority) {
 	int offset = 0;
 	for (int i = 0; i < this->text.size(); i++) {
 		this->text[i]->setPosition(Vector2f(x + offset, y));
@@ -46,14 +47,14 @@ void Text::writeText(const int& x, const int& y, Frame* frame, int priority) {
 		}
 		else offset += 19;
 		text[i]->setPriority(priority);
-		frame->addSprite(text[i]);
+		mainFrame->addSprite(text[i]);
 	}
 	return;
 }
 
-void Text::removeText(Frame* frame) {
+void Text::removeText() {
 	for (int i = 0; i < (int)text.size(); i++) {
-		frame->removeSprite(text[i]);
+		mainFrame->removeSprite(text[i]);
 	}
 }
 
@@ -72,8 +73,11 @@ int Text::getLength() const {
 	return this->length;
 }
 Text::~Text() {
-	for (int i = 0; i < this->text.size(); i++) {
-		delete this->text[i];
-		this->text[i] = nullptr;
-	}
+//	for (int i = 0; i < this->text.size(); i++) {
+//        if(this->text[i] != nullptr){
+//            delete this->text[i];
+//            this->text[i] = nullptr;
+//        }
+//	}
+    removeText();
 }

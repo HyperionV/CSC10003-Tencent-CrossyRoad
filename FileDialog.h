@@ -8,7 +8,6 @@
 #include <fstream>
 #include <string>
 #include <tchar.h>
-#include <filesystem>
 
 class FileDialog {
 public:

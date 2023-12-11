@@ -15,6 +15,7 @@
 #define TRAIN_MAP 2
 #define LOAD_MAP 3
 #define QUIT_GAME 4
+#define CONTINUE 5
 
 class Lane {
 private:
