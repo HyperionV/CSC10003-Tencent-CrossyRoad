@@ -79,8 +79,8 @@ int main(int argc, char* argv[]) {
 	//screen->startGame();
 	//ChessMap playMap(hdc, &mainFrame, diff, screen);
 	//playMap.drawMap();
-
-	int diff = 1000;
+	InitResource();
+	int diff = 100;
 	Game g(mainFrame, hdc, diff, STREET_MAP);
 	cout << g.startGame() << endl;
 

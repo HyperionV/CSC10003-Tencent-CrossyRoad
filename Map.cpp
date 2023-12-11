@@ -18,6 +18,7 @@ StreetMap::StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* scre
 		Sprite* tmp = trafficLight[i].getSprite();
 		mainFrame->addSprite(tmp);
 	}
+
 	player = Player(*mapFrame, STREET_MAP);
 }
 

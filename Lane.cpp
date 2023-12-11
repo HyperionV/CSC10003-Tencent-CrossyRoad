@@ -43,7 +43,6 @@ Lane::Lane(Frame* mainFrame, const int& laneCounter, vector<Entity>& _entityVehi
 			model.push_back(temp);
 		}
 	}
-	
 	if (laneCounter % 2) {
 		start = Vector2f(path.first, lanePos[mapType][laneCounter]);
 		end = Vector2f(path.second, lanePos[mapType][laneCounter]);
@@ -228,6 +227,7 @@ bool Lane::checkCollision(Player* _p) {
 	for(int i= 0; i< items.size(); i++) {
 		if (items[i]->checkCollision(_p)) {
 			_mutex.lock();
+			playSound("sound/coin.wav");
 			_p->addPoint(items[i]->getValue());
 			mainFrame->removeSprite(items[i]->getItemSprite());
 			delete items[i];
