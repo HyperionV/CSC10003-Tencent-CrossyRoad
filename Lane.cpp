@@ -51,7 +51,17 @@ Lane::Lane(Frame* mainFrame, const int& laneCounter, vector<Entity>& _entity, co
 	this->mainFrame = mainFrame;
 }
 
-Lane::~Lane() {}
+Lane::~Lane() {
+    for (auto& _sprite : vehicles) {
+        mainFrame->removeSprite(_sprite);
+    }
+    clearItems();
+    items.clear();
+    vehicles.clear();
+    model.clear();
+    nextSpawn.clear();
+    onTrack.clear();
+}
 
 void Lane::resetLane() {
 	timeBetweenSpawn = 2000 - (150 * (difficulty % 5)) * (1 + (difficulty % 5) / 4);
@@ -242,4 +252,48 @@ void Lane::printStart() {
 }
 void Lane::printEnd() {
 	cerr << "end pos: " << end.x << " " << end.y << '\n';
+}
+
+string Lane::saveLane() {
+    stringstream ss;
+    ss << "Lane" << endl;
+    ss << difficulty << endl;
+    ss << timeBetweenSpawn << endl;
+    ss << priority << endl;
+    ss << model.size() << endl;
+    ss << start.x << " " << start.y << endl;
+    ss << end.x << " " << end.y << endl;
+    ss << speed << endl;
+    ss << vehicleCounter << endl;
+    ss << lastSpawn << endl;
+    ss << nextSpawn.size() << endl;
+    for (int i = 0; i < nextSpawn.size(); i++) {
+        ss << nextSpawn[i] << ' ';
+    }
+    ss << endl;
+    ss << isRunning << endl;
+    ss << onTrack.size() << endl;
+    for (int i = 0; i < onTrack.size(); i++) {
+        ss << onTrack[i] << ' ';
+    }
+    ss << endl;
+    ss << timeTilNextSpawn << endl;
+    ss << items.size() << endl;
+    for (int i = 0; i < items.size(); i++) {
+        ss << items[i]->getItemName() << ' ';
+        ss << items[i]->getValue() << ' ';
+        ss << items[i]->getPosition().x << " " << items[i]->getPosition().y << ' ';
+        ss << items[i]->getDestination().x << " " << items[i]->getDestination().y << ' ';
+        ss << items[i]->getCreateTime() << endl;
+    }
+    // car info
+    for (int i = 0; i < vehicles.size(); i++) {
+        ss << "CarInfo" << endl;
+        ss << vehicles[i]->getPosition().x << " " << vehicles[i]->getPosition().y << ' ';
+        ss << vehicles[i]->getDestination().x << " " << vehicles[i]->getDestination().y << ' ';
+        ss << vehicles[i]->getSpeed() << ' ';
+        ss << vehicles[i]->getIsMoving() << ' ';
+        ss << vehicles[i]->getPriority() << endl;
+    }
+    return ss.str();
 }

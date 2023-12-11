@@ -78,6 +78,20 @@ void Frame::removeSprite(Sprite*& _sprite) {
             std::cerr << "Error: Attempt to remove a null node." << std::endl;
             return;
         }
+    // check if the sprite is in the list of children
+    bool found = false;
+    Drawable* current = first;
+    while (current != nullptr) {
+        if (current == sprite) {
+            found = true;
+            break;
+        }
+        current = current->next;
+    }
+    if(!found) {
+        std::cerr << "Error: Attempt to remove a node that is not in the list." << std::endl;
+        return;
+    }
 
     if (sprite == first) {
         first = sprite->next;
@@ -98,6 +112,10 @@ void Frame::removeSprite(Sprite*& _sprite) {
         }
     }
 
+    if (!found) {
+        std::cerr << "Error: Attempt to remove a node that is not in the list." << std::endl;
+        return;
+    }
     delete sprite;
     _sprite = nullptr;
 }

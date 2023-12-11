@@ -12,7 +12,7 @@ Item::Item(const Item& item)
 {}
 
 Item::~Item() {
-	delete model;
+//	delete model;
 }
 
 void Item::setSprite(Sprite* _sprite) {

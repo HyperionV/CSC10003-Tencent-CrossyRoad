@@ -1,13 +1,13 @@
 #pragma warning(disable:4244)
-#include "Screen.h"
+#include "MenuScreen.h"
 #include "Player.h"
 #include "Text.h"
 #include "TrafficLight.h"
-Screen::Screen() {
+MenuScreen::MenuScreen() {
 	this->mainFrame = nullptr;
 }
 
-Screen::Screen(Frame* curFrame, HDC* hdc) {
+MenuScreen::MenuScreen(Frame* curFrame, HDC* hdc) {
 
 	this->isMusicOff = 0;
 	this->hdc = hdc;
@@ -40,7 +40,7 @@ Screen::Screen(Frame* curFrame, HDC* hdc) {
 	}
 }
 
-void Screen::startGame() {
+int MenuScreen::startGame() {
 	changeTexture(0);
 	int vertical = 0, horizon = 0;
 	backGround->setTexture(resources[0].getCurrentTexture());
@@ -121,7 +121,8 @@ void Screen::startGame() {
 							break;
 						case 2:
 							playSound(ON_CLICK);
-							return;
+                            map = QUIT_GAME;
+							return map;
 						//case 3:
 						//	if (horizon == 0)
 						//		this->screenAbout();
@@ -129,6 +130,7 @@ void Screen::startGame() {
 						default:
 							break;
 					}
+                    return map;
 			default:
 				break;
 			}
@@ -136,7 +138,7 @@ void Screen::startGame() {
 		mainFrame->draw(*hdc, this->backGround);
 	}
 }
-bool Screen::screenPause() {
+bool MenuScreen::screenPause() {
 	int vertical = 0;
 	changeTexture(11 + 3*isMusicOff);
 	mainFrame->draw(*this->hdc, this->backGround);
@@ -196,7 +198,7 @@ bool Screen::screenPause() {
 	}
 	return 1;
 }
-void Screen::screenOption() {
+void MenuScreen::screenOption() {
 	int vertical = 0;
 	changeTexture(5 + 3 * isMusicOff);
 	while (true) {
@@ -258,7 +260,7 @@ void Screen::screenOption() {
 	}
 	return;
 }
-void Screen::screenPlay() {
+void MenuScreen::screenPlay() {
 	int vertical = 0;
 	changeTexture(17);
 	mainFrame->draw(*this->hdc, this->backGround);
@@ -304,6 +306,7 @@ void Screen::screenPlay() {
 					break;
 				case 1 : 
 					playSound(ON_CLICK);
+                    map = LOAD_MAP;
 					screenPause();
 					return;
 				case 2:
@@ -312,6 +315,7 @@ void Screen::screenPlay() {
 				default:
 					break;
 				}
+                return;
 			default:
 				break;
 			}
@@ -321,10 +325,10 @@ void Screen::screenPlay() {
 	return;
 }
 
-void Screen::changeTexture(const int& idx) {
+void MenuScreen::changeTexture(const int& idx) {
 	backGround->setTexture(resources[idx].getCurrentTexture());
 }
- void Screen::setMusic() {
+ void MenuScreen::setMusic() {
  	if (!isMusicOff) {
  		isMusicOff = 1;
  		music->Stop();
@@ -336,7 +340,7 @@ void Screen::changeTexture(const int& idx) {
  	return;
  }
 
- void Screen::playSound(const int& type) {
+ void MenuScreen::playSound(const int& type) {
  	PlaySound(0, 0, 0);
  	PlaySound(TEXT("on_click.wav"), nullptr, SND_FILENAME | SND_ASYNC);
  	return;
@@ -353,7 +357,7 @@ string updateScore(int& score, int bonus) {
 	return res;
  }
 
- void Screen::updateScoreSprite(const int& score) {
+ void MenuScreen::updateScoreSprite(const int& score) {
 	 string Score = to_string(score);
 	 while (Score.length() < 5) Score = "0" + Score;
 	 for (int i = 4; i > -1; i--) {
@@ -363,7 +367,7 @@ string updateScore(int& score, int bonus) {
 	 return;
  }
 
- //void Screen::crossyRoad() {
+ //void MenuScreen::crossyRoad() {
 	// int score = 0;
 	// Entity _char("up");
 
@@ -416,7 +420,7 @@ string updateScore(int& score, int bonus) {
  //}
 
 
- void Screen::screenLeaderboard() {
+ void MenuScreen::screenLeaderboard() {
 	 //vector<leaderBoardInfo> info = readLeaderBoardFromFile("leaderBoardInfo.bin");
 	 changeTexture(33);
 	 leaderBoardInfo A("ngobang", "99999", "27/11/2023");
@@ -451,7 +455,7 @@ string updateScore(int& score, int bonus) {
 
  }
 
- int Screen::screenChooseMap() {
+ int MenuScreen::screenChooseMap() {
 	 int horizon = 0;
 	 changeTexture(30);
 	 mainFrame->draw(*this->hdc, this->backGround);
@@ -492,12 +496,15 @@ string updateScore(int& score, int bonus) {
 				 switch (horizon) {
 				 case 0:
 					 playSound(ON_CLICK);
-					 return STREET_MAP;
+                     map = CHESS_MAP;
+					 return CHESS_MAP;
 				 case 1:
 					 playSound(ON_CLICK);
-					 return CHESS_MAP;
+                     map = STREET_MAP;
+					 return STREET_MAP;
 				 case 2:
 					 playSound(ON_CLICK);
+                     map = TRAIN_MAP;
 					 return TRAIN_MAP;
 				 default:
 					 break;
@@ -511,9 +518,8 @@ string updateScore(int& score, int bonus) {
 	 return -1;
 
  }
- 
 
- void Screen::addScore() {
+ void MenuScreen::addScore() {
 	 for (int i = 0; i < 5; i++) {
 		 mainFrame->addSprite(this->score[i]);
 	 }

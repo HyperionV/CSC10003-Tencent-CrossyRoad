@@ -16,7 +16,7 @@ protected:
 public:
 	Item(const string& itemName, const Vector2f& position);
 	Item(const Item&);
-	~Item();
+	virtual ~Item();
 
 	Texture* getTexture() const;
 	Sprite*& getItemSprite();

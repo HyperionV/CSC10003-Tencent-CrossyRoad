@@ -7,7 +7,7 @@
 #include <chrono>
 #include <thread>
 #include "Player.h"
-#include "Screen.h"
+#include "MenuScreen.h"
 #include "TrafficLight.h"
 #include "Map.h"
 
@@ -18,7 +18,7 @@ private:
 	HDC hdc;
 	int diff;
 	Map* playMap;
-	Screen* screen;
+	MenuScreen* screen;
 public:
 	Game(Frame& mainFrame, HDC& hdc, int& diff, const int& map);
 	~Game();

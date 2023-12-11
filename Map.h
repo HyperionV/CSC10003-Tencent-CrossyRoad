@@ -5,11 +5,13 @@
 #include "TrafficLight.h"
 #include "Lane.h"
 #include "Supportive.h"
+#include "FileDialog.h"
 #include <thread>
 #include <mutex>
 
 class Map {
 protected:
+    FileDialog fileDialog;
 	int difficulty;
 	HDC hdc;
 	Frame* mainFrame;
@@ -17,17 +19,20 @@ protected:
 	vector<Entity>vehicle;
 	vector<Slime>slime;
 	vector<Coin> coin;
-	Screen* screen;
+	MenuScreen* screen;
 	Texture* bgTexture;
 	Sprite* bg;
 	Player player;
 
 	bool gameRunning;
 public:
-	virtual void shiftResource() = 0;
-	virtual ~Map() {};
+    Map(Frame* mapFrame, int levelDifficulty, MenuScreen* screen);
+    virtual ~Map();
+    virtual void shiftResource() = 0;
 	virtual void drawMap() = 0;
 	virtual void loadResource() = 0;
+
+    virtual string saveMap() = 0;
 
 	int getDiff() const;
 	void randomItemSpawner();
@@ -37,21 +42,25 @@ class StreetMap : public Map {
 private : 
 	vector<TrafficLight>trafficLight;
 public : 
-	StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen);
+	StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen);
 	~StreetMap();
 	void drawMap();
 	void loadResource();
 	void shiftResource();
+
+    string saveMap();
 };
 
 
 class ChessMap : public Map {
 public:
-	ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen);
+	ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen);
 	~ChessMap();
 	void drawMap();
 	void loadResource();
 	void shiftResource() {};
+
+    string saveMap();
 };
 
 
@@ -59,10 +68,12 @@ class TrainMap : public Map {
 private:
 	vector<TrafficLight>trafficLight;
 public:
-	TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen);
+	TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen);
 	~TrainMap();
 	void drawMap();
 	void loadResource();
 	void shiftResource();
+
+    string saveMap();
 };
 

@@ -11,10 +11,11 @@
 #include <time.h>
 #include <conio.h>
 
-#include "Screen.h"
+#include "MenuScreen.h"
 #include "Map.h"
 #include "Game.h"
 #include "TextBox.h"
+#include "FileDialog.h"
 
 // #define _WIN32_WINNT 0x0500
 
@@ -43,7 +44,7 @@ void ShowConsoleCursor(bool showFlag)
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
 
-Screen* Screen::instancePtr = nullptr;
+MenuScreen* MenuScreen::instancePtr = nullptr;
 vector<Entity> Text::numeric;
 vector<Entity> Text::alphabet;
 vector<Entity> TrafficLight::lightTexture;
@@ -55,7 +56,7 @@ void InitResource() {
 	TrafficLight::INIT();
 	Lane::INIT();
 	Player::INIT();
-	Screen::getInstance(&mainFrame, &hdc);
+	MenuScreen::getInstance(&mainFrame, &hdc);
 }
 
 
@@ -81,17 +82,23 @@ int main(int argc, char* argv[]) {
 //	TextBox myTextBox;
 //	myTextBox.addTextBoxSprite(&mainFrame);
 //	myTextBox.setCursorSize(2, 35);
-	while (true) {
+//	while (true) {
 //		myTextBox.TextBoxControl();
 //		myTextBox.drawTextBox(&mainFrame);
 //		mainFrame.update();
 //		mainFrame.draw(hdc);
 //		string cur = myTextBox.getEnteredText();
-	}
+//	}
 
-	//Game g(mainFrame, hdc, diff, 0);
-	//cout << g.startGame() << endl;
-	system("pause");
+
+
+//    MenuScreen* menu = MenuScreen::getInstance(&mainFrame, &hdc);
+//    menu->screenPause();
+
+	Game g(mainFrame, hdc, diff, 0);
+	cout << g.startGame() << endl;
+
+    system("pause");
 	ReleaseDC(console, hdc);
 	system("cls");
 
