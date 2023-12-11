@@ -23,6 +23,7 @@ Player::Player(Frame& mainFrame, const int& mapType) {
     model.push_back(new Entity("character/left"));
     model.push_back(new Entity("character/up"));
     model.push_back(new Entity("character/right"));
+    model.push_back(new Entity("character/down"));
     model.push_back(new Entity("effect/explode"));
     _player = mainFrame.addSprite(model[state]->getCurrentTexture(), Vector2f(1280 / 2, 655));    
     _player->setPriority(Priority[mapType]);
@@ -51,12 +52,10 @@ void Player::setPosition(const float& x, const float& y,const char& dir) {
 
     if (dir == 'w')
     {
-        state = 1;
         this->cnt++;
     }
     else if (dir == 's')
     {
-        state = 1;
         this->cnt--;
     }
 
@@ -77,7 +76,7 @@ void Player::setPosition(const float& x, const float& y,const char& dir) {
 }
 
 void Player::animatePlayer() {
-    if (state == 3)
+    if (state == 4)
         _player->setPosition(Vector2f(0, 0));
     model[state]->shiftResource();
     _player->setTexture(model[state]->getCurrentTexture());
@@ -114,14 +113,13 @@ void Player::playerHandler()
                 setPosition(currPos.x + 40, currPos.y, 'd');
                 break;
             case KEY_DOWN:
+                state = 3;
                 setPosition(currPos.x, currPos.y, 's');
-                if (point > 0)
-                    point -= 1;
                 break;
             case KEY_UP:
                 state = 1;
-                if(point % 10 != 0 || cnt == 0)
-                    point += 1;
+                //if(point % 10 != 0 || cnt == 0)
+                //    point += 1;
                 setPosition(currPos.x, currPos.y, 'w');
                 break;
             case 'q':
@@ -144,7 +142,7 @@ void Player::stopPlayerHandler() {
 }
 
 int Player::summon_Megumin() {
-    state = 3;
+    state = 4;
     return model[state]->getMotionSize();
 }
 

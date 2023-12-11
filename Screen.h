@@ -15,7 +15,7 @@
 #define KEY_DOWN 115
 #define KEY_LEFT 97
 #define KEY_RIGHT 100
-#define ON_CLICK 0
+#define ON_CLICK "on_click.wav"
 #define NAME_COLUMN_WIDTH 309
 #define NAME_COLUMN_OFFSET 216
 #define SCORE_COLUMN_WIDTH 220
@@ -62,7 +62,6 @@ public:
 	}
 
 	void setMusic();
-	void playSound(const int& type);
 	~Screen();
 private :
 	static Screen* instancePtr;

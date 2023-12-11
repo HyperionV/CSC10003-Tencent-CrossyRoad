@@ -2,6 +2,7 @@
 #include "Screen.h"
 #include "Player.h"
 #include "Text.h"
+#include "Supportive.h"
 #include "TrafficLight.h"
 Screen::Screen() {
 	this->mainFrame = nullptr;
@@ -176,7 +177,7 @@ bool Screen::screenPause() {
 			case '\r':
 				switch (vertical) {
 				case 0:
-					playSound(0);
+					playSound(ON_CLICK);
 					return 0;
 				case 1:
 					setMusic();
@@ -336,11 +337,7 @@ void Screen::changeTexture(const int& idx) {
  	return;
  }
 
- void Screen::playSound(const int& type) {
- 	PlaySound(0, 0, 0);
- 	PlaySound(TEXT("on_click.wav"), nullptr, SND_FILENAME | SND_ASYNC);
- 	return;
- }
+
 
 string updateScore(int& score, int bonus) {
 	score += bonus;
@@ -435,7 +432,7 @@ string updateScore(int& score, int bonus) {
 			 int step{ 2 };
 			 switch (curr) {
 			 case 'q':
-				 playSound(ON_CLICK);
+				 playSound("on_click.wav");
 				 mainFrame->removeAllSprite();
 				 return;
 			 default:

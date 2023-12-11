@@ -1,5 +1,4 @@
 #pragma once
-#include "Utilities.h"
 #include "Sprite.h"
 #include "Entity.h"
 #include <conio.h>
@@ -13,7 +12,7 @@ using namespace std;
 #define KEY_LEFT 97
 #define KEY_RIGHT 100
 
-class Player: Rect2D {
+class Player : Rect2D {
 private:
     static vector<vector<int>>lanePos;
     int mapType;

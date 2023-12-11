@@ -43,3 +43,5 @@ int getScoreBoardCoord(const int& len, const int& col);
 void writeLeaderboardToFile(const vector<leaderBoardInfo>& leaderboard, const string& filename);
 
 int getRandomInRange(int a, int b);
+
+void playSound(const string& file);

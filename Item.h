@@ -15,6 +15,7 @@ protected:
 	Vector2f destination;
 public:
 	Item(const string& itemName, const Vector2f& position);
+	Item(const string& itemName ,const Vector2f& _position, const Vector2f& _destination);
 	Item(const Item&);
 	~Item();
 
@@ -41,6 +42,7 @@ public:
 class Slime : public Item {
 public:
 	Slime(const Vector2f& position);
+	Slime(const Vector2f& _position, const Vector2f& _destination);
 	~Slime();
 	long long getCreateTime() const;
 };
@@ -48,7 +50,7 @@ public:
 class Coin : public Item {
 	long long created;
 public:
-	Coin(const Vector2f& position);
+	Coin(const Vector2f& position, const int& value);
 	~Coin();
 
 	long long getCreateTime() const;

@@ -8,13 +8,21 @@
 pair<int, int> path = pair<int, int>(-420, 1280);
 
 void Lane::INIT() {
-	vector<int>street = {130, 170, 240, 276, 344, 384, 450, 490, 559, 602};
-	vector<int>chess = {90, 200, 300, 400, 510};
+	vector<int>street = { 130, 170, 240, 276, 344, 384, 450, 490, 554, 602 };
+	vector<int>chess = { 90, 200, 300, 400, 510 };
 	vector<int>train = { 80, 122, 185, 226, 287, 334, 398, 443, 511, 561 };
 
 	lanePos.push_back(street);
 	lanePos.push_back(chess);
 	lanePos.push_back(train);
+
+	vector<int>streetItem = { 130, 170, 244, 280, 344, 384, 450, 490, 554, 600 };
+	vector<int>chessItem = { 170, 270, 370, 470, 580, 650 };
+	vector<int>trainItem = { 130, 170, 232, 274, 337, 381, 455, 490, 560, 600, 655 };
+
+	itemLanePos.push_back(streetItem);
+	itemLanePos.push_back(chessItem);
+	itemLanePos.push_back(trainItem);
 
 	return;
 
@@ -26,15 +34,16 @@ void Lane::setVehicleCounter(const int& counter) {
 	return;
 }
 
-Lane::Lane(Frame* mainFrame, const int& laneCounter, vector<Entity>& _entity, const int& _difficulty, const int& mapType, const int& priority) 
+Lane::Lane(Frame* mainFrame, const int& laneCounter, vector<Entity>& _entityVehicle, const int& _difficulty, const int& mapType, const int& priority)
 	: rand(time(NULL) + laneCounter)
 {
-	for (int i = 0; i < _entity.size(); i++) {
+	for (int i = 0; i < _entityVehicle.size(); i++) {
 		if (laneCounter % 2 != i % 2) {
-			Entity* temp = &_entity[i];
+			Entity* temp = &_entityVehicle[i];
 			model.push_back(temp);
 		}
 	}
+	
 	if (laneCounter % 2) {
 		start = Vector2f(path.first, lanePos[mapType][laneCounter]);
 		end = Vector2f(path.second, lanePos[mapType][laneCounter]);
@@ -46,9 +55,10 @@ Lane::Lane(Frame* mainFrame, const int& laneCounter, vector<Entity>& _entity, co
 	this->priority = priority;
 	difficulty = _difficulty;
 	timeBetweenSpawn = 2000 - (150 * (difficulty % 5)) * (1 + (difficulty % 5) / 4);
-	vehicleCounter = floor(12000/timeBetweenSpawn);
-	speed += floor((float) difficulty/5);
+	vehicleCounter = floor(12000 / timeBetweenSpawn);
+	speed += floor((float)difficulty / 5);
 	this->mainFrame = mainFrame;
+	this->mapType = mapType;
 }
 
 Lane::~Lane() {}
@@ -61,13 +71,13 @@ void Lane::resetLane() {
 		nextSpawn.push_back(i);
 	}
 	onTrack.resize(vehicleCounter, false);
-	while (vehicles.size() < vehicleCounter) { 
+	while (vehicles.size() < vehicleCounter) {
 		int idx = vehicles.size();
 		vehicles.push_back(mainFrame->addSprite(model[idx]->getCurrentTexture(), start));
 		vehicles[idx]->setPriority(priority);
 	}
 	speed += floor((difficulty % 5) / 4);
-	for (auto& _sprite: vehicles) {
+	for (auto& _sprite : vehicles) {
 		_sprite->setPosition(start);
 	}
 	lastSpawn = clock();
@@ -88,9 +98,9 @@ void Lane::spawnCar() {
 	nextSpawn.push_back(spawnNow);
 
 	vehicles[spawnNow]->setEndPos(end, speed);
-	
+
 	lastSpawn = clock();
-	timeTilNextSpawn = 1.f * timeBetweenSpawn / 1000 + rand() % RANDOM_INTERVAL / (float) 1000;
+	timeTilNextSpawn = 1.f * timeBetweenSpawn / 1000 + rand() % RANDOM_INTERVAL / (float)1000;
 }
 
 void Lane::startLane() {
@@ -105,13 +115,15 @@ void Lane::startLane() {
 			continue;
 		}
 		if (_item->getItemName() == "Slime")
-			_item->getItemSprite()->setEndPos(end, speed);
+		{
+			_item->getItemSprite()->setIsMoving(true);
+		}
 	}
 }
 
 void Lane::stopLane() {
 	isRunning = false;
-	for (int i = 0; i<vehicles.size();i++) {
+	for (int i = 0; i < vehicles.size(); i++) {
 		vehicles[i]->setIsMoving(false);
 	}
 	for (auto& _item : items) {
@@ -119,49 +131,51 @@ void Lane::stopLane() {
 			items.erase(find(items.begin(), items.end(), _item));
 			continue;
 		}
-		_item->getItemSprite()->setEndPos(Vector2f(), 0);
+		_item->getItemSprite()->setIsMoving(false);
 	}
 }
 
 void Lane::animateLane() {
-	for(int i= 0; i< vehicles.size(); i++) {
+	for (int i = 0; i < vehicles.size(); i++) {
 		vehicles[i]->setTexture(model[i % model.size()]->getCurrentTexture());
 	}
 
 }
 
 void Lane::animateItem() {
-	for (auto& _item : items) {
-		if (_item->getItemSprite() == nullptr) {
-			items.erase(find(items.begin(), items.end(), _item));
+	for (int i = 0; i< items.size(); i++) {
+		if (items[i]->getItemSprite() == nullptr) {
+			items.erase(items.begin() + i);
 			continue;
 		}
-		_item->animateItem();
+		items[i]->animateItem();
 	}
 }
 
 void Lane::updateItem() {
 	_mutex.lock();
-	for (auto& _item : items) {
-		Sprite* _s = _item->getItemSprite();
+	for(int i= 0; i< items.size(); i++) {
+		Sprite* _s = items[i]->getItemSprite();
 		if (_s == nullptr) {
-			_item->setSprite(mainFrame->addSprite(_item->getTexture(), _item->getPosition()));
-			if (_item->getItemName() == "Slime") {
+			items[i]->setSprite(mainFrame->addSprite(items[i]->getTexture(), items[i]->getPosition()));
+			items[i]->getItemSprite()->setPriority(priority - 1);
+			items[i]->getItemSprite()->setEndPos(items[i]->getDestination(), 0);
+			if (items[i]->getItemName() == "Slime") {
 				if (isRunning)
-					_item->getItemSprite()->setEndPos(end, speed);
+					items[i]->getItemSprite()->setEndPos(items[i]->getDestination(), speed);
 			}
 			continue;
 		}
-		if (_item->getItemName() == "Coin") {
-			if (time(NULL) - _item->getCreateTime() > 5) {
+		if (items[i]->getItemName() == "Coin") {
+			if (time(NULL) - items[i]->getCreateTime() > 5) {
 				mainFrame->removeSprite(_s);
-				items.erase(find(items.begin(), items.end(), _item));
+				items[i]->setSprite(nullptr);
 			}
 			continue;
 		}
 		if (_s->reachedDestination()) {
 			mainFrame->removeSprite(_s);
-			items.erase(find(items.begin(), items.end(), _item));
+			items[i]->setSprite(nullptr);
 		}
 	}
 	_mutex.unlock();
@@ -171,6 +185,8 @@ void Lane::update() {
 	updateItem();
 	animateItem();
 	animateLane();
+
+
 	if (!isRunning) {
 		lastSpawn = clock();
 	}
@@ -209,32 +225,38 @@ bool Lane::checkCollision(Player* _p) {
 	}
 	//return false;
 
-	for (auto& _item : items) {
-		if (_item->checkCollision(_p)) {
+	for(int i= 0; i< items.size(); i++) {
+		if (items[i]->checkCollision(_p)) {
 			_mutex.lock();
-			_p->addPoint(_item->getValue());
-			mainFrame->removeSprite(_item->getItemSprite());
-			delete _item;
-			items.erase(find(items.begin(), items.end(), _item));
+			_p->addPoint(items[i]->getValue());
+			mainFrame->removeSprite(items[i]->getItemSprite());
+			delete items[i];
+			items.erase(items.begin() + i);
 			_mutex.unlock();
 		}
 	}
 	return false;
 }
 
-void Lane::addItem(const string& itemName, const Vector2f& position) {
+void Lane::addItem(const string& itemName, const Vector2f& position, vector<Entity>&slime, vector<Entity>& coin, const int& laneCounter) {
 	_mutex.lock();
-	if (itemName == "Slime") {
-		items.push_back(new Slime(start));
+	if (itemName == "Slime" && slime.size() != 0) {
+		Slime* newSlime = new Slime(Vector2f(start.x, itemLanePos[mapType][laneCounter]), Vector2f(end.x, itemLanePos[mapType][laneCounter]));
+		int rand = getRandomInRange(0, slime.size() - 1);
+		newSlime->setModel(&slime[rand]);
+		items.push_back(newSlime);
 	}
 	else {
-		items.push_back(new Coin(position));
+		int rand = getRandomInRange(2, 4);
+		Coin* newCoin = new Coin(Vector2f(position.x, itemLanePos[mapType][laneCounter]), rand);
+		newCoin->setModel(&coin[rand - 2]);
+		items.push_back(newCoin);
 	}
 	_mutex.unlock();
 }
 
 int Lane::getTotalVehicle() {
-	return (int) vehicles.size();
+	return (int)vehicles.size();
 }
 
 void Lane::printStart() {

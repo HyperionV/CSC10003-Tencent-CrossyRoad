@@ -7,23 +7,22 @@ StreetMap::StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* scre
 	this->hdc = hdc;
 	difficulty = levelDifficulty;
 	loadResource();
-	for (int i = 0, prio = 2; i < 10; i++, prio+=2) {
+	for (int i = 0, prio = 2; i < 10; i++, prio += 2) {
 		Lane* cur = new Lane(mainFrame, i, vehicle, levelDifficulty, STREET_MAP, prio);
 		this->mapLane.push_back(cur);
 	}
 	bgTexture = new Texture("image_bin/street/street.bin");
-    bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
+	bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
 	getTraffic(STREET_MAP, mapLane, trafficLight);
 	for (int i = 0; i < 5; i++) {
 		Sprite* tmp = trafficLight[i].getSprite();
 		mainFrame->addSprite(tmp);
 	}
 	player = Player(*mapFrame, STREET_MAP);
-	player.addPoint(difficulty);
 }
 
 StreetMap::~StreetMap() {
-	for (auto ptr:mapLane) {
+	for (auto ptr : mapLane) {
 		delete ptr;
 	}
 	mapLane.clear();
@@ -41,11 +40,10 @@ void StreetMap::drawMap() {
 	thread t = player.launchHandler();
 	thread spawner([this]() {
 		return this->randomItemSpawner();
-	});
+		});
 	bool collide = 0;
 	while (gameRunning) {
 		screen->updateScoreSprite(player.getPoint());
-		randomItemSpawner();
 		shiftResource();
 		trafficControl(trafficLight);
 		for (int i = 0; i < (int)mapLane.size(); i++) {
@@ -70,7 +68,7 @@ void StreetMap::drawMap() {
 			int sz = player.summon_Megumin();
 			player.setSpritePriotity(INT_MAX);
 			while (sz--) {
-				this_thread::sleep_for(200ms);
+				this_thread::sleep_for(50ms);
 				player.animatePlayer();
 				mainFrame->update();
 				mainFrame->draw(hdc);
@@ -82,6 +80,16 @@ void StreetMap::drawMap() {
 
 
 void StreetMap::loadResource() {
+	for (int i = 0; i < 5; i++) {
+		Entity Slime("slime/slime" + to_string(i + 1));
+		slime.push_back(Slime);
+		Slime.flipHorizontal();
+		slime.push_back(Slime);
+	}
+	for (int i = 0; i < 3; i++) {
+		Entity Coin("coin/coin" + to_string(i + 1));
+		coin.push_back(Coin);
+	}
 	for (int i = 0; i < 11; i++) {
 		Entity car("street/car" + to_string(i + 1));
 		vehicle.push_back(car);
@@ -95,11 +103,18 @@ void StreetMap::shiftResource() {
 	for (int i = 0; i < vehicle.size(); i++) {
 		vehicle[i].shiftResource();
 	}
+	for (int i = 0; i < slime.size(); i++) {
+		slime[i].shiftResource();
+	}
+	for (int i = 0; i < coin.size(); i++) {
+		coin[i].shiftResource();
+	}
+
 	return;
 }
 
 
-ChessMap::ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen)  {
+ChessMap::ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen) {
 	this->screen = screen;
 	mainFrame = mapFrame;
 	this->hdc = hdc;
@@ -129,12 +144,13 @@ void ChessMap::drawMap() {
 		mapLane[i]->startLane();
 	}
 	thread t = player.launchHandler();
-	/*thread spawner([this]() {
+	cout << mapLane.size() << endl;
+	thread spawner([this]() {
 		return this->randomItemSpawner();
-		});*/
+		});
 	while (gameRunning) {
+		shiftResource();
 		screen->updateScoreSprite(player.getPoint());
-		randomItemSpawner();
 		for (int i = 0; i < (int)mapLane.size(); i++) {
 			mapLane[i]->update();
 		}
@@ -151,13 +167,14 @@ void ChessMap::drawMap() {
 			gameRunning = 0;
 			player.stopPlayerHandler();
 			t.join();
+			spawner.join();
 			for (auto& s : mapLane) {
 				s->stopLane();
 			}
 			int sz = player.summon_Megumin();
 			player.setSpritePriotity(1);
 			while (sz--) {
-				this_thread::sleep_for(200ms);
+				this_thread::sleep_for(50ms);
 				player.animatePlayer();
 				mainFrame->update();
 				mainFrame->draw(hdc);
@@ -167,6 +184,14 @@ void ChessMap::drawMap() {
 	}
 }
 
+void ChessMap::shiftResource() {
+	for (int i = 0; i < slime.size(); i++) {
+		slime[i].shiftResource();
+	}
+	for (int i = 0; i < coin.size(); i++) {
+		coin[i].shiftResource();
+	}
+}
 
 void ChessMap::loadResource() {
 	for (int i = 0; i < 15; i++) {
@@ -175,6 +200,10 @@ void ChessMap::loadResource() {
 		vehicle.push_back(chess);
 		chess.flipHorizontal();
 		vehicle.push_back(chess);
+	}
+	for (int i = 0; i < 3; i++) {
+		Entity Coin("coin/coin" + to_string(i + 1));
+		coin.push_back(Coin);
 	}
 	return;
 }
@@ -211,9 +240,11 @@ void TrainMap::drawMap() {
 	}
 
 	thread t = player.launchHandler();
+	thread spawner([this]() {
+		return this->randomItemSpawner();
+		});
 	while (gameRunning) {
 		screen->updateScoreSprite(player.getPoint());
-		randomItemSpawner();
 		shiftResource();
 		trafficControl(trafficLight);
 		for (int i = 0; i < (int)mapLane.size(); i++) {
@@ -231,14 +262,14 @@ void TrainMap::drawMap() {
 			gameRunning = 0;
 			player.stopPlayerHandler();
 			t.join();
-			t.~thread();
+			spawner.join();
 			for (auto& s : mapLane) {
 				s->stopLane();
 			}
 			int sz = player.summon_Megumin();
 			player.setSpritePriotity(25);
 			while (sz--) {
-				this_thread::sleep_for(100ms);
+				this_thread::sleep_for(50ms);
 				player.animatePlayer();
 				mainFrame->update();
 				mainFrame->draw(hdc);
@@ -256,12 +287,28 @@ void TrainMap::loadResource() {
 		train.flipHorizontal();
 		vehicle.push_back(train);
 	}
+	for (int i = 0; i < 5; i++) {
+		Entity Slime("slime/slime" + to_string(i + 1));
+		slime.push_back(Slime);
+		Slime.flipHorizontal();
+		slime.push_back(Slime);
+	}
+	for (int i = 0; i < 3; i++) {
+		Entity Coin("coin/coin" + to_string(i + 1));
+		coin.push_back(Coin);
+	}
 	return;
 }
 
 void TrainMap::shiftResource() {
 	for (int i = 0; i < vehicle.size(); i++) {
 		vehicle[i].shiftResource();
+	}
+	for (int i = 0; i < slime.size(); i++) {
+		slime[i].shiftResource();
+	}
+	for (int i = 0; i < coin.size(); i++) {
+		coin[i].shiftResource();
 	}
 	return;
 }
@@ -274,23 +321,24 @@ TrainMap::~TrainMap() {
 	trafficLight.clear();
 }
 
-
-void Map::randomItemSpawner() {
-	//while (gameRunning) {
-	//	long long epoch = chrono::system_clock::now().time_since_epoch().count();
-	//	srand(epoch);
-	//	int seed = rand() + 1;
-	//	seed = seed * 2 + seed % 2;
-	//	this_thread::sleep_for(1s);
-	//	if (seed % 2) {
-	//		mapLane[seed % mapLane.size()]->addItem("Slime", Vector2f());
-	//	}
-	//	else {
-	//		mapLane[seed % mapLane.size()]->addItem("Coin", Vector2f(((seed % 30)+1)*40, mapLane[seed%mapLane.size()]->getStart().y));
-	//	}
-	//}
-}
-
 int Map::getDiff() const {
 	return player.getPoint();
+}
+
+void Map::randomItemSpawner() {
+	while (gameRunning) {
+		long long epoch = chrono::system_clock::now().time_since_epoch().count();
+		srand(epoch);
+		int seed = rand() + 1;
+		seed = seed * 2 + seed % 2;
+		this_thread::sleep_for(1s);
+		if (seed % 10 < 2) {
+			seed = getRandomInRange(0, mapLane.size() - 1);
+			mapLane[seed]->addItem("Slime", Vector2f(), slime, coin, seed);
+		}
+		else {
+			int rand = getRandomInRange(0, mapLane.size() - 1);
+			mapLane[rand]->addItem("Coin", Vector2f(((seed % 30) + 1) * 40, mapLane[rand]->getStart().y), slime, coin, rand);
+		}
+	}
 }

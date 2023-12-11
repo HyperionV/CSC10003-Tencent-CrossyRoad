@@ -15,8 +15,8 @@ protected:
 	Frame* mainFrame;
 	vector<Lane*> mapLane;
 	vector<Entity>vehicle;
-	vector<Slime>slime;
-	vector<Coin> coin;
+	vector<Entity>slime;
+	vector<Entity>coin;
 	Screen* screen;
 	Texture* bgTexture;
 	Sprite* bg;
@@ -34,9 +34,9 @@ public:
 };
 
 class StreetMap : public Map {
-private : 
+private:
 	vector<TrafficLight>trafficLight;
-public : 
+public:
 	StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen);
 	~StreetMap();
 	void drawMap();
@@ -51,7 +51,7 @@ public:
 	~ChessMap();
 	void drawMap();
 	void loadResource();
-	void shiftResource() {};
+	void shiftResource();
 };
 
 
@@ -59,10 +59,9 @@ class TrainMap : public Map {
 private:
 	vector<TrafficLight>trafficLight;
 public:
-	TrainMap::TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen);
+	TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, Screen* screen);
 	~TrainMap();
 	void drawMap();
 	void loadResource();
 	void shiftResource();
 };
-

@@ -18,16 +18,18 @@ class Lane {
 private:
     const int RANDOM_INTERVAL = 4000;
 
+    int mapType;
     int difficulty;
     int timeBetweenSpawn;
     int priority;
     vector<Entity*> model;
     vector<Sprite*> vehicles;
     static vector<vector<int>>lanePos;
+    static vector<vector<int>>itemLanePos;
 
     Vector2f start;
     Vector2f end;
-    float speed{5};
+    float speed{ 5 };
     Frame* mainFrame;
     int vehicleCounter;
     clock_t lastSpawn;
@@ -42,9 +44,9 @@ private:
 
 public:
     Lane();
-    Lane(Frame*, const int&, vector<Entity>& _entity, const int&, const int&,const int&);
+    Lane(Frame*, const int&, vector<Entity>& _entityVehicle, const int&, const int&, const int&);
     ~Lane();
-    void resetLane(); 
+    void resetLane();
     void startLane();
     void stopLane();
     static void INIT();
@@ -52,7 +54,7 @@ public:
     void spawnCar();
 
     bool checkCollision(Player*);
-    void addItem(const string& itemName, const Vector2f& postion);
+    void Lane::addItem(const string& itemName, const Vector2f& position, vector<Entity>& slime, vector<Entity>& coin, const int& laneCounter);
 
     void animateLane();
     void animateItem();

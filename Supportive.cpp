@@ -3,6 +3,7 @@
 #include "Supportive.h"
 
 
+
 string return_current_time_and_date()
 {
 	auto now = chrono::system_clock::now();
@@ -96,4 +97,9 @@ int getRandomInRange(int a, int b) {
 	int randomNum = std::rand() % rangeSpan + a;
 
 	return randomNum;
+}
+void playSound(const string& file) {
+	PlaySound(0, 0, 0);
+	PlaySound(TEXT(file.c_str()), nullptr, SND_FILENAME | SND_ASYNC);
+	return;
 }

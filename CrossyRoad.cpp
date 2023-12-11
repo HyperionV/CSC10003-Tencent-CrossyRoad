@@ -43,6 +43,7 @@ vector<Entity> Text::numeric;
 vector<Entity> Text::alphabet;
 vector<Entity> TrafficLight::lightTexture;
 vector<vector<int>> Lane::lanePos;
+vector<vector<int>> Lane::itemLanePos;
 vector<vector<int>> Player::lanePos;
 
 
@@ -67,12 +68,12 @@ int main(int argc, char* argv[]) {
 	HDC hdc = GetDC(console);
 	//int diff = 50;
 	//Screen* screen = Screen::getInstance(&mainFrame, &hdc);
-	////screen->startGame();
+	//screen->startGame();
 	//ChessMap playMap(hdc, &mainFrame, diff, screen);
 	//playMap.drawMap();
 
-	int diff = 90;
-	Game g(mainFrame, hdc, diff, TRAIN_MAP);
+	int diff = 1000;
+	Game g(mainFrame, hdc, diff, STREET_MAP);
 	cout << g.startGame() << endl;
 	system("pause");
 	ReleaseDC(console, hdc);

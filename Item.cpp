@@ -2,7 +2,13 @@
 #include "Item.h"
 
 Item::Item(const string& _itemName, const Vector2f& position)
-	:itemName{_itemName}, position{ position }
+	:itemName{ _itemName }, position{ position }
+{
+	itemSprite = nullptr;
+}
+
+Item::Item(const string& _itemName, const Vector2f& position, const Vector2f& _destination)
+	:itemName{ _itemName }, position{ position }, destination{_destination}
 {
 	itemSprite = nullptr;
 }
@@ -12,7 +18,8 @@ Item::Item(const Item& item)
 {}
 
 Item::~Item() {
-	delete model;
+	model = nullptr;
+	itemSprite = nullptr;
 }
 
 void Item::setSprite(Sprite* _sprite) {
@@ -60,7 +67,6 @@ void Item::removeItem(Frame& mainFrame) {
 }
 
 void Item::animateItem() {
-	model->shiftResource();
 	itemSprite->setTexture(model->getCurrentTexture());
 }
 
@@ -90,25 +96,29 @@ Slime::Slime(const Vector2f& _position)
 	:Item("Slime", _position)
 {
 	value = -2;
-	model = new Entity("blueSlime", 'a');
-	this->position.y -= 15;
-	this->destination = Vector2f((this->position.x == -132) ? 1280 : -132, this->position.y);
+	this->position.y -= 30;
+	this->destination = Vector2f((this->position.x < 0) ? 1280 : -132, this->position.y - 30);
+}
+
+Slime::Slime(const Vector2f& _position, const Vector2f& _destination)
+	:Item("Slime", _position, _destination)
+{
+	value = -2;
 }
 
 Slime::~Slime() {
-	delete model;
+	model = nullptr;
 }
 
 Vector2f Item::getDestination() const {
 	return destination;
 }
 
-Coin::Coin(const Vector2f& _position)
+Coin::Coin(const Vector2f& _position, const int& value)
 	:Item("Coin", _position)
 {
 	created = time(NULL);
-	model = new Entity("yc", 1);
-	value = 2;
+	this->value = value;
 	destination = position;
 }
 
