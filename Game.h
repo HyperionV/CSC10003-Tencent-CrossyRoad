@@ -14,7 +14,7 @@
 
 class Game {
 private:
-	Frame mainFrame;
+	Frame* mainFrame;
 	HDC hdc;
 	int diff;
 	Map* playMap;

@@ -34,10 +34,6 @@ MenuScreen::MenuScreen(Frame* curFrame, HDC* hdc) {
 		resources.push_back(Entity(folder + "choose_map" + to_string(i), true));
 	}
 	resources.push_back(Entity(folder + "leader_board", true)); // 33
-    for (int i = 1; i <= 5; i++) { // 34 -> 38
-        Sprite* scoreSprite = new Sprite(Vector2f(900 + 60 * i, 40), resources[22].getCurrentTexture());
-        score.push_back(scoreSprite);
-    }
 }
 
 int MenuScreen::startGame() {
@@ -547,14 +543,14 @@ string updateScore(int& score, int bonus) {
  }
 
  void MenuScreen::addScore() {
-//    for(auto i:score) {
-//        mainFrame->removeSprite(i);
-//    }
-//    score.clear();
-//     for (int i = 1; i <= 5; i++) { // 34 -> 38
-//         Sprite* scoreSprite = new Sprite(Vector2f(900 + 60 * i, 40), resources[22].getCurrentTexture());
-//         score.push_back(scoreSprite);
-//     }
+    for(auto i:score) {
+        mainFrame->removeSprite(i);
+    }
+    score.clear();
+     for (int i = 1; i <= 5; i++) { // 34 -> 38
+         Sprite* scoreSprite = new Sprite(Vector2f(900 + 60 * i, 40), resources[22].getCurrentTexture());
+         score.push_back(scoreSprite);
+     }
      for (int i = 0; i < 5; i++) {
 		 mainFrame->addSprite(this->score[i]);
          this->score[i]->setPriority(INT_MAX);
