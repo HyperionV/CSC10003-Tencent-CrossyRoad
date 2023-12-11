@@ -1,8 +1,9 @@
 #include "TextCursor.h"
 
-TextCursor::TextCursor() {
+TextCursor::TextCursor(Frame* mainFrame) {
+    this->mainFrame = mainFrame;
 	cursorWidth = 2, cursorHeight = 20;
-	textToDraw = new Text;
+	textToDraw = new Text(mainFrame);
 	cursorTexture = new Texture(2, 20, 0, 0, 0, 255);
 	cursorInitPosition = cursorCurrentPosition = Vector2i(0, 0);
 	cursorRightmostPosition = Vector2i(190, 0);
@@ -12,9 +13,10 @@ TextCursor::TextCursor() {
 	cursorSprite = new Sprite(tmp, cursorTexture, 50);
 }
 
-TextCursor::TextCursor(Vector2i cursorInit, Vector2i cursorRightmost) {
+TextCursor::TextCursor(Frame* mainFrame, Vector2i cursorInit, Vector2i cursorRightmost) {
+    this->mainFrame = mainFrame;
 	cursorWidth = 2, cursorHeight = 20;
-	textToDraw = new Text;
+	textToDraw = new Text(mainFrame);
 	cursorTexture = new Texture(2, 20, 0, 0, 0, 255);
 	cursorInitPosition = cursorCurrentPosition = cursorInit;
 	cursorRightmostPosition = cursorRightmost;
@@ -24,9 +26,10 @@ TextCursor::TextCursor(Vector2i cursorInit, Vector2i cursorRightmost) {
 	cursorSprite = new Sprite(tmp, cursorTexture, 50);
 }
 
-TextCursor::TextCursor(Vector2i cursorInit, Vector2i cursorRightmost, int cursorWidth, int cursorHeight) {
-	this->cursorWidth = cursorWidth, this->cursorHeight = cursorHeight;
-	textToDraw = new Text;
+TextCursor::TextCursor(Frame* mainFrame, Vector2i cursorInit, Vector2i cursorRightmost, int cursorWidth, int cursorHeight) {
+	this->mainFrame = mainFrame;
+    this->cursorWidth = cursorWidth, this->cursorHeight = cursorHeight;
+	textToDraw = new Text(mainFrame);
 	cursorTexture = new Texture(2, 20, 0, 0, 0, 255);
 	cursorInitPosition = cursorCurrentPosition = cursorInit;
 	cursorRightmostPosition = cursorRightmost;
@@ -38,11 +41,13 @@ TextCursor::TextCursor(Vector2i cursorInit, Vector2i cursorRightmost, int cursor
 
 TextCursor::~TextCursor() {
 	delete cursorTexture;
-	delete cursorSprite;
-	delete textToDraw;
+//	delete cursorSprite;
+    mainFrame->removeSprite(cursorSprite);
+    if(textToDraw != nullptr)
+	    delete textToDraw;
 }
 
-void TextCursor::checkCursor(Frame* mainFrame) {
+void TextCursor::checkCursor() {
 	if (((-curClock + clock()) / CLOCKS_PER_SEC) >= tickRate) {
 		isTick = !isTick;
 		curClock = clock();
@@ -119,16 +124,16 @@ bool TextCursor::textControl() {
 	return false;
 }
 
-void TextCursor::drawText(Frame* mainFrame) {
-	checkCursor(mainFrame);
+void TextCursor::drawText() {
+	checkCursor();
 
-	textToDraw->removeText(mainFrame);
+	textToDraw->removeText();
 	if (textToDraw != nullptr) {
 		delete textToDraw;
 		textToDraw = nullptr;
 	}
-	textToDraw = new Text(textContent);
-	textToDraw->writeText(cursorInitPosition.x, cursorInitPosition.y, mainFrame, 50);
+	textToDraw = new Text(mainFrame, textContent);
+	textToDraw->writeText(cursorInitPosition.x, cursorInitPosition.y, 50);
 }
 
 void TextCursor::setCursorSize(int width, int height) {

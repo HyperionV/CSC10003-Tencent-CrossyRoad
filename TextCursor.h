@@ -14,6 +14,7 @@ class TextCursor {
 	Texture* cursorTexture;
 	Sprite* cursorSprite;
 	Text* textToDraw;
+    Frame* mainFrame;
 	Vector2i cursorInitPosition, cursorRightmostPosition, cursorCurrentPosition;
 	clock_t curClock;
 	string textContent;
@@ -21,15 +22,15 @@ class TextCursor {
 	bool isTick;
 	int cursorWidth, cursorHeight;
 public:
-	TextCursor();
-	TextCursor(Vector2i cursorInit, Vector2i cursorRightmost);
-	TextCursor(Vector2i cursorInit, Vector2i cursorRightmost, int cursorWidth, int cursorHeight);
+	TextCursor(Frame* mainFrame);
+	TextCursor(Frame* mainFrame, Vector2i cursorInit, Vector2i cursorRightmost);
+	TextCursor(Frame* mainFrame, Vector2i cursorInit, Vector2i cursorRightmost, int cursorWidth, int cursorHeight);
 	~TextCursor();
 	int getTextLength();
-	void checkCursor(Frame* mainFrame);
+	void checkCursor();
 	bool cursorOutOfBound();
 	bool textControl();
-	void drawText(Frame* mainFrame);
+	void drawText();
 	void setCursorSize(int width, int height);
 	string getStringContent();
 };

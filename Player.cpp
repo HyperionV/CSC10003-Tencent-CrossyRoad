@@ -20,6 +20,7 @@ void Player::INIT() {
 
 
 Player::Player(Frame& mainFrame, const int& mapType) {
+    this->mainFrame = &mainFrame;
     model.push_back(new Entity("character/left"));
     model.push_back(new Entity("character/up"));
     model.push_back(new Entity("character/right"));
@@ -34,12 +35,30 @@ Player::Player(Frame& mainFrame, const int& mapType) {
     this->mapType = mapType;
 }
 
+Player::Player(Frame& mainFrame, const int& mapType, const Vector2f& pos, const int& point) {
+    this->mainFrame = &mainFrame;
+    model.push_back(new Entity("character/left"));
+    model.push_back(new Entity("character/up"));
+    model.push_back(new Entity("character/right"));
+    model.push_back(new Entity("effect/explode"));
+    _player = mainFrame.addSprite(model[state]->getCurrentTexture(), pos);
+    _player->setPriority(Priority[mapType]);
+    width = 36;
+    height = 40;
+    cnt = 0;
+    this->point = point;
+    this->mapType = mapType;
+    setPosition(pos.x, pos.y, 'w');
+}
+
 // Memory leak here: unable to delete vector of Entity
 Player::~Player() {
-    /*for (auto& s : model) {
+    mainFrame->removeSprite(_player);
+
+    for (auto& s : model) {
         delete s;
     }
-    model.clear();*/
+    model.clear();
     // delete _player; 
     // _player = nullptr;
 }
@@ -94,14 +113,14 @@ void Player::addPoint(const int& value) {
     point += value;
 }
 
-void Player::playerHandler()
+void Player::playerHandler(char curr)
 {
-    while (isRunning) {
+    if (isRunning) {
         int vertical{}, horizon{};
         animatePlayer();
-        if (_kbhit()) {
-            this_thread::sleep_for(50ms);
-            int curr = _getch();
+        if (curr != 0) {
+//            this_thread::sleep_for(50ms);
+//            int curr = _getch();
             Vector2f currPos = _player->getPosition();
             switch (curr) {
             case KEY_LEFT:
@@ -123,22 +142,26 @@ void Player::playerHandler()
                 setPosition(currPos.x, currPos.y, 'w');
                 break;
             case 'q':
-                system("pause");
+//                system("pause");
                 break;
             }
         }
     }
 }
 
-thread Player::launchHandler() {
-    isRunning = true;
-    return thread([this]() { 
-        this->playerHandler(); 
-    });
-}
+//thread Player::launchHandler() {
+//    isRunning = true;
+//    return thread([this]() {
+//        this->playerHandler();
+//    });
+//}
 
 void Player::stopPlayerHandler() {
     isRunning = false;
+}
+
+void Player::resumePlayerHandler() {
+    isRunning = true;
 }
 
 int Player::summon_Megumin() {
@@ -154,8 +177,16 @@ int Player::getPoint() const {
 int Player::convertLane(const int& mapType) {
     if (mapType == TRAIN_MAP || mapType == STREET_MAP)
         return 10 - cnt;
-    else return 5 - cnt;
+    else return 10 - cnt;
 }
 void Player::setSpritePriotity(const int& i) {
     _player->setPriority(i);
+}
+
+void Player::setPlayerName(string name) {
+    this->playerName = name;
+}
+
+string Player::getPlayerName() {
+    return this->playerName;
 }

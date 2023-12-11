@@ -1,36 +1,45 @@
 #include "TextBox.h"
 
-TextBox::TextBox() {
+TextBox::TextBox() :
+    cursor(nullptr, Vector2i(0, 0), Vector2i(0, 0))
+{
 	textFrame = new Texture(200, 30, 255, 255, 255, 255);
 	Vector2f textBoxPosition = Vector2f(0, 0);
 	textSprite = new Sprite(textBoxPosition, textFrame, 30);
+
 }
 
 TextBox::~TextBox() {
 	delete textFrame;
-	delete textSprite;
+    removeTextBoxSprite();
 }
 
-TextBox::TextBox(Vector2i initPosition, Vector2i rightmostPosition) {
-	cursor = TextCursor(initPosition, rightmostPosition);
+TextBox::TextBox(Frame* mainFrame, Vector2i initPosition, Vector2i rightmostPosition)
+    : cursor(mainFrame ,initPosition, rightmostPosition)
+{
 	textFrame = new Texture(200, 30, 255, 255, 255, 255);
 	Vector2f textBoxPosition = Vector2f(initPosition.x - 10, initPosition.y - 5);
 	textSprite = new Sprite(textBoxPosition, textFrame, 30);
+    this->mainFrame = mainFrame;
 }
 
-TextBox::TextBox(Vector2i initPosition, Vector2i rightmostPosition, int width, int height) {
-	cursor = TextCursor(initPosition, rightmostPosition);
+TextBox::TextBox(Frame* mainFrame, Vector2i initPosition, Vector2i rightmostPosition, int width, int height) :
+    cursor(mainFrame ,initPosition, rightmostPosition)
+{
 	textFrame = new Texture(width, height, 255, 255, 255, 255);
 	Vector2f textBoxPosition = Vector2f(initPosition.x - 10, initPosition.y - 5);
 	textSprite = new Sprite(textBoxPosition, textFrame, 30);
+    this->mainFrame = mainFrame;
 }
 
-TextBox::TextBox(Vector2i initPosition, Vector2i rightmostPosition, Texture* textFrameTexture) {
-	cursor = TextCursor(initPosition, rightmostPosition);
+TextBox::TextBox(Frame* mainFrame, Vector2i initPosition, Vector2i rightmostPosition, Texture* textFrameTexture) :
+    cursor(mainFrame ,initPosition, rightmostPosition)
+{
 	textFrame = new Texture;
 	textFrame = textFrameTexture;
 	Vector2f textBoxPosition = Vector2f(initPosition.x - 10, initPosition.y - 5);
 	textSprite = new Sprite(textBoxPosition, textFrame, 30);
+    this->mainFrame = mainFrame;
 }
 
 bool TextBox::TextBoxControl() {
@@ -45,16 +54,16 @@ string TextBox::getEnteredText() {
 	return enteredText;
 }
 
-void TextBox::addTextBoxSprite(Frame* mainFrame) {
+void TextBox::addTextBoxSprite() {
 	mainFrame->addSprite(textSprite);
 }
-void TextBox::removeTextBoxSprite(Frame* mainFrame) {
+void TextBox::removeTextBoxSprite() {
 	mainFrame->removeSprite(textSprite);
 }
 
-void TextBox::drawTextBox(Frame* mainFrame) {
+void TextBox::drawTextBox() {
 	bool isEntered = TextBoxControl();
-	cursor.drawText(mainFrame);
+	cursor.drawText();
 	if (isEntered) {
 		enteredText = cursor.getStringContent();
 	}

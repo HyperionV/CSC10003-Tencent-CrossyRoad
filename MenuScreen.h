@@ -7,6 +7,8 @@
 #include "Supportive.h"
 #include "Lane.h"
 #include "Text.h"
+#include "FileDialog.h"
+#include "TextBox.h"
 #include <conio.h>
 #include <thread>
 #include <chrono>
@@ -35,25 +37,31 @@
 
 
 #define mainScreen Vector2f(1280, 720)
-class Screen {
+class MenuScreen {
 public:
+    int map;
+    // 0 - street map
+    // 1 - chess map
+    // 2 - train map
+    // 3 - load map
 	void crossyRoad();
 	void screenAbout();
 	void screenHelp();
-	void startGame();
+	int startGame();
 	int screenChooseMap();
 	bool screenPause();
 	void screenOption();
 	void screenPlay();
 	void screenLeaderboard();
+    string screenPlayerName();
 	void updateScoreSprite(const int& score);
 	void changeTexture(const int& idx);
 	void addScore();
-	Screen(const Screen& screen) = delete;
+	MenuScreen(const MenuScreen& screen) = delete;
 
-	static Screen* getInstance(Frame* curFrame, HDC* hdc) {
+	static MenuScreen* getInstance(Frame* curFrame, HDC* hdc) {
 		if (instancePtr == nullptr) {
-			instancePtr = new Screen(curFrame, hdc);
+			instancePtr = new MenuScreen(curFrame, hdc);
 			return instancePtr;
 		}
 		else {
@@ -62,11 +70,13 @@ public:
 	}
 
 	void setMusic();
+
 	~Screen();
+
 private :
-	static Screen* instancePtr;
-	Screen(Frame*, HDC* hdc);
-	Screen();
+	static MenuScreen* instancePtr;
+	MenuScreen(Frame*, HDC* hdc);
+	MenuScreen();
 	Frame* mainFrame;
 	Sprite* backGround;
 	vector<Entity> resources;

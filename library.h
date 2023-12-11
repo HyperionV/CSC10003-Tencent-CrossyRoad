@@ -30,7 +30,7 @@
 #include "Movable.h"
 #include "Player.h"
 #include "resource.h"
-#include "Screen.h"
+#include "MenuScreen.h"
 #include "Sprite.h"
 #include "Supportive.h"
 #include "Text.h"

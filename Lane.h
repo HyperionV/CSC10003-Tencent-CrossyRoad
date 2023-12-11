@@ -13,6 +13,9 @@
 #define STREET_MAP 0
 #define CHESS_MAP 1
 #define TRAIN_MAP 2
+#define LOAD_MAP 3
+#define QUIT_GAME 4
+#define CONTINUE 5
 
 class Lane {
 private:
@@ -44,7 +47,9 @@ private:
 
 public:
     Lane();
-    Lane(Frame*, const int&, vector<Entity>& _entityVehicle, const int&, const int&, const int&);
+    Lane(Frame*, const int&, vector<Entity>& _entity, const int&, const int&,const int&);
+    Lane(Frame*, const int&, vector<Entity>& _entity, const int&, const int&, const int&, const int&);
+
     ~Lane();
     void resetLane();
     void startLane();
@@ -67,4 +72,6 @@ public:
     void printStart();
     void printEnd();
     void setVehicleCounter(const int&);
+
+    string saveLane();
 };

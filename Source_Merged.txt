@@ -151,7 +151,7 @@ public:
 #include <chrono>
 #include <thread>
 #include "Player.h"
-#include "Screen.h"
+#include "MenuScreen.h"
 #include "TrafficLight.h"
 #include "Map.h"
 
@@ -325,7 +325,7 @@ public:
 #include "Movable.h"
 #include "Player.h"
 #include "resource.h"
-#include "Screen.h"
+#include "MenuScreen.h"
 #include "Sprite.h"
 #include "Supportive.h"
 #include "Text.h"
@@ -542,7 +542,7 @@ public:
 #endif
 #endif
 
-```Screen.h```
+```MenuScreen.h```
 
 #pragma once
 
@@ -581,7 +581,7 @@ public:
 
 
 #define mainScreen Vector2f(1280, 720)
-class Screen {
+class MenuScreen {
 public:
 	void crossyRoad();
 	void screenAbout();
@@ -594,11 +594,11 @@ public:
 	void screenLeaderboard();
 	void updateScoreSprite(int& score, int bonus);
 	void changeTexture(const int& idx);
-	Screen(const Screen& screen) = delete;
+	MenuScreen(const MenuScreen& screen) = delete;
 
-	static Screen* getInstance(Frame* curFrame, HDC* hdc) {
+	static MenuScreen* getInstance(Frame* curFrame, HDC* hdc) {
 		if (instancePtr == nullptr) {
-			instancePtr = new Screen(curFrame, hdc);
+			instancePtr = new MenuScreen(curFrame, hdc);
 			return instancePtr;
 		}
 		else {
@@ -608,11 +608,11 @@ public:
 
 	void setMusic();
 	void playSound(const int& type);
-	~Screen();
+	MenuScreenreen();
 private :
-	static Screen* instancePtr;
-	Screen(Frame*, HDC* hdc);
-	Screen();
+	static MenuScreen* instancePtr;
+	MenuScreen(Frame*, HDC* hdc);
+	MenuScreen();
 	Frame* mainFrame;
 	Sprite* backGround;
 	vector<Entity> resources;
@@ -666,7 +666,7 @@ public:
 #include <sstream>
 #include <iomanip>
 #include "Text.h"
-#include "Screen.h"
+#include "MenuScreen.h"
 
 using namespace std;
 
@@ -2408,18 +2408,18 @@ size_t Player::getPoint() const {
     return point;
 }
 
-```Screen.cpp```
+```MenuScreen.cpp```
 
 #pragma warning(disable:4244)
-#include "Screen.h"
+#include "MenuScreen.h"
 #include "Player.h"
 #include "Text.h"
 #include "TrafficLight.h"
-Screen::Screen() {
+MenuScreen::MenuScreen() {
 	this->mainFrame = nullptr;
 }
 
-Screen::Screen(Frame* curFrame, HDC* hdc) {
+MenuScreen::MenuScreen(Frame* curFrame, HDC* hdc) {
 
 	this->isMusicOff = 0;
 	this->hdc = hdc;
@@ -2449,7 +2449,7 @@ Screen::Screen(Frame* curFrame, HDC* hdc) {
 	}
 }
 
-void Screen::startGame() {
+void MenuScreen::startGame() {
 	int vertical = 0, horizon = 0;
 	backGround->setTexture(resources[0].getCurrentTexture());
 	mainFrame->draw(*hdc, backGround);
@@ -2545,7 +2545,7 @@ void Screen::startGame() {
 		mainFrame->draw(*hdc, this->backGround);
 	}
 }
-bool Screen::screenPause() {
+bool MenuScreen::screenPause() {
 	int vertical = 0;
 	changeTexture(11 + 3*isMusicOff);
 	mainFrame->draw(*this->hdc, this->backGround);
@@ -2607,7 +2607,7 @@ bool Screen::screenPause() {
 	}
 	return 1;
 }
-void Screen::screenOption() {
+void MenuScreen::screenOption() {
 	int vertical = 0;
 	changeTexture(5 + 3 * isMusicOff);
 	while (true) {
@@ -2671,7 +2671,7 @@ void Screen::screenOption() {
 	}
 	return;
 }
-void Screen::screenPlay() {
+void MenuScreen::screenPlay() {
 	int vertical = 0;
 	changeTexture(17);
 	mainFrame->draw(*this->hdc, this->backGround);
@@ -2731,10 +2731,10 @@ void Screen::screenPlay() {
 	return;
 }
 
-void Screen::changeTexture(const int& idx) {
+void MenuScreen::changeTexture(const int& idx) {
 	backGround->setTexture(resources[idx].getCurrentTexture());
 }
- void Screen::setMusic() {
+ void MenuScreen::setMusic() {
  	if (!isMusicOff) {
  		isMusicOff = 1;
  		music->Stop();
@@ -2746,7 +2746,7 @@ void Screen::changeTexture(const int& idx) {
  	return;
  }
 
- void Screen::playSound(const int& type) {
+ void MenuScreen::playSound(const int& type) {
  	PlaySound(0, 0, 0);
  	PlaySound(TEXT("on_click.wav"), nullptr, SND_FILENAME | SND_ASYNC);
  	return;
@@ -2763,7 +2763,7 @@ string updateScore(int& score, int bonus) {
 	return res;
  }
 
- void Screen::updateScoreSprite(int& score, int bonus) {
+ void MenuScreen::updateScoreSprite(int& score, int bonus) {
 	 string Score = updateScore(score, bonus);
 	 for (int i = 4; i > -1; i--) {
 		 int idx = Score[i] - '0' + 22;
@@ -2772,7 +2772,7 @@ string updateScore(int& score, int bonus) {
 	 return;
  }
 
- void Screen::crossyRoad() {
+ void MenuScreen::crossyRoad() {
 	 int score = 0;
 	 Entity _char("up");
 
@@ -2831,7 +2831,7 @@ string updateScore(int& score, int bonus) {
  }
 
 
- void Screen::screenLeaderboard() {
+ void MenuScreen::screenLeaderboard() {
 	 //vector<leaderBoardInfo> info = readLeaderBoardFromFile("leaderBoardInfo.bin");
 	 
 	 leaderBoardInfo A("ngobang", "99999", "27/11/2023");
@@ -3601,7 +3601,7 @@ void ShowConsoleCursor(bool showFlag)
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
 
-Screen* Screen::instancePtr = nullptr;
+MenuScreen* MenuScreen::instancePtr = nullptr;
 vector<Entity> Text::numeric;
 vector<Entity> Text::alphabet;
 vector<Entity> TrafficLight::lightTexture;

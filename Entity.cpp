@@ -1,7 +1,9 @@
 #include "Entity.h"
 #include <fstream>
 
-Entity::Entity() {}
+Entity::Entity() {
+    motion.clear();
+}
 
 Entity::Entity(const string& entityName) {
     int cnt{ 1 };
@@ -62,6 +64,16 @@ Entity::Entity(const string& entityName, bool) {
 Entity::Entity(const Entity& other) {
     for (auto& i : other.motion) {
         motion.push_back(new Texture(*i));
+    }
+}
+
+Entity::~Entity() {
+
+    while (motion.size() > 0) {
+        size_t i = motion.size();
+        Texture* dummy = motion.front();
+        delete dummy;
+        motion.pop_front();
     }
 }
 

@@ -11,7 +11,7 @@ private:
     deque<Texture*> motion;
 public:
     Entity();
-    //~Entity();
+    ~Entity();
     Entity(const string&);
     Entity(const string&, char);
     Entity(const string&, int);
