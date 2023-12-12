@@ -38,6 +38,7 @@ MenuScreen::MenuScreen(Frame* curFrame, HDC* hdc) {
 	resources.push_back(Entity(folder + "help", true)); // 34
 	resources.push_back(Entity(folder + "about", true)); // 35
 	resources.push_back(Entity(folder + "game_over", true)); // 36
+    resources.push_back(Entity(folder + "input_name", true)); // 37
 }
 
 int MenuScreen::startGame() {
@@ -341,7 +342,8 @@ void MenuScreen::screenPlay() {
 }
 
 string MenuScreen::screenPlayerName() {
-    TextBox myTextBox(mainFrame, Vector2i(300, 300), Vector2i(500, 300));
+    Sprite* bg = mainFrame->addSprite(resources[37].getCurrentTexture(), Vector2f(0, 0), -1);
+    TextBox myTextBox(mainFrame, Vector2i(480, 290), Vector2i(830, 285));
 	myTextBox.addTextBoxSprite();
 	myTextBox.setCursorSize(2, 35);
     string cur = "";
@@ -355,7 +357,7 @@ string MenuScreen::screenPlayerName() {
         music->Stop();
         isMusicOff = 1;
     }
-
+    mainFrame->removeSprite(bg);
     return cur;
 }
 

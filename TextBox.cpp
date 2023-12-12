@@ -17,7 +17,7 @@ TextBox::~TextBox() {
 TextBox::TextBox(Frame* mainFrame, Vector2i initPosition, Vector2i rightmostPosition)
     : cursor(mainFrame ,initPosition, rightmostPosition)
 {
-	textFrame = new Texture(200, 30, 255, 255, 255, 255);
+	textFrame = new Texture(200, 30, 255, 255, 255, 0);
 	Vector2f textBoxPosition = Vector2f(initPosition.x - 10, initPosition.y - 5);
 	textSprite = new Sprite(textBoxPosition, textFrame, 30);
     this->mainFrame = mainFrame;
@@ -26,7 +26,7 @@ TextBox::TextBox(Frame* mainFrame, Vector2i initPosition, Vector2i rightmostPosi
 TextBox::TextBox(Frame* mainFrame, Vector2i initPosition, Vector2i rightmostPosition, int width, int height) :
     cursor(mainFrame ,initPosition, rightmostPosition)
 {
-	textFrame = new Texture(width, height, 255, 255, 255, 255);
+	textFrame = new Texture(width, height, 255, 255, 255, 0);
 	Vector2f textBoxPosition = Vector2f(initPosition.x - 10, initPosition.y - 5);
 	textSprite = new Sprite(textBoxPosition, textFrame, 30);
     this->mainFrame = mainFrame;

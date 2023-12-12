@@ -104,7 +104,7 @@ bool TextCursor::textControl() {
 				textContent.pop_back();
 				return false;
 			}
-			cursorCurrentPosition.x = textLength;
+			cursorCurrentPosition.x = textLength + cursorInitPosition.x;
 			curClock = clock() - clock();
 		}
 		else if (curChar == 8) { // backspace
@@ -112,7 +112,7 @@ bool TextCursor::textControl() {
 				return false;
 			textContent.pop_back();
 			int textLength = getTextLength();
-			cursorCurrentPosition.x = textLength;
+			cursorCurrentPosition.x = textLength + cursorInitPosition.x;
 			curClock = clock() - clock();
 		}
 		else if (curChar == 13) { // enter
