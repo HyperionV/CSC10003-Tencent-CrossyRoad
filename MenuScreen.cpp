@@ -35,6 +35,9 @@ MenuScreen::MenuScreen(Frame* curFrame, HDC* hdc) {
 		resources.push_back(Entity(folder + "choose_map" + to_string(i), true));
 	}
 	resources.push_back(Entity(folder + "leader_board", true)); // 33
+	resources.push_back(Entity(folder + "help", true)); // 34
+	resources.push_back(Entity(folder + "about", true)); // 35
+	resources.push_back(Entity(folder + "game_over", true)); // 36
 }
 
 int MenuScreen::startGame() {
@@ -51,6 +54,7 @@ int MenuScreen::startGame() {
 	while (true) {
 		// this_thread::sleep_for(50ms);
 		if (_kbhit()) {
+			playSound(ON_CLICK);
 			int curr = _getch();
 			switch (curr) {
 			case KEY_LEFT:
@@ -126,10 +130,16 @@ int MenuScreen::startGame() {
                             map = QUIT_GAME;
 							return map;
                             break;
-						//case 3:
-						//	if (horizon == 0)
-						//		this->screenAbout();
-						//	else this->screenHelp();
+						case 3:
+							if (horizon == 0) {
+								this->screenAbout();
+								changeTexture(3);
+							}
+							else {
+								this->screenHelp();
+								changeTexture(4);
+							}
+							break;
 						default:
 							break;
 					}
@@ -549,6 +559,75 @@ string updateScore(int& score, int bonus) {
      for (int i = 0; i < 5; i++) {
 		 mainFrame->addSprite(this->score[i]);
          this->score[i]->setPriority(INT_MAX);
+	 }
+	 return;
+ }
+
+ void MenuScreen::screenHelp() {
+	 changeTexture(34);
+	 mainFrame->draw(*this->hdc, this->backGround);
+	 while (true) {
+		 if (_kbhit()) {
+			 int curr = _getch();
+			 switch (curr) {
+			 case 'q':
+				 playSound(ON_CLICK);
+				 return;
+			 default:
+				 break;
+			 }
+		 }
+		 mainFrame->draw(*hdc, this->backGround);
+	 }
+	 return;
+ }
+
+ void MenuScreen::screenAbout() {
+	 changeTexture(35);
+	 mainFrame->draw(*this->hdc, this->backGround);
+	 while (true) {
+		 if (_kbhit()) {
+			 int curr = _getch();
+			 switch (curr) {
+			 case 'q':
+				 playSound(ON_CLICK);
+				 return;
+			 default:
+				 break;
+			 }
+		 }
+		 mainFrame->draw(*hdc, this->backGround);
+	 }
+	 return;
+ }
+
+ void MenuScreen::screenGameOver(const int& score) {
+	 if(!isMusicOff) setMusic();
+	 playSound("sound/die.wav");
+	 Sprite* gameOver = mainFrame->addSprite(resources[36].getCurrentTexture(), Vector2f(300, 110));
+	 gameOver->setPriority(29);
+	 string Score = to_string(score);
+	 while(Score.length() < 5) Score = "0" + Score;
+	 //Text a(mainFrame, to_string(score));
+	 //a.writeText(1000, 400);
+	 for (int i = 0; i < 5; i++) {
+		 Sprite* scoreSprite = new Sprite(Vector2f(495 + 60 * i, 365), resources[Score[i] - '0' + 20].getCurrentTexture());
+		 scoreSprite->setPriority(30);
+		 mainFrame->addSprite(scoreSprite);
+	 }
+	 while (true) {
+		 if (_kbhit()) {
+			 int curr = _getch();
+			 switch (curr) {
+			 case '\r':
+				 playSound(ON_CLICK);
+				 return;
+			 default:
+				 break;
+			 }
+		 }
+		 mainFrame->update();
+		 mainFrame->draw(*hdc);
 	 }
 	 return;
  }

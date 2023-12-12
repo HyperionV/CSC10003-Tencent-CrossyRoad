@@ -177,7 +177,7 @@ int Player::getPoint() const {
 int Player::convertLane(const int& mapType) {
     if (mapType == TRAIN_MAP || mapType == STREET_MAP)
         return 10 - cnt;
-    else return 10 - cnt;
+    else return 5 - cnt;
 }
 void Player::setSpritePriotity(const int& i) {
     _player->setPriority(i);

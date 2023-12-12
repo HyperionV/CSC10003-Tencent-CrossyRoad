@@ -63,7 +63,7 @@ public:
 	void drawMap();
 	void loadResource();
 
-	void shiftResource() {};
+	void shiftResource();
 
     string saveMap();
 
