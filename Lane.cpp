@@ -231,6 +231,7 @@ bool Lane::checkCollision(Player* _p) {
 			_p->addPoint(items[i]->getValue());
 			mainFrame->removeSprite(items[i]->getItemSprite());
 			delete items[i];
+			items[i] = nullptr;
 			items.erase(items.begin() + i);
 			_mutex.unlock();
 		}

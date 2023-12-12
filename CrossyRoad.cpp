@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
 	//playMap.drawMap();
 	InitResource();
 	int diff = 100;
-	Game g(mainFrame, hdc, diff, STREET_MAP);
+	Game g(mainFrame, hdc, diff, TRAIN_MAP);
 	cout << g.startGame() << endl;
 
 //	TextBox myTextBox;
