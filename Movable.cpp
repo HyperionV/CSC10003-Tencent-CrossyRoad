@@ -39,6 +39,14 @@ Movable::~Movable() {
     // Do nothing
 }
 
+Vector2f Movable::getStartingPosition() {
+    return startingPosition;
+}
+
+void Movable::setStartingPosition(Vector2f startingPosition) {
+    this->startingPosition = startingPosition;
+}
+
 Vector2f Movable::getPosition() {
     return position;
 }
@@ -131,16 +139,16 @@ void Movable::update() {
         if (reachedDestination()) {
             isMoving = false;
             velocity = Vector2f();
+//            destination = position;
             position = startingPosition;
-            destination = position;
         }
         else {
-            Vector2f firstHalf = position - startingPosition;
-            Vector2f secondHalf = destination - startingPosition;
-            if(firstHalf.modulus() / secondHalf.modulus() < 0.6)
-                velocity += acceleration;
-            else
-                velocity -= acceleration;
+//            Vector2f firstHalf = position - startingPosition;
+//            Vector2f secondHalf = destination - startingPosition;
+//            if(firstHalf.modulus() / secondHalf.modulus() < 0.6)
+//                velocity += acceleration;
+//            else
+//                velocity -= acceleration;
             position += velocity;
         }
     }
@@ -148,9 +156,9 @@ void Movable::update() {
 
 void Movable::setEndPos(Vector2f endPos, float speed) {
     destination = endPos;
-    startingPosition = position;
+//    startingPosition = position;
     isMoving = true;
-    Vector2f distance = destination - position;
+    Vector2f distance = destination - startingPosition;
     float distanceModulus = distance.modulus();
     float time = distanceModulus / speed;
     velocity = distance / time;

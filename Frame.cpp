@@ -125,7 +125,7 @@ void Frame::removeSprite(Sprite*& _sprite) {
     }
 
     if (!found) {
-        std::cerr << "Error: Attempt to remove a node that is not in the list." << std::endl;
+//        std::cerr << "Error: Attempt to remove a node that is not in the list." << std::endl;
         return;
     }
     delete sprite;

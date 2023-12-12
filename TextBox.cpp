@@ -51,7 +51,7 @@ bool TextBox::TextBoxControl() {
 }
 
 string TextBox::getEnteredText() {
-	return enteredText;
+	return cursor.getStringContent();
 }
 
 void TextBox::addTextBoxSprite() {

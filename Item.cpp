@@ -123,7 +123,7 @@ Coin::Coin(const Vector2f& _position, const int& value)
 }
 
 Coin::~Coin() {
-	delete model;
+	model = nullptr;
 }
 
 long long Coin::getCreateTime() const {
