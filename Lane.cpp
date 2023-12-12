@@ -244,7 +244,10 @@ bool Lane::checkCollision(Player* _p) {
 	for(int i= 0; i< items.size(); i++) {
 		if (items[i]->checkCollision(_p)) {
 			_mutex.lock();
-			playSound("sound/coin.wav");
+			if (items[i]->getItemName() == "Slime") {
+				playSound("sound/enemy_hit.wav");
+			}
+			else playSound("sound/coin.wav");
 			_p->addPoint(items[i]->getValue());
 			mainFrame->removeSprite(items[i]->getItemSprite());
 			delete items[i];

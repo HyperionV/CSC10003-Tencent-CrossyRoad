@@ -44,7 +44,7 @@ public:
     // 1 - chess map
     // 2 - train map
     // 3 - load map
-	void crossyRoad();
+	void screenGameOver(const int& score);
 	void screenAbout();
 	void screenHelp();
 	int startGame();

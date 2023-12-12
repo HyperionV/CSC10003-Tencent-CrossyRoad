@@ -25,7 +25,7 @@ private:
     static vector<vector<int>>lanePos;
     int mapType;
     int cnt = 0;
-    vector<Entity*> model;
+    vector<Entity*>model;
     Sprite* _player;
     size_t point = 0;
     int state = 1; // left - 0; up - 1; right - 2;

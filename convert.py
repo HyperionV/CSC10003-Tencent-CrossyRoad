@@ -4,10 +4,10 @@ import os
 dir = os.path.dirname(__file__)
 print(dir)
 
-for imageFile in os.listdir(dir + '\image_png\\coin\\coin3\\'):
+for imageFile in os.listdir(dir + '\image_png\\UI\\'):
     # Open the image file
     # imageFile = dir + '\image_png\\' + imageFile
-    image = Image.open(dir + '\image_png\\coin\\coin3\\' + imageFile)
+    image = Image.open(dir + '\image_png\\UI\\' + imageFile)
 
     # Get the image dimensions (width and height)
     width, height = image.size
@@ -16,7 +16,7 @@ for imageFile in os.listdir(dir + '\image_png\\coin\\coin3\\'):
     image_data = image.tobytes()
 
     # Specify the output binary file
-    output_file = dir + '\image_bin\\coin\\' + imageFile.split('.')[0] + '.bin'
+    output_file = dir + '\image_bin\\UI\\' + imageFile.split('.')[0] + '.bin'
 
     # Open the output file in binary write mode ('wb')
     with open(output_file, 'wb') as f:
