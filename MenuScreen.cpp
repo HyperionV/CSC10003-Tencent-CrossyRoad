@@ -1,16 +1,16 @@
 #pragma warning(disable:4244)
-#include "Screen.h"
+#include "MenuScreen.h"
 #include "Player.h"
 #include "Text.h"
 #include "Supportive.h"
 #include "TrafficLight.h"
-Screen::Screen() {
+MenuScreen::MenuScreen() {
 	this->mainFrame = nullptr;
 }
 
-Screen::Screen(Frame* curFrame, HDC* hdc) {
+MenuScreen::MenuScreen(Frame* curFrame, HDC* hdc) {
 
-	this->isMusicOff = 0;
+	this->isMusicOff = 1;
 	this->hdc = hdc;
 	this->mainFrame = curFrame;
 	this->backGround = new Sprite;
@@ -35,22 +35,20 @@ Screen::Screen(Frame* curFrame, HDC* hdc) {
 		resources.push_back(Entity(folder + "choose_map" + to_string(i), true));
 	}
 	resources.push_back(Entity(folder + "leader_board", true)); // 33
-	for (int i = 1; i <= 5; i++) { // 34 -> 38
-		Sprite* scoreSprite = new Sprite(Vector2f(900 + 60 * i, 40), resources[22].getCurrentTexture());
-		score.push_back(scoreSprite);
-	}
 }
 
-void Screen::startGame() {
+int MenuScreen::startGame() {
 	changeTexture(0);
 	int vertical = 0, horizon = 0;
 	backGround->setTexture(resources[0].getCurrentTexture());
 	mainFrame->draw(*hdc, backGround);
-	music->Play("gameSound.wav", 1, 1);
+    if(isMusicOff){
+	    music->Play("gameSound.wav", 1, 1);
+        isMusicOff = false;
+    }
 	//Lane l1(mainFrame, 1, e1, 20);
 	//thread t1 = l1.spawnThread();
 	while (true) {
-
 		// this_thread::sleep_for(50ms);
 		if (_kbhit()) {
 			int curr = _getch();
@@ -114,15 +112,20 @@ void Screen::startGame() {
 							this->screenPlay();
 							changeTexture(0);
 							vertical = 0, horizon = 0;
-							break;
+                            if(map != CONTINUE)
+                                return map;
+                            break;
 						case 1:
 							playSound(ON_CLICK);
 							this->screenOption();
 							vertical = 0, horizon = 0;
+                            changeTexture(0);
 							break;
 						case 2:
 							playSound(ON_CLICK);
-							return;
+                            map = QUIT_GAME;
+							return map;
+                            break;
 						//case 3:
 						//	if (horizon == 0)
 						//		this->screenAbout();
@@ -130,6 +133,7 @@ void Screen::startGame() {
 						default:
 							break;
 					}
+                    break;
 			default:
 				break;
 			}
@@ -137,7 +141,7 @@ void Screen::startGame() {
 		mainFrame->draw(*hdc, this->backGround);
 	}
 }
-bool Screen::screenPause() {
+bool MenuScreen::screenPause() {
 	int vertical = 0;
 	changeTexture(11 + 3*isMusicOff);
 	mainFrame->draw(*this->hdc, this->backGround);
@@ -197,7 +201,7 @@ bool Screen::screenPause() {
 	}
 	return 1;
 }
-void Screen::screenOption() {
+void MenuScreen::screenOption() {
 	int vertical = 0;
 	changeTexture(5 + 3 * isMusicOff);
 	while (true) {
@@ -259,7 +263,7 @@ void Screen::screenOption() {
 	}
 	return;
 }
-void Screen::screenPlay() {
+void MenuScreen::screenPlay() {
 	int vertical = 0;
 	changeTexture(17);
 	mainFrame->draw(*this->hdc, this->backGround);
@@ -305,14 +309,18 @@ void Screen::screenPlay() {
 					break;
 				case 1 : 
 					playSound(ON_CLICK);
+                    map = LOAD_MAP;
 					screenPause();
 					return;
+                    break;
 				case 2:
 					playSound(ON_CLICK);
+                    map = CONTINUE;
 					return;
 				default:
 					break;
 				}
+                return;
 			default:
 				break;
 			}
@@ -322,10 +330,29 @@ void Screen::screenPlay() {
 	return;
 }
 
-void Screen::changeTexture(const int& idx) {
+string MenuScreen::screenPlayerName() {
+    TextBox myTextBox(mainFrame, Vector2i(300, 300), Vector2i(500, 300));
+	myTextBox.addTextBoxSprite();
+	myTextBox.setCursorSize(2, 35);
+    string cur = "";
+	while (!myTextBox.TextBoxControl()) {
+		myTextBox.drawTextBox();
+		mainFrame->update();
+		mainFrame->draw(*hdc);
+		cur = myTextBox.getEnteredText();
+	}
+    if(!isMusicOff){
+        music->Stop();
+        isMusicOff = 1;
+    }
+
+    return cur;
+}
+
+void MenuScreen::changeTexture(const int& idx) {
 	backGround->setTexture(resources[idx].getCurrentTexture());
 }
- void Screen::setMusic() {
+ void MenuScreen::setMusic() {
  	if (!isMusicOff) {
  		isMusicOff = 1;
  		music->Stop();
@@ -336,8 +363,6 @@ void Screen::changeTexture(const int& idx) {
  	}
  	return;
  }
-
-
 
 string updateScore(int& score, int bonus) {
 	score += bonus;
@@ -350,7 +375,7 @@ string updateScore(int& score, int bonus) {
 	return res;
  }
 
- void Screen::updateScoreSprite(const int& score) {
+ void MenuScreen::updateScoreSprite(const int& score) {
 	 string Score = to_string(score);
 	 while (Score.length() < 5) Score = "0" + Score;
 	 for (int i = 4; i > -1; i--) {
@@ -360,7 +385,7 @@ string updateScore(int& score, int bonus) {
 	 return;
  }
 
- //void Screen::crossyRoad() {
+ //void MenuScreen::crossyRoad() {
 	// int score = 0;
 	// Entity _char("up");
 
@@ -413,17 +438,17 @@ string updateScore(int& score, int bonus) {
  //}
 
 
- void Screen::screenLeaderboard() {
+ void MenuScreen::screenLeaderboard() {
 	 //vector<leaderBoardInfo> info = readLeaderBoardFromFile("leaderBoardInfo.bin");
 	 changeTexture(33);
 	 leaderBoardInfo A("ngobang", "99999", "27/11/2023");
 	 mainFrame->addSprite(this->backGround);
-	 Text a(A.getName());
-	 Text b(A.getScore());
-	 Text c(A.getDate());
-	 a.writeText(getScoreBoardCoord(a.getLength(), NAME_COL), ROW2_OFFSET, mainFrame);
-	 b.writeText(getScoreBoardCoord(b.getLength(), SCORE_COL), ROW2_OFFSET, mainFrame);
-	 c.writeText(getScoreBoardCoord(c.getLength(), DATE_COL), ROW2_OFFSET, mainFrame);
+	 Text a(mainFrame, A.getName());
+	 Text b(mainFrame, A.getScore());
+	 Text c(mainFrame, A.getDate());
+	 a.writeText(getScoreBoardCoord(a.getLength(), NAME_COL), ROW2_OFFSET);
+	 b.writeText(getScoreBoardCoord(b.getLength(), SCORE_COL), ROW2_OFFSET);
+	 c.writeText(getScoreBoardCoord(c.getLength(), DATE_COL), ROW2_OFFSET);
 	 
 	 while (true) {
 		 //this_thread::sleep_for(100ms);
@@ -448,7 +473,7 @@ string updateScore(int& score, int bonus) {
 
  }
 
- int Screen::screenChooseMap() {
+ int MenuScreen::screenChooseMap() {
 	 int horizon = 0;
 	 changeTexture(30);
 	 mainFrame->draw(*this->hdc, this->backGround);
@@ -489,12 +514,15 @@ string updateScore(int& score, int bonus) {
 				 switch (horizon) {
 				 case 0:
 					 playSound(ON_CLICK);
-					 return STREET_MAP;
+                     map = CHESS_MAP;
+					 return CHESS_MAP;
 				 case 1:
 					 playSound(ON_CLICK);
-					 return CHESS_MAP;
+                     map = STREET_MAP;
+					 return STREET_MAP;
 				 case 2:
 					 playSound(ON_CLICK);
+                     map = TRAIN_MAP;
 					 return TRAIN_MAP;
 				 default:
 					 break;
@@ -508,11 +536,19 @@ string updateScore(int& score, int bonus) {
 	 return -1;
 
  }
- 
 
- void Screen::addScore() {
-	 for (int i = 0; i < 5; i++) {
+ void MenuScreen::addScore() {
+    for(auto i:score) {
+        mainFrame->removeSprite(i);
+    }
+    score.clear();
+     for (int i = 1; i <= 5; i++) { // 34 -> 38
+         Sprite* scoreSprite = new Sprite(Vector2f(900 + 60 * i, 40), resources[22].getCurrentTexture());
+         score.push_back(scoreSprite);
+     }
+     for (int i = 0; i < 5; i++) {
 		 mainFrame->addSprite(this->score[i]);
+         this->score[i]->setPriority(INT_MAX);
 	 }
 	 return;
  }

@@ -12,8 +12,16 @@ using namespace std;
 #define KEY_LEFT 97
 #define KEY_RIGHT 100
 
-class Player : Rect2D {
+
+class Map;
+class StreetMap;
+class ChessMap;
+class TrainMap;
+
+class Player: Rect2D {
 private:
+    string playerName;
+    Frame* mainFrame;
     static vector<vector<int>>lanePos;
     int mapType;
     int cnt = 0;
@@ -25,6 +33,7 @@ private:
 public:
     Player() {};
     Player(Frame&, const int&);
+    Player(Frame&, const int& mapType, const Vector2f& pos, const int& point);
     ~Player();
 
 
@@ -34,12 +43,22 @@ public:
     void addPoint(const int& value);
     void setSpritePriotity(const int&);
     void stopPlayerHandler();
-    void playerHandler();
+    void resumePlayerHandler();
+    void playerHandler(char curr);
+
+    void setPlayerName(string name);
+    string getPlayerName();
+
     static void INIT();
     Vector2f getHitbox() const;
     Vector2f getCurrentPos() const;
-    thread launchHandler();
+//    thread launchHandler();
     int getPoint() const;
     int convertLane(const int& mapType);
     int summon_Megumin();
+
+    friend Map;
+    friend StreetMap;
+    friend ChessMap;
+    friend TrainMap;
 };

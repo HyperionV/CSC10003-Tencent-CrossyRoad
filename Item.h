@@ -17,7 +17,7 @@ public:
 	Item(const string& itemName, const Vector2f& position);
 	Item(const string& itemName ,const Vector2f& _position, const Vector2f& _destination);
 	Item(const Item&);
-	~Item();
+	virtual ~Item();
 
 	Texture* getTexture() const;
 	Sprite*& getItemSprite();

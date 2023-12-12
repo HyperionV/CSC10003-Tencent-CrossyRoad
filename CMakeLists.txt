@@ -23,13 +23,13 @@ add_executable(CSC10003_Tencent_CrossyRoad
         Movable.cpp Movable.h
         Sprite.cpp Sprite.h
         Frame.cpp Frame.h
-        Screen.cpp
+        MenuScreen.cpp
         Player.cpp
         Entity.cpp
         Audio.cpp
         Map.cpp
         Lane.cpp
-        Text.cpp Font.cpp Item.cpp Supportive.cpp TrafficLight.cpp Drawable.cpp Drawable.h Event.cpp Event.h TextBox.cpp TextCursor.cpp)
+        Text.cpp Font.cpp Item.cpp Supportive.cpp TrafficLight.cpp Drawable.cpp Drawable.h Event.cpp Event.h TextBox.cpp TextCursor.cpp FileDialog.cpp FileDialog.h)
 
 # Link to GLFW, GLEW, OpenGL, WinMM, and XAudio2
 target_link_libraries(CSC10003_Tencent_CrossyRoad PUBLIC

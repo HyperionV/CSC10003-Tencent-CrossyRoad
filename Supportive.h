@@ -5,7 +5,7 @@
 #include <sstream>
 #include <iomanip>
 #include "Text.h"
-#include "Screen.h"
+#include "MenuScreen.h"
 
 using namespace std;
 
