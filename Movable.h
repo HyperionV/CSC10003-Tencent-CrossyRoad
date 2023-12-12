@@ -23,6 +23,7 @@ public:
     Movable(const Movable& other);
     ~Movable();
 
+    Vector2f getStartingPosition();
     Vector2f getPosition();
     Vector2f getVelocity();
     Vector2f getAcceleration();
@@ -30,6 +31,7 @@ public:
     bool getIsMoving();
     float getSpeed();
 
+    void setStartingPosition(Vector2f startingPosition);
     void setPosition(Vector2f position);
     void setVelocity(Vector2f velocity);
     void setAcceleration(Vector2f acceleration);

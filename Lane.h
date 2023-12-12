@@ -59,7 +59,7 @@ public:
     void spawnCar();
 
     bool checkCollision(Player*);
-    void Lane::addItem(const string& itemName, const Vector2f& position, vector<Entity>& slime, vector<Entity>& coin, const int& laneCounter);
+    void addItem(const string& itemName, const Vector2f& position, vector<Entity>& slime, vector<Entity>& coin, const int& laneCounter);
 
     void animateLane();
     void animateItem();
@@ -74,4 +74,5 @@ public:
     void setVehicleCounter(const int&);
 
     string saveLane();
+    void loadLane(stringstream&);
 };

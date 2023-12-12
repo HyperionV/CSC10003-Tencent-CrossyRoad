@@ -1,5 +1,6 @@
 #pragma warning(disable:4244)
 #include "Lane.h"
+#include <cassert>
 
 //int laneStreetPos[] {130, 170, 240, 276, 344, 384, 450, 490, 559, 602};
 //int laneChessPos[] { 130, 170, 240, 276, 344 };
@@ -84,6 +85,8 @@ void Lane::resetLane() {
 		int idx = vehicles.size();
 		vehicles.push_back(mainFrame->addSprite(model[idx]->getCurrentTexture(), start));
 		vehicles[idx]->setPriority(priority);
+        vehicles[idx]->setStartingPosition(start);
+        vehicles[idx]->setDestination(end);
 	}
 	speed += floor((difficulty % 5) / 4);
 	for (auto& _sprite : vehicles) {
@@ -148,7 +151,6 @@ void Lane::animateLane() {
 	for (int i = 0; i < vehicles.size(); i++) {
 		vehicles[i]->setTexture(model[i % model.size()]->getCurrentTexture());
 	}
-
 }
 
 void Lane::animateItem() {
@@ -202,6 +204,11 @@ void Lane::update() {
 	if ((float)(clock() - lastSpawn) / CLOCKS_PER_SEC >= timeTilNextSpawn && isRunning) {
 		spawnCar();
 	}
+//    for(auto _sprite : vehicles) {
+//        if(_sprite->getPosition().y != start.y) {
+////            cout << _sprite->getPosition().y << ' ' << start.y << endl;
+//        }
+//    }
 }
 
 Vector2f Lane::getStart() const {
@@ -282,7 +289,6 @@ string Lane::saveLane() {
     ss << difficulty << endl;
     ss << timeBetweenSpawn << endl;
     ss << priority << endl;
-    ss << model.size() << endl;
     ss << start.x << " " << start.y << endl;
     ss << end.x << " " << end.y << endl;
     ss << speed << endl;
@@ -300,22 +306,119 @@ string Lane::saveLane() {
     }
     ss << endl;
     ss << timeTilNextSpawn << endl;
-    ss << items.size() << endl;
-    for (int i = 0; i < items.size(); i++) {
-        ss << items[i]->getItemName() << ' ';
-        ss << items[i]->getValue() << ' ';
-        ss << items[i]->getPosition().x << " " << items[i]->getPosition().y << ' ';
-        ss << items[i]->getDestination().x << " " << items[i]->getDestination().y << ' ';
-        ss << items[i]->getCreateTime() << endl;
-    }
+//    ss << items.size() << endl;
+//    for (int i = 0; i < items.size(); i++) {
+//        ss << items[i]->getItemName() << ' ';
+//        ss << items[i]->getValue() << ' ';
+//        ss << items[i]->getPosition().x << " " << items[i]->getPosition().y << ' ';
+//        ss << items[i]->getDestination().x << " " << items[i]->getDestination().y << ' ';
+//        ss << items[i]->getCreateTime() << endl;
+//    }
     // car info
+    ss << vehicles.size() << endl;
     for (int i = 0; i < vehicles.size(); i++) {
         ss << "CarInfo" << endl;
+        ss << vehicles[i]->getStartingPosition().x << " " << vehicles[i]->getStartingPosition().y << ' ';
         ss << vehicles[i]->getPosition().x << " " << vehicles[i]->getPosition().y << ' ';
         ss << vehicles[i]->getDestination().x << " " << vehicles[i]->getDestination().y << ' ';
         ss << vehicles[i]->getSpeed() << ' ';
+        ss << vehicles[i]->getVelocity().x << " " << vehicles[i]->getVelocity().y << ' ';
         ss << vehicles[i]->getIsMoving() << ' ';
         ss << vehicles[i]->getPriority() << endl;
     }
     return ss.str();
+}
+
+void Lane::loadLane(stringstream& ss) {
+    string temp;
+    ss >> temp;
+    ss >> difficulty;
+    ss >> timeBetweenSpawn;
+    ss >> priority;
+    ss >> start.x >> start.y;
+    ss >> end.x >> end.y;
+    ss >> speed;
+    ss >> vehicleCounter;
+    ss >> lastSpawn;
+    lastSpawn = clock();
+    int nextSpawnSize;
+    ss >> nextSpawnSize;
+    nextSpawn.resize(nextSpawnSize);
+    for (int i = 0; i < nextSpawnSize; i++) {
+        ss >> nextSpawn[i];
+    }
+    ss >> isRunning;
+    int onTrackSize;
+    ss >> onTrackSize;
+    onTrack.resize(onTrackSize);
+    for (int i = 0; i < onTrackSize; i++) {
+        int tmpInt;
+        ss >> tmpInt;
+        onTrack[i] = (bool)tmpInt;
+    }
+    ss >> timeTilNextSpawn;
+//    int itemsSize;
+//    ss >> itemsSize;
+//    items.resize(itemsSize);
+//    for (int i = 0; i < itemsSize; i++) {
+//        string itemName;
+//        ss >> itemName;
+//        if (itemName == "Slime") {
+//            int value;
+//            Vector2f position;
+//            Vector2f destination;
+//            time_t createTime;
+//            ss >> value;
+//            ss >> position.x >> position.y;
+//            ss >> destination.x >> destination.y;
+//            ss >> createTime;
+//            Slime* newSlime = new Slime(position, destination);
+//            newSlime->setModel(&slime[value]);
+//            newSlime->setCreateTime(createTime);
+//            items[i] = newSlime;
+//        }
+//        else {
+//            int value;
+//            Vector2f position;
+//            Vector2f destination;
+//            time_t createTime;
+//            ss >> value;
+//            ss >> position.x >> position.y;
+//            ss >> destination.x >> destination.y;
+//            ss >> createTime;
+//            Coin* newCoin = new Coin(position, value);
+//            newCoin->setModel(&coin[value - 2]);
+//            newCoin->setCreateTime(createTime);
+//            items[i] = newCoin;
+//        }
+//    }
+    // car info
+    int vehiclesSize;
+    ss >> vehiclesSize;
+    for (int i = 0; i < vehiclesSize; i++) {
+        ss >> temp;
+        Vector2f startingPosition;
+        Vector2f position;
+        Vector2f destination;
+        Vector2f velocity;
+        float speed;
+        bool isMoving;
+        int priority;
+
+        ss >> startingPosition.x >> startingPosition.y;
+        ss >> position.x >> position.y;
+        ss >> destination.x >> destination.y;
+        ss >> speed;
+        ss >> velocity.x >> velocity.y;
+        ss >> isMoving;
+        ss >> priority;
+
+        vehicles[i]->setStartingPosition(startingPosition);
+        vehicles[i]->setPosition(position);
+        vehicles[i]->setDestination(destination);
+        vehicles[i]->setSpeed(speed);
+        vehicles[i]->setVelocity(velocity);
+        vehicles[i]->setIsMoving(isMoving);
+        vehicles[i]->setPriority(priority);
+    }
 }

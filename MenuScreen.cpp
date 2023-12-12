@@ -188,7 +188,7 @@ bool MenuScreen::screenPause() {
 					changeTexture(12 + 3 * isMusicOff);
 					break;
 				case 2:
-					playSound(0);
+					playSound(ON_CLICK);
 					return 1;
 				default:
 					break;
@@ -339,8 +339,8 @@ string MenuScreen::screenPlayerName() {
 		myTextBox.drawTextBox();
 		mainFrame->update();
 		mainFrame->draw(*hdc);
-		cur = myTextBox.getEnteredText();
 	}
+    cur = myTextBox.getEnteredText();
     if(!isMusicOff){
         music->Stop();
         isMusicOff = 1;

@@ -71,7 +71,7 @@ public:
 
 	void setMusic();
 
-	~Screen();
+	~MenuScreen();
 
 private :
 	static MenuScreen* instancePtr;
