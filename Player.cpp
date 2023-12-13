@@ -20,6 +20,7 @@ void Player::INIT() {
 
 
 Player::Player(Frame& mainFrame, const int& mapType) {
+//    setDateTime();
     this->mainFrame = &mainFrame;
     model.push_back(new Entity("character/left"));
     model.push_back(new Entity("character/up"));
@@ -36,6 +37,7 @@ Player::Player(Frame& mainFrame, const int& mapType) {
 }
 
 Player::Player(Frame& mainFrame, const int& mapType, const Vector2f& pos, const int& point) {
+//    setDateTime();
     this->mainFrame = &mainFrame;
     model.push_back(new Entity("character/left"));
     model.push_back(new Entity("character/up"));
@@ -163,6 +165,14 @@ void Player::stopPlayerHandler() {
 void Player::resumePlayerHandler() {
     isRunning = true;
 }
+
+//void Player::setDateTime() {
+//    dateTime = return_current_time_and_date();
+//}
+//
+//string Player::getDateTime() {
+//    return dateTime;
+//}
 
 int Player::summon_Megumin() {
     state = 4;

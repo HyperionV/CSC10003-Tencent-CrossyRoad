@@ -107,7 +107,7 @@ void StreetMap::drawMap() {
                 if (continuePlaying == true) {
                     gameRunning = false;
                     spawner.join();
-                    fileDialog.ShowSaveFileDialog(saveMap());
+                    fileDialog.ShowSaveFileDialog(saveMap(), player.getPlayerName() + "_" + to_string(player.getPoint()) + "_" + mapName);
                     mainFrame->removeAllSprite();
                     return;
                 }
@@ -148,7 +148,7 @@ void StreetMap::drawMap() {
                     mainFrame->draw(hdc);
                 }
 			player.setSpritePriotity(0);
-			screen->screenGameOver(player.getPoint());
+			screen->screenGameOver(player.getPoint(), player.getPlayerName());
             this_thread::sleep_for(500ms);
 			return;
 		}
@@ -270,7 +270,7 @@ void ChessMap::drawMap() {
                     gameRunning = false;
                     player.stopPlayerHandler();
                     spawner.join();
-                    fileDialog.ShowSaveFileDialog(saveMap());
+                    fileDialog.ShowSaveFileDialog(saveMap(), player.getPlayerName() + "_" + to_string(player.getPoint()) + "_" + mapName);
                     return;
                 }
                 else{
@@ -311,7 +311,7 @@ void ChessMap::drawMap() {
 					mainFrame->draw(hdc);
 				}
 			player.setSpritePriotity(0);
-			screen->screenGameOver(player.getPoint());
+			screen->screenGameOver(player.getPoint(), player.getPlayerName());
 			this_thread::sleep_for(500ms);
 			return;
 		}
@@ -432,7 +432,7 @@ void TrainMap::drawMap() {
 //                        s->stopLane();
 //                    }
 //                    cout << "Save file" << endl;
-                    fileDialog.ShowSaveFileDialog(saveMap());
+                    fileDialog.ShowSaveFileDialog(saveMap(), player.getPlayerName() + "_" + to_string(player.getPoint()) + "_" + mapName);
                     return;
                 }
                 else{
@@ -472,7 +472,7 @@ void TrainMap::drawMap() {
 					mainFrame->draw(hdc);
 				}
 			player.setSpritePriotity(0);
-			screen->screenGameOver(player.getPoint());
+			screen->screenGameOver(player.getPoint(), player.getPlayerName());
 			this_thread::sleep_for(500ms);
 			return;
 		}

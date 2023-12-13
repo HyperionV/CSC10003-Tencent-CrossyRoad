@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
 	InitResource();
 	int diff = 100;
 	Game g(mainFrame, hdc, diff, TRAIN_MAP);
-	cout << g.startGame() << endl;
+    g.startGame();
 
     system("pause");
 	ReleaseDC(console, hdc);

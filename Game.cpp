@@ -1,4 +1,4 @@
-# include "Game.h"
+#include "Game.h"
 
 Game::Game(Frame& mainFrame, HDC& hdc, int& diff, const int& map)
 	:mainFrame{ &mainFrame }, hdc{ hdc }, diff{ diff }

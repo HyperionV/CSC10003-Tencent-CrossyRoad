@@ -13,7 +13,7 @@ class FileDialog {
 public:
     explicit FileDialog(HWND hwnd = nullptr);
     std::string ShowOpenFileDialog();
-    std::string ShowSaveFileDialog(const std::string& contentToSave);
+    std::string ShowSaveFileDialog(const std::string& contentToSave, const std::string& defaultFileName);
 
 private:
     HWND hwnd_;

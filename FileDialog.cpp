@@ -1,5 +1,7 @@
 #include "FileDialog.h"
 #include <sstream>
+#include <iostream>
+#include <tchar.h>
 
 
 FileDialog::FileDialog(HWND hwnd) : hwnd_(hwnd) {}
@@ -23,6 +25,7 @@ std::string FileDialog::ShowOpenFileDialog() {
     ofn.lpstrFile = szFileName_;
     ofn.nMaxFile = MAX_PATH;
     ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+    ofn.lpstrInitialDir = _T("saves");
 
     std::string selectedFilePath;
     std::stringstream content;
@@ -35,25 +38,27 @@ std::string FileDialog::ShowOpenFileDialog() {
         content << file.rdbuf();
         file.close();
         // Handle the content as needed (you can print or return it)
+        ofn.lpstrFile = currentDir;
+        SetCurrentDirectory(currentDir);
         return content.str();
     } else {
         // User canceled the dialog
         selectedFilePath = "";
     }
-
+    ofn.lpstrFile = currentDir;
     // Restore the current working directory
     SetCurrentDirectory(currentDir);
 
     return selectedFilePath;
 }
 
-std::string FileDialog::ShowSaveFileDialog(const std::string& contentToSave) {
+std::string FileDialog::ShowSaveFileDialog(const std::string& contentToSave, const std::string& defaultFileName) {
     // Save the current working directory
     TCHAR currentDir[MAX_PATH];
     GetCurrentDirectory(MAX_PATH, currentDir);
 
     // Initialize the buffer
-    _tcscpy_s(szFileName_, _T("*.CR"));  // Set default file name with ".CR" extension
+    _tcscpy_s(szFileName_, _T(defaultFileName.c_str()));  // Set default file name with ".CR" extension
 
     OPENFILENAME ofn;
     ZeroMemory(&ofn, sizeof(ofn));
@@ -66,6 +71,8 @@ std::string FileDialog::ShowSaveFileDialog(const std::string& contentToSave) {
     ofn.lpstrFile = szFileName_;
     ofn.nMaxFile = MAX_PATH;
     ofn.Flags = OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
+    //set directory to saves
+    ofn.lpstrInitialDir = _T("saves");
 
     std::string savedFilePath;
     if (GetSaveFileName(&ofn) == TRUE) {
@@ -87,8 +94,13 @@ std::string FileDialog::ShowSaveFileDialog(const std::string& contentToSave) {
         savedFilePath = "";
     }
 
+    ofn.lpstrInitialDir = currentDir;
+
     // Restore the current working directory
     SetCurrentDirectory(currentDir);
+
+    GetCurrentDirectory(MAX_PATH, currentDir);
+//    _tprintf(_T("Current directory: %s\n"), currentDir);
 
     return savedFilePath;
 }

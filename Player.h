@@ -1,6 +1,7 @@
 #pragma once
 #include "Sprite.h"
 #include "Entity.h"
+//#include "Supportive.h"
 #include <conio.h>
 #include <chrono>
 #include <thread>
@@ -30,12 +31,12 @@ private:
     size_t point = 0;
     int state = 1; // left - 0; up - 1; right - 2;
     bool isRunning;
+//    string dateTime;
 public:
     Player() {};
     Player(Frame&, const int&);
     Player(Frame&, const int& mapType, const Vector2f& pos, const int& point);
     ~Player();
-
 
     void setPosition(const float& x, const float& y, const char& dir);
     void animatePlayer();
@@ -51,6 +52,9 @@ public:
 
     void setMap(int map);
     int getMap();
+
+//    void setDateTime();
+//    string getDateTime();
 
     static void INIT();
     Vector2f getHitbox() const;

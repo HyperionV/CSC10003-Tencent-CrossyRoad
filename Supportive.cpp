@@ -10,7 +10,8 @@ string return_current_time_and_date()
 	auto in_time_t = chrono::system_clock::to_time_t(now);
 
 	std::stringstream ss;
-	ss << put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
+	ss << put_time(std::localtime(&in_time_t), "%d/%m/%Y");
+//    string owo = ss.str();
 	return ss.str();
 }
 
@@ -23,7 +24,7 @@ string getExePath(string x) // removes fileName from path i.e "D:\path\to\exe\sa
 vector<leaderBoardInfo> readLeaderBoardFromFile(const string& filename) {
 	vector<leaderBoardInfo> leaderboard;
 
-	ifstream fin(filename, ios::in | ios::binary);
+	ifstream fin(filename, ios::in);
 	if (!fin) {
 		cerr << "Error opening file for reading: " << filename << endl;
 		return leaderboard;
@@ -31,14 +32,12 @@ vector<leaderBoardInfo> readLeaderBoardFromFile(const string& filename) {
 
 	// Read the vector size
 	size_t size;
-	fin.read(reinterpret_cast<char*>(&size), sizeof(size));
+	fin >> size;
 
 	// Read each leaderBoardInfo object
 	for (size_t i = 0; i < size; ++i) {
 		char name[100], score[100], date[100];
-		fin.read(name, sizeof(name));
-		fin.read(score, sizeof(score));
-		fin.read(date, sizeof(date));
+		fin >> name >> score >> date;
 		leaderboard.emplace_back(name, score, date);
 	}
 
@@ -47,7 +46,7 @@ vector<leaderBoardInfo> readLeaderBoardFromFile(const string& filename) {
 }
 
 void writeLeaderboardToFile(const vector<leaderBoardInfo>& leaderboard, const string& filename) {
-	ofstream fout(filename, ios::out | ios::binary);
+	ofstream fout(filename, ios::out);
 	if (!fout) {
 		cerr << "Error opening file for writing: " << filename << endl;
 		return;
@@ -55,13 +54,11 @@ void writeLeaderboardToFile(const vector<leaderBoardInfo>& leaderboard, const st
 
 	// Write the vector size (number of objects) first
 	size_t size = leaderboard.size();
-	fout.write(reinterpret_cast<char*>(&size), sizeof(size));
+    fout << size << endl;
 
 	// Write each leaderBoardInfo object
 	for (const auto& entry : leaderboard) {
-		fout.write(entry.getName().c_str(), entry.getName().size() + 1); // Include null terminator
-		fout.write(entry.getScore().c_str(), entry.getScore().size() + 1);
-		fout.write(entry.getDate().c_str(), entry.getDate().size() + 1);
+		fout << entry.getName() << " " << entry.getScore() << " " << entry.getDate() << endl;
 	}
 
 	fout.close();

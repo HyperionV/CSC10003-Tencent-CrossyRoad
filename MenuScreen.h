@@ -33,7 +33,7 @@
 #define SCORE_COL 2
 #define DATE_COL 3
 
-
+const int ROW_OFFSET[5] = { ROW1_OFFSET, ROW2_OFFSET, ROW3_OFFSET, ROW4_OFFSET, ROW5_OFFSET };
 
 
 #define mainScreen Vector2f(1280, 720)
@@ -44,7 +44,7 @@ public:
     // 1 - chess map
     // 2 - train map
     // 3 - load map
-	void screenGameOver(const int& score);
+	void screenGameOver(const int& score, const string& name);
 	void screenAbout();
 	void screenHelp();
 	int startGame();
