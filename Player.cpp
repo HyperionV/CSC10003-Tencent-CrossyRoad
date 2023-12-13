@@ -190,3 +190,11 @@ void Player::setPlayerName(string name) {
 string Player::getPlayerName() {
     return this->playerName;
 }
+
+void Player::setMap(int map) {
+    this->mapType = map;
+}
+
+int Player::getMap() {
+    return this->mapType;
+}

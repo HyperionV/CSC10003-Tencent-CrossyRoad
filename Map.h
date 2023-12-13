@@ -11,6 +11,7 @@
 
 class Map {
 protected:
+    string mapName;
     FileDialog fileDialog;
 	int difficulty;
 	HDC hdc;
@@ -34,7 +35,8 @@ public:
 	virtual void drawMap() = 0;
 	virtual void loadResource() = 0;
 
-    virtual string saveMap() = 0;
+    string saveMap();
+    void loadMap(string);
 
 	int getDiff() const;
 	void randomItemSpawner();
@@ -46,26 +48,29 @@ private:
 
 public : 
 	StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName);
-
+    StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName, string mapString);
 	~StreetMap();
 	void drawMap();
 	void loadResource();
 	void shiftResource();
 
-    string saveMap();
+//    string saveMap();
+//    void loadMap(string);
 };
 
 
 class ChessMap : public Map {
 public:
 	ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName);
-	~ChessMap();
+	ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName, string mapString);
+    ~ChessMap();
 	void drawMap();
 	void loadResource();
 
 	void shiftResource();
 
-    string saveMap();
+//    string saveMap();
+//    void loadMap(string);
 
 };
 
@@ -75,10 +80,12 @@ private:
 	vector<TrafficLight>trafficLight;
 public:
 	TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName);
-	~TrainMap();
+	TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName, string mapString);
+    ~TrainMap();
 	void drawMap();
 	void loadResource();
 	void shiftResource();
 
-    string saveMap();
+//    string saveMap();
+//    void loadMap(string);
 };

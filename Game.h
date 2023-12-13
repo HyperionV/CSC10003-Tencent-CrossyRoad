@@ -10,6 +10,7 @@
 #include "MenuScreen.h"
 #include "TrafficLight.h"
 #include "Map.h"
+#include "FileDialog.h"
 
 
 class Game {
@@ -19,6 +20,7 @@ private:
 	int diff;
 	Map* playMap;
 	MenuScreen* screen;
+    FileDialog fileDialog;
 public:
 	Game(Frame& mainFrame, HDC& hdc, int& diff, const int& map);
 	~Game();

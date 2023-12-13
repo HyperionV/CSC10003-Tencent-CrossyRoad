@@ -49,6 +49,9 @@ public:
     void setPlayerName(string name);
     string getPlayerName();
 
+    void setMap(int map);
+    int getMap();
+
     static void INIT();
     Vector2f getHitbox() const;
     Vector2f getCurrentPos() const;
