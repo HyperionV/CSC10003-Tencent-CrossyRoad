@@ -58,7 +58,6 @@ int MenuScreen::startGame() {
     while (true) {
         // this_thread::sleep_for(50ms);
         if (_kbhit()) {
-            playSound(ON_CLICK);
             int curr = _getch();
             switch (curr) {
                 case KEY_LEFT:
@@ -200,6 +199,7 @@ bool MenuScreen::screenPause() {
                             playSound(ON_CLICK);
                             return 0;
                         case 1:
+                            playSound(ON_CLICK);
                             setMusic(Map);
                             changeTexture(12 + 3 * isMusicOff);
                             break;
@@ -484,7 +484,7 @@ void MenuScreen::screenLeaderboard() {
             int step{2};
             switch (curr) {
                 case 'q':
-                    playSound("sound/on_click.wav");
+                    playSound(ON_CLICK);
 //                    mainFrame->removeAllSprite();
                     for (int i = 0; i < info.size(); i++) {
                         delete a[i];

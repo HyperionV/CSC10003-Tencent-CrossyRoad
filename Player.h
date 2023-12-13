@@ -28,7 +28,7 @@ private:
     int cnt = 0;
     vector<Entity*>model;
     Sprite* _player;
-    size_t point = 0;
+    int point = 0;
     int state = 1; // left - 0; up - 1; right - 2;
     bool isRunning;
 //    string dateTime;

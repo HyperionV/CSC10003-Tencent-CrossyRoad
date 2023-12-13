@@ -118,6 +118,7 @@ void Player::addPoint(const int& value) {
     point += value;
     if (point < 0)
         point = 0;
+    return;
 }
 
 void Player::playerHandler(char curr)

@@ -1,7 +1,5 @@
 #include "FileDialog.h"
 #include <sstream>
-#include <iostream>
-#include <tchar.h>
 
 
 FileDialog::FileDialog(HWND hwnd) : hwnd_(hwnd) {}

@@ -41,7 +41,6 @@ StreetMap::StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* 
 		Sprite* tmp = trafficLight[i].getSprite();
 		mainFrame->addSprite(tmp);
 	}
-	player.addPoint(difficulty);
 //    screen->updateScoreSprite(player.getPoint());
     for (int i = 0; i < (int)mapLane.size(); i++) {
         mapLane[i]->resetLane();
@@ -124,9 +123,9 @@ void StreetMap::drawMap() {
             }
         }
         player.playerHandler(c);
-		screen->updateScoreSprite(player.getPoint());
 		shiftResource();
 		trafficControl(trafficLight);
+		screen->updateScoreSprite(player.getPoint());
 		for (int i = 0; i < (int)mapLane.size(); i++) {
 			mapLane[i]->update();
 		}
@@ -136,6 +135,7 @@ void StreetMap::drawMap() {
 			if (mapLane[playerCurrentLane]->checkCollision(&player))
 				collide = 1;
 		}
+
 		mainFrame->update();
 		mainFrame->draw(hdc);
 		if (collide) {
