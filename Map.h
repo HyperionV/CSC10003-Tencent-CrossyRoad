@@ -18,7 +18,6 @@ protected:
 	Frame* mainFrame;
 	vector<Lane*> mapLane;
 	vector<Entity>vehicle;
-
 	vector<Entity>slime;
 	vector<Entity>coin;
 	MenuScreen* screen;

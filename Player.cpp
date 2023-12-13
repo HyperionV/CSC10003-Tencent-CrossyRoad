@@ -80,8 +80,11 @@ void Player::setPosition(const float& x, const float& y, const char& dir) {
         this->cnt--;
     }
 
-    if (this->cnt == mapLim[mapType] || this->cnt == -1)
+    if (this->cnt == mapLim[mapType] || this->cnt == -1){
         this->cnt = 0;
+        this->point += mapLim[mapType];
+    }
+
     
     if (x < 0) {
         _player->setPosition(Vector2f(0, lanePos[mapType][cnt]));
@@ -113,6 +116,8 @@ void Player::addPoint() {
 
 void Player::addPoint(const int& value) {
     point += value;
+    if (point < 0)
+        point = 0;
 }
 
 void Player::playerHandler(char curr)

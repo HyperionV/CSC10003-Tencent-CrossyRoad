@@ -9,6 +9,13 @@ Map::Map(Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string player
 
 Map::~Map() {
     mainFrame->removeAllSprite();
+    if(bgTexture != nullptr){
+        delete bgTexture;
+        bgTexture = nullptr;
+    }
+    for (auto ptr : mapLane) {
+        delete ptr;
+    }
 }
 
 StreetMap::StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName) :
