@@ -4,13 +4,14 @@
 #include "Text.h"
 #include "Supportive.h"
 #include "TrafficLight.h"
+int Map = -1;
 MenuScreen::MenuScreen() {
 	this->mainFrame = nullptr;
 }
 
 MenuScreen::MenuScreen(Frame* curFrame, HDC* hdc) {
 
-	this->isMusicOff = 1;
+	this->isMusicOff = 0;
 	this->hdc = hdc;
 	this->mainFrame = curFrame;
 	this->backGround = new Sprite;
@@ -45,10 +46,10 @@ int MenuScreen::startGame() {
 	int vertical = 0, horizon = 0;
 	backGround->setTexture(resources[0].getCurrentTexture());
 	mainFrame->draw(*hdc, backGround);
-    if(isMusicOff){
-	    music->Play("gameSound.wav", 1, 1);
-        isMusicOff = false;
-    }
+	if (!isMusicOff) {
+		cerr << 1;
+		music->Play("sound/gameMusic.wav", 1, 1);
+	}
 	//Lane l1(mainFrame, 1, e1, 20);
 	//thread t1 = l1.spawnThread();
 	while (true) {
@@ -116,8 +117,10 @@ int MenuScreen::startGame() {
 							this->screenPlay();
 							changeTexture(0);
 							vertical = 0, horizon = 0;
-                            if(map != CONTINUE)
-                                return map;
+							if (map != CONTINUE) {
+								Map = map;
+								return map;
+							}
                             break;
 						case 1:
 							playSound(ON_CLICK);
@@ -194,11 +197,11 @@ bool MenuScreen::screenPause() {
 					playSound(ON_CLICK);
 					return 0;
 				case 1:
-					setMusic();
+					setMusic(Map);
 					changeTexture(12 + 3 * isMusicOff);
 					break;
 				case 2:
-					playSound(0);
+					playSound(ON_CLICK);
 					return 1;
 				default:
 					break;
@@ -256,7 +259,7 @@ void MenuScreen::screenOption() {
 					break;
 				case 1:
 					playSound(ON_CLICK);
-					setMusic();
+					setMusic(-1);
 					changeTexture(6 + 3 * isMusicOff);
 					break;
 				case 2:
@@ -362,14 +365,14 @@ string MenuScreen::screenPlayerName() {
 void MenuScreen::changeTexture(const int& idx) {
 	backGround->setTexture(resources[idx].getCurrentTexture());
 }
- void MenuScreen::setMusic() {
+ void MenuScreen::setMusic(const int& mapType) {
  	if (!isMusicOff) {
  		isMusicOff = 1;
  		music->Stop();
  	}
  	else {
  		isMusicOff = 0;
- 		music->Play("gameSound.wav", 1 ,1);
+		startMusic(mapType);
  	}
  	return;
  }
@@ -602,7 +605,6 @@ string updateScore(int& score, int bonus) {
  }
 
  void MenuScreen::screenGameOver(const int& score) {
-	 if(!isMusicOff) setMusic();
 	 playSound("sound/die.wav");
 	 Sprite* gameOver = mainFrame->addSprite(resources[36].getCurrentTexture(), Vector2f(300, 110));
 	 gameOver->setPriority(29);
@@ -629,5 +631,29 @@ string updateScore(int& score, int bonus) {
 		 mainFrame->update();
 		 mainFrame->draw(*hdc);
 	 }
+	 return;
+ }
+ void MenuScreen::startMusic(const int& mapType) {
+	if(isMusicOff) return;
+	if(!isMusicOff) music->Stop();
+	if (mapType == STREET_MAP) {
+		music->Play("sound/street_gameMusic.wav", 1, 1);
+	}
+	else if (mapType == CHESS_MAP) {
+		music->Play("sound/chess_gameMusic.wav", 1, 1);
+	}
+	else if (mapType == TRAIN_MAP) {
+		music->Play("sound/train_gameMusic.wav", 1, 1);
+	}
+	else {
+		music->Play("sound/gameMusic.wav", 1, 1);
+	}
+	 return;
+ }
+ bool MenuScreen::getMuicStatus() const {
+	 return isMusicOff;
+ }
+ void MenuScreen::stopMusic() {
+	 music->Stop();
 	 return;
  }

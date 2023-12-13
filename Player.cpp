@@ -90,7 +90,7 @@ void Player::setPosition(const float& x, const float& y, const char& dir) {
         return;
     }
 
-    _player->setPriority(Priority[mapType] - cnt * 2);
+    _player->setPriority(Priority[mapType] - cnt * 2 + 1);
     _player->setPosition(Vector2f(x, lanePos[mapType][cnt]));
 }
 
