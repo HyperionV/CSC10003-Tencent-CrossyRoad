@@ -17,7 +17,7 @@
 #define KEY_DOWN 115
 #define KEY_LEFT 97
 #define KEY_RIGHT 100
-#define ON_CLICK "on_click.wav"
+#define ON_CLICK "sound/on_click.wav"
 #define NAME_COLUMN_WIDTH 309
 #define NAME_COLUMN_OFFSET 216
 #define SCORE_COLUMN_WIDTH 220
@@ -57,6 +57,7 @@ public:
 	void updateScoreSprite(const int& score);
 	void changeTexture(const int& idx);
 	void addScore();
+	bool getMuicStatus() const;
 	MenuScreen(const MenuScreen& screen) = delete;
 
 	static MenuScreen* getInstance(Frame* curFrame, HDC* hdc) {
@@ -69,7 +70,9 @@ public:
 		}
 	}
 
-	void setMusic();
+	void setMusic(const int& mapType = -1);
+	void startMusic(const int& mapType);
+	void stopMusic();
 
 	~MenuScreen();
 

@@ -91,6 +91,7 @@ StreetMap::~StreetMap() {
 }
 
 void StreetMap::drawMap() {
+	screen->startMusic(STREET_MAP);
 	gameRunning = true;
     player.resumePlayerHandler();
 	thread spawner([this]() {
@@ -148,7 +149,8 @@ void StreetMap::drawMap() {
                     mainFrame->draw(hdc);
                 }
 			player.setSpritePriotity(0);
-			screen->screenGameOver(player.getPoint(), player.getPlayerName());
+			if (screen->getMuicStatus() == 0) screen->stopMusic();
+			screen->screenGameOver(player.getPoint());
             this_thread::sleep_for(500ms);
 			return;
 		}
@@ -238,7 +240,7 @@ ChessMap::ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* sc
     bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
 //	player = Player(*mapFrame, CHESS_MAP);
     loadMap(mapString);
-    screen->updateScoreSprite(player.getPoint());
+    screen->updateScoreSprite(player.getPoint(), player.getPlayerName());
     for (int i = 0; i < (int)mapLane.size(); i++) {
         mapLane[i]->startLane();
     }
@@ -253,6 +255,7 @@ ChessMap::~ChessMap() {
 }
 
 void ChessMap::drawMap() {
+	screen->startMusic(CHESS_MAP);
 	gameRunning = true;
 
     player.resumePlayerHandler();
@@ -311,6 +314,7 @@ void ChessMap::drawMap() {
 					mainFrame->draw(hdc);
 				}
 			player.setSpritePriotity(0);
+			if (screen->getMuicStatus() == 0) screen->stopMusic();
 			screen->screenGameOver(player.getPoint(), player.getPlayerName());
 			this_thread::sleep_for(500ms);
 			return;
@@ -409,6 +413,7 @@ TrainMap::TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* sc
 
 
 void TrainMap::drawMap() {
+	screen->startMusic(TRAIN_MAP);
 	//	screen->addScore();
 	gameRunning = true;
 //	thread t = player.launchHandler();
@@ -471,6 +476,7 @@ void TrainMap::drawMap() {
 					mainFrame->update();
 					mainFrame->draw(hdc);
 				}
+			if (screen->getMuicStatus() == 0) screen->stopMusic();
 			player.setSpritePriotity(0);
 			screen->screenGameOver(player.getPoint(), player.getPlayerName());
 			this_thread::sleep_for(500ms);
