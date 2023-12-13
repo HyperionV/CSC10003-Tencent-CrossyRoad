@@ -150,7 +150,7 @@ void StreetMap::drawMap() {
                 }
 			player.setSpritePriotity(0);
 			if (screen->getMuicStatus() == 0) screen->stopMusic();
-			screen->screenGameOver(player.getPoint());
+			screen->screenGameOver(player.getPoint(), player.getPlayerName());
             this_thread::sleep_for(500ms);
 			return;
 		}
@@ -240,7 +240,7 @@ ChessMap::ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* sc
     bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
 //	player = Player(*mapFrame, CHESS_MAP);
     loadMap(mapString);
-    screen->updateScoreSprite(player.getPoint(), player.getPlayerName());
+    screen->updateScoreSprite(player.getPoint());
     for (int i = 0; i < (int)mapLane.size(); i++) {
         mapLane[i]->startLane();
     }
@@ -277,7 +277,7 @@ void ChessMap::drawMap() {
                     return;
                 }
                 else{
-                    screen->screenPlay();
+//                    screen->screenPlay();
                 }
             }
         }

@@ -484,9 +484,9 @@ void MenuScreen::screenLeaderboard() {
             int step{2};
             switch (curr) {
                 case 'q':
-                    playSound("on_click.wav");
-                    mainFrame->removeAllSprite();
-                    for (int i = 0; i < 5; i++) {
+                    playSound("sound/on_click.wav");
+//                    mainFrame->removeAllSprite();
+                    for (int i = 0; i < info.size(); i++) {
                         delete a[i];
                         delete b[i];
                         delete c[i];
@@ -500,7 +500,7 @@ void MenuScreen::screenLeaderboard() {
         }
         mainFrame->draw(*hdc);
     }
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < info.size(); i++) {
         delete a[i];
         delete b[i];
         delete c[i];
@@ -627,7 +627,7 @@ void MenuScreen::screenAbout() {
     return;
 }
 
-void MenuScreen::screenGameOver(const int &score) {
+void MenuScreen::screenGameOver(const int &score, const string &name) {
     vector<leaderBoardInfo> info = readLeaderBoardFromFile("leaderBoardInfo.txt");
     leaderBoardInfo A(name, to_string(score), return_current_time_and_date());
     info.push_back(A);
