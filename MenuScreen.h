@@ -35,6 +35,12 @@
 
 const int ROW_OFFSET[5] = { ROW1_OFFSET, ROW2_OFFSET, ROW3_OFFSET, ROW4_OFFSET, ROW5_OFFSET };
 #define mainScreen Vector2f(1280, 720)
+
+/*
+ * MenuScreen Class
+ * Controls the menu screen UI. Allow user to navigate through different windows.
+ */
+
 class MenuScreen {
 public:
     int map;

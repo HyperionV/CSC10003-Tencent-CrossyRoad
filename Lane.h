@@ -17,6 +17,16 @@
 #define QUIT_GAME 4
 #define CONTINUE 5
 
+/*
+ * Lane class
+ * Contains information of one lane, notably:
+ *     difficulty - affects the difficulty of gameplay
+ *     timeBetweenSpawn - minimum time 2 cars spawn apart from each other
+ *     vehicles - a vector of Sprite that contains vehicle to be drawn
+ *     items - a vector of Sprite that contains items (coins and slimes) to be drawn
+ * Serves the purpose of controlling the traffic, spawn and animate vehicles and items
+ * */
+
 class Lane {
 private:
     const int RANDOM_INTERVAL = 4000;

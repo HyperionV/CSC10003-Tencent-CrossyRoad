@@ -18,6 +18,12 @@ class StreetMap;
 class ChessMap;
 class TrainMap;
 
+/*
+ * Player Class
+ * Contains characteristics variable of the playable character.
+ * Handles keyboard input for this character to move and animates movements.
+ */
+
 class Player: Rect2D {
 private:
     string playerName;

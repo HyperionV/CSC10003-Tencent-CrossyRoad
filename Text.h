@@ -5,6 +5,10 @@
 #include <iostream>
 #include <vector>
 
+/*
+ * Text Class
+ * Used for writing text to the console. A fixed font is pre-defined.
+ */
 
 class Text {
 private : 

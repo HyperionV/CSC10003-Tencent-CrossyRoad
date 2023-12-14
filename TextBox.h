@@ -2,6 +2,13 @@
 
 #include "TextCursor.h" 
 
+/*
+ * TextBox Class
+ * Defines basic behaviour of a standard text box. Contains TextCursor and Text (within TextCursor itself).
+ * Limits the player to type within a given space, and some typing restrictions are given:
+ * Only allows player to type lowercase latin letters and numbers.
+ */
+
 class TextBox {
 	Texture* textFrame;
 	Sprite* textSprite;

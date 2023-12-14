@@ -9,6 +9,14 @@
 #include <thread>
 #include <mutex>
 
+/* 
+ * Map Class
+ * Encapsulate every object relates to the gameplay. Contains the main loop for drawing textures and process gameplay.
+ * 
+ * StreetMap, TrainMap, ChessMap: classes that derived from Map Class.
+ * These classes controls the behaviour of the corresponding theme of the game.
+ */
+
 class Map {
 protected:
     string mapName;
@@ -52,7 +60,6 @@ public :
 	void drawMap();
 	void loadResource();
 	void shiftResource();
-
 };
 
 
@@ -65,8 +72,6 @@ public:
 	void loadResource();
 
 	void shiftResource();
-
-
 };
 
 

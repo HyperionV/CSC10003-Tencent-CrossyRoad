@@ -10,6 +10,12 @@
 
 const float tickRate = 0.5;
 
+/*
+ * TextCursor Class
+ * One of the few components of the text box (see TextBox.h).
+ * The text cursor associate with the text written on the screen.
+ */
+
 class TextCursor {
 	Texture* cursorTexture;
 	Sprite* cursorSprite;

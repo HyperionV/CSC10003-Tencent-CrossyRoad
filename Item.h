@@ -5,6 +5,12 @@
 #include "Player.h"
 #include <map>
 
+/*
+ * Item Class
+ * Contains items' basic characteristics.
+ * Slime Class and Coin Class: derived from Item Class - are two of the basic components of this game.
+ */
+
 class Item {
 	string itemName;
 	Sprite* itemSprite;

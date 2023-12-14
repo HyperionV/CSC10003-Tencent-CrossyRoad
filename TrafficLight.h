@@ -8,6 +8,12 @@
 
 //#define TRAFFIC_LIGHT_POS_1 Vector2f()
 
+/*
+ * TrafficLight Class
+ * Class of traffic light object to be drawn to the playing field.
+ * Controls the traffic.
+ */
+
 class TrafficLight {
 private :
 	int status; //0 is green, 1 is yellow, 2 is red
