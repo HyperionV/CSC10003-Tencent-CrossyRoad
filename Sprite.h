@@ -7,6 +7,11 @@
 #include "Texture.h"
 #include "Drawable.h"
 
+/*
+ * Sprite class
+ * This class is the representation of a texture on screen. Contains a texture and a position.
+ * Supports drawing sprite to screen.
+ * */
 class Sprite : public Movable, public Drawable
 {
 private:

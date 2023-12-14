@@ -6,6 +6,11 @@ using namespace std;
 using namespace utility;
 
 class Movable
+/*
+ * Movable class
+ * This class is the base class for all movable objects in the game. Contains position, velocity, acceleration, destination, speed and isMoving.
+ * Supports updating position, setting destination and checking if the object has reached its destination.
+ * */
 {
 protected:
     Vector2f position;

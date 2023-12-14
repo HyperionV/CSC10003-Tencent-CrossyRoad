@@ -6,6 +6,12 @@
 #include <deque>
 #include "Utilities.h"
 
+/*
+ * Entity class
+ * This class is the representation of animation. Contains some textures;
+ * Supports getting current texture, and shift to the next frame of the animation.
+ * */
+
 class Entity : public Rect2D {
 private:
     deque<Texture*> motion;

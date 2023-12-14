@@ -5,6 +5,13 @@
 using namespace utility;
 using namespace std;
 
+/*
+ * Drawable class
+ * This class is the base class for all drawable objects in the game. Contains priority.
+ * Supports drawing to screen and updating.
+ * Is also a node of a doubly linked list.
+ * */
+
 class Drawable {
 protected:
     int priority;

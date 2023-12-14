@@ -10,6 +10,14 @@
 using namespace std;
 
 class Frame
+/*
+ * Frame class
+ * This class is the representation of a frame on screen. Is a container for managing, updating and drawing sprites.
+ * Contains a doubly linked list of sprites.
+ * Supports adding and removing sprites, updating and drawing frame to screen.
+ * Sprites are drawn in order of priority.
+ * Sprites must be drawn using the draw function of the frame for performance reasons.
+ * */
 {
 private:
     Drawable* first;

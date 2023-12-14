@@ -4,6 +4,11 @@
 #include <winuser.h>
 
 class Pixel
+/*
+ * Pixel class
+ * This class is used to store the color of a pixel. Contains 4 integers: r, g, b, a.
+ * Supports drawing pixel to screen and printing pixel to console for debugging.
+ */
 {
 private:
     int r;

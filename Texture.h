@@ -11,12 +11,12 @@ using namespace std;
 using namespace utility;
 
 class Texture
-/* Texture class
- * This class is used to store a texture
- * A texture is a 2D array of pixels
- * This class also provides methods to read a texture from a file
- * and draw a texture to a device context
- */
+/*
+* Texture class
+ * This class is used to store the texture of sprites. Contains a 2D vector of pixels.
+ * Multiple sprites can share the same texture, reducing memory usage.
+ * Supports reading texture from file, printing texture to console, flipping texture horizontally and drawing texture to screen.
+ * */
 {
 protected:
 	int width;
