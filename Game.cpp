@@ -5,15 +5,6 @@ Game::Game(Frame& mainFrame, HDC& hdc, int& diff, const int& map)
 {
 	screen = MenuScreen::getInstance(&mainFrame, &hdc);
     playMap = nullptr;
-//	if (map == STREET_MAP) {
-//		playMap = new StreetMap(hdc, &mainFrame, diff, screen);
-//	}
-//	else if (map == CHESS_MAP) {
-//		playMap = new ChessMap(hdc, &mainFrame, diff, screen);
-//	}
-//	else {
-//		playMap = new TrainMap(hdc, &mainFrame, diff, screen);
-//	}
 }
 
 Game::~Game() {

@@ -31,7 +31,6 @@ void TrafficLight::red() {
 	lane[0]->stopLane();
 	lane[1]->stopLane();
 	status = 2;
-	//sprite->setTexture(lightTexture[0].getCurrentTexture());
 }
 
 void TrafficLight::setStatus(const int& Status) {
@@ -103,11 +102,3 @@ void getTraffic(const int& mapType, vector<Lane*>mapLane, vector<TrafficLight>& 
 		return;
 	}
 }
-
-//TrafficLight& TrafficLight::operator = (const TrafficLight& trafficLight) {
-//	this->status = trafficLight.status;
-//	this->sprite = trafficLight.sprite;
-//	for (int i = 0; i < trafficLight.lane.size(); i++) {
-//		this->lane.push_back(trafficLight.lane[i]);
-//	}
-//}

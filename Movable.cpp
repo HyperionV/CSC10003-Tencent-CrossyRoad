@@ -123,11 +123,6 @@ bool Movable::reachedDestination() {
 
     return true;
     
-    //if (position.x > destination.x || position.x < destination.x && destination.x < 0)
-    //    return true;
-    //if (position.x == destination.x && position.y == destination.y)
-    //    return true;
-    //return false;
 }
 
 void Movable::update() {
@@ -143,12 +138,6 @@ void Movable::update() {
             position = startingPosition;
         }
         else {
-//            Vector2f firstHalf = position - startingPosition;
-//            Vector2f secondHalf = destination - startingPosition;
-//            if(firstHalf.modulus() / secondHalf.modulus() < 0.6)
-//                velocity += acceleration;
-//            else
-//                velocity -= acceleration;
             position += velocity;
         }
     }

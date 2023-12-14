@@ -83,12 +83,6 @@ void Texture::readTexture(string filename) {
     file.read(reinterpret_cast<char*>(&width), sizeof(int));
     file.read(reinterpret_cast<char*>(&height), sizeof(int));
     pixels = vector<vector<Pixel>>(height, vector<Pixel>(width));
-//    cerr << "Height: " << pixels.size() << "\n";
-//    if(pixels.size() > 0)
-//        cerr << "Width: " << pixels[0].size() << "\n";
-//    else
-//        cerr << "Width: 0\n";
-//    cerr << "\n";
 
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < width; col++)
@@ -124,10 +118,6 @@ void Texture::print() {
         }
     }
 }
-
-//void Texture::drawTexture(int top, int left, Rect2D textureRect, HDC hdc)
-//{
-//}
 
 void Texture::drawTexture(int top, int left, Rect2D textureRect, void *bits, Vector2i frameSize) {
     for (int y = 0; y < textureRect.height; y++) {

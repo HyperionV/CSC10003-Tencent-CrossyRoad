@@ -41,7 +41,6 @@ StreetMap::StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* 
 		Sprite* tmp = trafficLight[i].getSprite();
 		mainFrame->addSprite(tmp);
 	}
-//    screen->updateScoreSprite(player.getPoint());
     for (int i = 0; i < (int)mapLane.size(); i++) {
         mapLane[i]->resetLane();
         mapLane[i]->startLane();
@@ -71,9 +70,6 @@ StreetMap::StreetMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* 
         Sprite* tmp = trafficLight[i].getSprite();
         mainFrame->addSprite(tmp);
     }
-
-//	player = Player(*mapFrame, STREET_MAP);
-
     for (int i = 0; i < (int)mapLane.size(); i++) {
         mapLane[i]->resetLane();
         mapLane[i]->startLane();
@@ -113,9 +109,11 @@ void StreetMap::drawMap() {
                 continuePlaying = screen->screenPause();
                 if (continuePlaying == true) {
                     gameRunning = false;
+					player.stopPlayerHandler();
                     spawner.join();
                     fileDialog.ShowSaveFileDialog(saveMap(), player.getPlayerName() + "_" + to_string(player.getPoint()) + "_" + mapName);
                     mainFrame->removeAllSprite();
+					if (screen->getMuicStatus() == 0) screen->stopMusic();
                     return;
                 }
                 else{
@@ -220,7 +218,6 @@ ChessMap::ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* sc
 
 	bgTexture = new Texture("image_bin/chess/chess.bin");
 	bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
-//	player = Player(*mapFrame, CHESS_MAP);
 }
 
 ChessMap::ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName,string mapString) :
@@ -245,7 +242,6 @@ ChessMap::ChessMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* sc
 
     bgTexture = new Texture("image_bin/chess/chess.bin");
     bg = mainFrame->addSprite(*bgTexture, Vector2f(0, 0));
-//	player = Player(*mapFrame, CHESS_MAP);
     loadMap(mapString);
     screen->updateScoreSprite(player.getPoint());
     for (int i = 0; i < (int)mapLane.size(); i++) {
@@ -281,10 +277,10 @@ void ChessMap::drawMap() {
                     player.stopPlayerHandler();
                     spawner.join();
                     fileDialog.ShowSaveFileDialog(saveMap(), player.getPlayerName() + "_" + to_string(player.getPoint()) + "_" + mapName);
+					if (screen->getMuicStatus() == 0) screen->stopMusic();
                     return;
                 }
                 else{
-//                    screen->screenPlay();
                 }
             }
         }
@@ -380,7 +376,6 @@ TrainMap::TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* sc
 		Sprite* tmp = trafficLight[i].getSprite();
 		mainFrame->addSprite(tmp);
 	}
-	//	player = Player(*mapFrame, TRAIN_MAP);
 }
 
 TrainMap::TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* screen, string playerName, string mapString) :
@@ -410,7 +405,6 @@ TrainMap::TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* sc
         Sprite* tmp = trafficLight[i].getSprite();
         mainFrame->addSprite(tmp);
     }
-//	player = Player(*mapFrame, TRAIN_MAP);
     loadMap(mapString);
     screen->updateScoreSprite(player.getPoint());
     for (int i = 0; i < (int)mapLane.size(); i++) {
@@ -421,9 +415,7 @@ TrainMap::TrainMap(HDC hdc, Frame* mapFrame, int levelDifficulty, MenuScreen* sc
 
 void TrainMap::drawMap() {
 	screen->startMusic(TRAIN_MAP);
-	//	screen->addScore();
 	gameRunning = true;
-//	thread t = player.launchHandler();
     player.resumePlayerHandler();
     thread spawner([this]() {
         return this->randomItemSpawner();
@@ -437,18 +429,12 @@ void TrainMap::drawMap() {
                 continuePlaying = screen->screenPause();
                 if (continuePlaying == true) {
                     gameRunning = false;
-//                    player.stopPlayerHandler();
-//                    t.join();
                     spawner.join();
-//                    for (auto& s : mapLane) {
-//                        s->stopLane();
-//                    }
-//                    cout << "Save file" << endl;
                     fileDialog.ShowSaveFileDialog(saveMap(), player.getPlayerName() + "_" + to_string(player.getPoint()) + "_" + mapName);
+					if (screen->getMuicStatus() == 0) screen->stopMusic();
                     return;
                 }
                 else{
-//                    screen->screenPlay();
                 }
             }
         }

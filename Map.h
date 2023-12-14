@@ -53,8 +53,6 @@ public :
 	void loadResource();
 	void shiftResource();
 
-//    string saveMap();
-//    void loadMap(string);
 };
 
 
@@ -68,8 +66,6 @@ public:
 
 	void shiftResource();
 
-//    string saveMap();
-//    void loadMap(string);
 
 };
 
@@ -85,6 +81,4 @@ public:
 	void loadResource();
 	void shiftResource();
 
-//    string saveMap();
-//    void loadMap(string);
 };

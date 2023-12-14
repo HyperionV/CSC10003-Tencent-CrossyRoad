@@ -147,10 +147,6 @@ void Frame::update() {
     Drawable* current = first;
     while (current != nullptr) {
         current->update();
-        // if (current->getPosition().x > current->getDestination().x || (current->getPosition().x < current->getDestination().x && current->getDestination().x < 0) ) {
-        //     removeSprite(current);
-        //     continue;
-        // }
         current = current->next;
     }
 }

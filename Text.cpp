@@ -73,11 +73,5 @@ int Text::getLength() const {
 	return this->length;
 }
 Text::~Text() {
-//	for (int i = 0; i < this->text.size(); i++) {
-//        if(this->text[i] != nullptr){
-//            delete this->text[i];
-//            this->text[i] = nullptr;
-//        }
-//	}
     removeText();
 }
