@@ -47,6 +47,8 @@ MenuScreen::MenuScreen(Frame *curFrame, HDC *hdc) {
 int MenuScreen::startGame() {
     changeTexture(0);
     int vertical = 0, horizon = 0;
+    mainFrame->removeSprite(backGround);
+    backGround = new Sprite;
     backGround->setTexture(resources[0].getCurrentTexture());
     mainFrame->draw(*hdc, backGround);
     if (!isMusicOff) {
