@@ -98,11 +98,3 @@ void Entity::flipHorizontal() {
 int Entity::getMotionSize() {
     return (int)motion.size();
 }
-
-//Entity::~Entity() {
-//    while (motion.size() > 0) {
-//        Texture* dummy = motion.front();
-//        delete dummy;
-//        motion.pop_front();
-//    }
-//}

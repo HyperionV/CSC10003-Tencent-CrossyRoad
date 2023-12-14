@@ -75,11 +75,6 @@ int main(int argc, char* argv[]) {
 
 
 	HDC hdc = GetDC(console);
-	//int diff = 50;
-	//Screen* screen = Screen::getInstance(&mainFrame, &hdc);
-	//screen->startGame();
-	//ChessMap playMap(hdc, &mainFrame, diff, screen);
-	//playMap.drawMap();
 	InitResource();
 	int diff = 100;
 	Game g(mainFrame, hdc, diff, TRAIN_MAP);

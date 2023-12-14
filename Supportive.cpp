@@ -11,7 +11,8 @@ string return_current_time_and_date()
 
 	std::stringstream ss;
 	ss << put_time(std::localtime(&in_time_t), "%d/%m/%Y");
-//    string owo = ss.str();
+
+	string owo = ss.str();
 	return ss.str();
 }
 

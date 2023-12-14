@@ -60,7 +60,6 @@ int MenuScreen::startGame() {
     while (true) {
         // this_thread::sleep_for(50ms);
         if (_kbhit()) {
-            playSound(ON_CLICK);
             int curr = _getch();
             switch (curr) {
                 case KEY_LEFT:
@@ -139,6 +138,7 @@ int MenuScreen::startGame() {
                             return map;
                             break;
                         case 3:
+                            playSound(ON_CLICK);
                             if (horizon == 0) {
                                 this->screenAbout();
                                 changeTexture(3);
@@ -202,6 +202,7 @@ bool MenuScreen::screenPause() {
                             playSound(ON_CLICK);
                             return 0;
                         case 1:
+                            playSound(ON_CLICK);
                             setMusic(Map);
                             changeTexture(12 + 3 * isMusicOff);
                             break;
@@ -351,7 +352,9 @@ void MenuScreen::screenPlay() {
 }
 
 string MenuScreen::screenPlayerName() {
-    Sprite *bg = mainFrame->addSprite(resources[37].getCurrentTexture(), Vector2f(0, 0), -1);
+    changeTexture(37);
+    Sprite *bg = mainFrame->addSprite(this->backGround->getTexture(), Vector2f(0, 0), -1);
+    this_thread::sleep_for(50ms);
     TextBox myTextBox(mainFrame, Vector2i(480, 290), Vector2i(830, 285));
     myTextBox.addTextBoxSprite();
     myTextBox.setCursorSize(2, 35);
@@ -364,7 +367,6 @@ string MenuScreen::screenPlayerName() {
     cur = myTextBox.getEnteredText();
     if (!isMusicOff) {
         music->Stop();
-        isMusicOff = 1;
     }
     mainFrame->removeSprite(bg);
     return cur;
@@ -406,63 +408,10 @@ void MenuScreen::updateScoreSprite(const int &score) {
     return;
 }
 
-//void MenuScreen::crossyRoad() {
-// int score = 0;
-// Entity _char("up");
-
-
-// changeTexture(21);
-// mainFrame->addSprite(this->backGround);
-// for (int i = 0; i < 5; i++) {
-//	 mainFrame->addSprite(this->score[i]);
-// }
-
-// Player _p(*mainFrame, STREET_MAP);
-// while (true) {
-//	 //this_thread::sleep_for(100ms);
-//	 _p.animatePlayer();
-//	 if (_kbhit()) {
-//		 int curr = _getch();
-//		 int step{ 2 };
-//		 Vector2f currPos = _p.getCurrentPos();
-//		 switch (curr) {
-//		 case KEY_LEFT:
-//			 _p.setPosition(currPos.x - 40, currPos.y, 'a');
-//			 break;
-//		 case KEY_RIGHT:
-//			 _p.setPosition(currPos.x + 40, currPos.y, 'd');
-//			 break;
-//		 case KEY_DOWN:
-//			 _p.setPosition(currPos.x, currPos.y, 's');
-//			 break;
-//		 case KEY_UP:
-//			 this->updateScoreSprite(score);
-//			 _p.setPosition(currPos.x, currPos.y, 'w');
-//			 break;
-//		 case 'q':
-//			 playSound(ON_CLICK);
-//			 if (screenPause()) {
-//				 //mainFrame->removeAllSprite();
-//				 return;
-//			 }
-//			 break;
-//		 default:
-//			 //cout << "Invalid key pressed" << endl;
-//			 //system("pause");
-//			 break;
-//		 }
-//	 }
-//	 //trafficControl(traff);
-//	 mainFrame->update();
-//	 mainFrame->draw(*hdc);
-// }
-//}
-
 
 void MenuScreen::screenLeaderboard() {
     vector<leaderBoardInfo> info = readLeaderBoardFromFile("leaderBoardInfo.txt");
     changeTexture(33);
-//    leaderBoardInfo A("ngobang", "99999", "27/11/2023");
     mainFrame->addSprite(this->backGround);
 
     vector<Text *> a;
@@ -486,8 +435,7 @@ void MenuScreen::screenLeaderboard() {
             int step{2};
             switch (curr) {
                 case 'q':
-                    playSound("sound/on_click.wav");
-//                    mainFrame->removeAllSprite();
+                    playSound(ON_CLICK);
                     for (int i = 0; i < info.size(); i++) {
                         delete a[i];
                         delete b[i];
@@ -648,8 +596,6 @@ void MenuScreen::screenGameOver(const int &score, const string &name) {
     gameOver->setPriority(29);
     string Score = to_string(score);
     while (Score.length() < 5) Score = "0" + Score;
-    //Text a(mainFrame, to_string(score));
-    //a.writeText(1000, 400);
     for (int i = 0; i < 5; i++) {
         Sprite *scoreSprite = new Sprite(Vector2f(495 + 60 * i, 365),
                                          resources[Score[i] - '0' + 20].getCurrentTexture());

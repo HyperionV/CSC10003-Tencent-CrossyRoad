@@ -34,8 +34,6 @@
 #define DATE_COL 3
 
 const int ROW_OFFSET[5] = { ROW1_OFFSET, ROW2_OFFSET, ROW3_OFFSET, ROW4_OFFSET, ROW5_OFFSET };
-
-
 #define mainScreen Vector2f(1280, 720)
 class MenuScreen {
 public:

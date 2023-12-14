@@ -204,11 +204,6 @@ void Lane::update() {
 	if ((float)(clock() - lastSpawn) / CLOCKS_PER_SEC >= timeTilNextSpawn && isRunning) {
 		spawnCar();
 	}
-//    for(auto _sprite : vehicles) {
-//        if(_sprite->getPosition().y != start.y) {
-////            cout << _sprite->getPosition().y << ' ' << start.y << endl;
-//        }
-//    }
 }
 
 Vector2f Lane::getStart() const {
@@ -310,14 +305,6 @@ string Lane::saveLane() {
     }
     ss << endl;
     ss << timeTilNextSpawn << endl;
-//    ss << items.size() << endl;
-//    for (int i = 0; i < items.size(); i++) {
-//        ss << items[i]->getItemName() << ' ';
-//        ss << items[i]->getValue() << ' ';
-//        ss << items[i]->getPosition().x << " " << items[i]->getPosition().y << ' ';
-//        ss << items[i]->getDestination().x << " " << items[i]->getDestination().y << ' ';
-//        ss << items[i]->getCreateTime() << endl;
-//    }
     // car info
     ss << vehicles.size() << endl;
     for (int i = 0; i < vehicles.size(); i++) {
@@ -361,41 +348,6 @@ void Lane::loadLane(stringstream& ss) {
         onTrack[i] = (bool)tmpInt;
     }
     ss >> timeTilNextSpawn;
-//    int itemsSize;
-//    ss >> itemsSize;
-//    items.resize(itemsSize);
-//    for (int i = 0; i < itemsSize; i++) {
-//        string itemName;
-//        ss >> itemName;
-//        if (itemName == "Slime") {
-//            int value;
-//            Vector2f position;
-//            Vector2f destination;
-//            time_t createTime;
-//            ss >> value;
-//            ss >> position.x >> position.y;
-//            ss >> destination.x >> destination.y;
-//            ss >> createTime;
-//            Slime* newSlime = new Slime(position, destination);
-//            newSlime->setModel(&slime[value]);
-//            newSlime->setCreateTime(createTime);
-//            items[i] = newSlime;
-//        }
-//        else {
-//            int value;
-//            Vector2f position;
-//            Vector2f destination;
-//            time_t createTime;
-//            ss >> value;
-//            ss >> position.x >> position.y;
-//            ss >> destination.x >> destination.y;
-//            ss >> createTime;
-//            Coin* newCoin = new Coin(position, value);
-//            newCoin->setModel(&coin[value - 2]);
-//            newCoin->setCreateTime(createTime);
-//            items[i] = newCoin;
-//        }
-//    }
     // car info
     int vehiclesSize;
     ss >> vehiclesSize;

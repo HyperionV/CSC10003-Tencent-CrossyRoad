@@ -1,7 +1,6 @@
 #pragma once
 #include "Sprite.h"
 #include "Entity.h"
-//#include "Supportive.h"
 #include <conio.h>
 #include <chrono>
 #include <thread>
@@ -28,7 +27,7 @@ private:
     int cnt = 0;
     vector<Entity*>model;
     Sprite* _player;
-    size_t point = 0;
+    int point = 0;
     int state = 1; // left - 0; up - 1; right - 2;
     bool isRunning;
 //    string dateTime;
@@ -53,13 +52,9 @@ public:
     void setMap(int map);
     int getMap();
 
-//    void setDateTime();
-//    string getDateTime();
-
     static void INIT();
     Vector2f getHitbox() const;
     Vector2f getCurrentPos() const;
-//    thread launchHandler();
     int getPoint() const;
     int convertLane(const int& mapType);
     int summon_Megumin();

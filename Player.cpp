@@ -20,7 +20,6 @@ void Player::INIT() {
 
 
 Player::Player(Frame& mainFrame, const int& mapType) {
-//    setDateTime();
     this->mainFrame = &mainFrame;
     model.push_back(new Entity("character/left"));
     model.push_back(new Entity("character/up"));
@@ -37,7 +36,6 @@ Player::Player(Frame& mainFrame, const int& mapType) {
 }
 
 Player::Player(Frame& mainFrame, const int& mapType, const Vector2f& pos, const int& point) {
-//    setDateTime();
     this->mainFrame = &mainFrame;
     model.push_back(new Entity("character/left"));
     model.push_back(new Entity("character/up"));
@@ -53,7 +51,6 @@ Player::Player(Frame& mainFrame, const int& mapType, const Vector2f& pos, const 
     setPosition(pos.x, pos.y, 'w');
 }
 
-// Memory leak here: unable to delete vector of Entity
 Player::~Player() {
     mainFrame->removeSprite(_player);
 
@@ -61,8 +58,6 @@ Player::~Player() {
         delete s;
     }
     model.clear();
-    // delete _player; 
-    // _player = nullptr;
 }
 
 Vector2f Player::getCurrentPos() const {
@@ -118,6 +113,7 @@ void Player::addPoint(const int& value) {
     point += value;
     if (point < 0)
         point = 0;
+    return;
 }
 
 void Player::playerHandler(char curr)
@@ -144,8 +140,6 @@ void Player::playerHandler(char curr)
                 break;
             case KEY_UP:
                 state = 1;
-                //if(point % 10 != 0 || cnt == 0)
-                //    point += 1;
                 setPosition(currPos.x, currPos.y, 'w');
                 break;
             case 'q':
@@ -156,12 +150,6 @@ void Player::playerHandler(char curr)
     }
 }
 
-//thread Player::launchHandler() {
-//    isRunning = true;
-//    return thread([this]() {
-//        this->playerHandler();
-//    });
-//}
 
 void Player::stopPlayerHandler() {
     isRunning = false;
@@ -170,14 +158,6 @@ void Player::stopPlayerHandler() {
 void Player::resumePlayerHandler() {
     isRunning = true;
 }
-
-//void Player::setDateTime() {
-//    dateTime = return_current_time_and_date();
-//}
-//
-//string Player::getDateTime() {
-//    return dateTime;
-//}
 
 int Player::summon_Megumin() {
     state = 4;
