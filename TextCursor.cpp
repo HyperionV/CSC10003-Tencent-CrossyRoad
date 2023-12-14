@@ -96,7 +96,7 @@ bool TextCursor::textControl() {
 		//cerr << "cursor size: " << cursorHeight << '\n';
 		char curChar = getch();
 		int maxLength = cursorRightmostPosition.x - cursorInitPosition.x;
-		if (('a' <= curChar && curChar <= 'z') || ('0' <= curChar && curChar <= '9')) { // character
+		if ((('a' <= curChar && curChar <= 'z') || ('0' <= curChar && curChar <= '9')) && textContent.size() < 14) { // character
 			textContent.push_back(curChar);
 			int textLength = getTextLength();
 			//cerr << "maxLength, textLength: " << maxLength << " " << getTextLength() << '\n';
